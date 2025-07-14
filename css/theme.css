@@ -948,6 +948,7 @@ body.dark-mode .day-view-container.drop-invalid {
 }
 
 
+
 .unplaced-event-item .event-title {
     font-weight: 600;
     color: var(--main-text-color);
@@ -1029,3 +1030,4 @@ body.dark-mode .day-view-container.drop-invalid {
         opacity: 0;
     }
 }
+

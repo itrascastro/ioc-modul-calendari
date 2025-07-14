@@ -23,7 +23,7 @@ class ViewManager {
         this.renderers.month = monthRenderer;
         this.renderers.day = dayRenderer;
         this.renderers.week = weekRenderer;
-        // this.renderers.semester = semesterRenderer; // TODO: implementar
+        this.renderers.semester = semesterRenderer;
         
         console.log('[ViewManager] ✅ Renderitzadors inicialitzats');
     }
@@ -233,10 +233,29 @@ class ViewManager {
         this.updateNavigationButtons();
     }
     
-    // Renderitzar vista semestral (placeholder)
+    // Renderitzar vista semestral
     renderSemesterView(calendar) {
-        console.warn('[ViewManager] ⚠️ Vista semestral no implementada encara');
-        this.renderMonthView(calendar); // Fallback
+        if (!this.renderers.semester) {
+            console.error('[ViewManager] ❌ Renderitzador de vista semestral no disponible');
+            this.renderMonthView(calendar); // Fallback
+            return;
+        }
+        
+        const gridWrapper = document.getElementById('calendar-grid-wrapper');
+        const periodDisplay = document.getElementById('current-period-display');
+        
+        const semesterHTML = this.renderers.semester.render(calendar, appState.currentDate, 'DOM');
+        gridWrapper.innerHTML = semesterHTML;
+        
+        // Actualitzar títol del període
+        const semesterName = this.renderers.semester.generateSemesterName(calendar);
+        periodDisplay.textContent = semesterName;
+        
+        // Configurar drag & drop (reutilitza la lògica de la vista mensual)
+        setupDragAndDrop(gridWrapper, calendar);
+        
+        // Actualitzar navegació
+        this.updateNavigationButtons();
     }
     
     // === NAVEGACIÓ ===
@@ -318,8 +337,10 @@ class ViewManager {
     
     // Navegació específica per semestres
     navigateSemester(direction, calendarStart, calendarEnd) {
-        console.warn('[ViewManager] ⚠️ Navegació semestral no implementada');
-        return null;
+        // Per a vista semestral, la navegació està limitada al semestre actual
+        // ja que cada calendari representa exactament un semestre
+        console.log('[ViewManager] ℹ️ Navegació semestral: un calendari = un semestre');
+        return null; // No navegar fora del semestre actual
     }
     
     // Navegació específica per mesos
@@ -370,6 +391,9 @@ class ViewManager {
             case 'week':
                 this.updateWeekNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd);
                 break;
+            case 'semester':
+                this.updateSemesterNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd);
+                break;
             case 'month':
             default:
                 calendarManager.updateNavigationControls(calendar);
@@ -418,6 +442,15 @@ class ViewManager {
             currentWeekStart.getUTCDate() + 7
         );
         nextBtn.disabled = nextWeekStart > calendarEnd;
+    }
+    
+    // Actualitzar navegació per vista semestral
+    updateSemesterNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd) {
+        // Per a vista semestral, desactivar navegació ja que un calendari = un semestre
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        prevBtn.title = 'Canvia de calendari per veure altres semestres';
+        nextBtn.title = 'Canvia de calendari per veure altres semestres';
     }
     
     // === DRAG & DROP ===
