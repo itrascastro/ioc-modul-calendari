@@ -71,8 +71,9 @@ class CalendarRenderer {
         const weekPillHTML = (dayData.weekNumber && !dayData.isOutOfMonth) ? 
             `<div class="week-pill">S${dayData.weekNumber}</div>` : '';
         
-        // Botó d'afegir esdeveniment només per a DOM i dies dins del calendari
-        const addEventBtnHTML = (outputFormat === 'DOM' && !dayData.isOutOfMonth) ? 
+        // Botó d'afegir esdeveniment només per a DOM i dies dins del calendari acadèmic
+        const addEventBtnHTML = (outputFormat === 'DOM' && !dayData.isOutOfMonth && 
+            calendar && dayData.dateStr >= calendar.startDate && dayData.dateStr <= calendar.endDate) ? 
             `<button class="add-event-btn" data-action="add-event" data-date="${dayData.dateStr}" title="Afegir event">+</button>` : '';
         
         // Configurar segons el format de sortida
