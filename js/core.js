@@ -16,7 +16,7 @@ function handleAction(e) {
         case 'save-calendar': calendarManager.saveCalendar(); break;
         case 'navigate-period': navigatePeriod(parseInt(target.dataset.direction)); break;
         case 'switch-calendar': calendarManager.switchCalendar(target.closest('.calendar-list-item').dataset.calendarId); break;
-        case 'add-event': openEventModal(null, target.closest('.day-cell').dataset.date); break;
+        case 'add-event': openEventModal(null, target.dataset.date || target.closest('.day-cell')?.dataset.date); break;
         case 'open-event-modal': openEventModal(JSON.parse(target.dataset.event)); break;
         case 'save-event': eventManager.saveEvent(); break;
         case 'delete-event': eventManager.deleteEvent(); break;
@@ -38,51 +38,22 @@ function handleAction(e) {
         case 'delete-calendar': calendarManager.deleteCalendar(getSelectedCalendarId()); break;
         case 'replicate-calendar': replicationManager.openReplicationModal(getSelectedCalendarId()); break;
         case 'execute-replication': replicationManager.executeReplication(); break;
+        case 'change-view': viewManager.changeView(target.dataset.view); break;
+        case 'day-click': viewManager.changeToDateView(target.dataset.date); break;
         default: console.warn(`Acción no reconocida: ${action}`);
     }
 }
 
 // === RENDERITZAT PRINCIPAL DEL CALENDARI ===
 function renderCalendar() {
-    const calendar = getCurrentCalendar();
-    const gridWrapper = document.getElementById('calendar-grid-wrapper');
-    const periodDisplay = document.getElementById('current-period-display');
-    
-    if (!calendar) {
-        gridWrapper.innerHTML = `<div style="display: flex; height: 100%; align-items: center; justify-content: center; color: var(--secondary-text-color);">Selecciona un calendari per començar.</div>`;
-        periodDisplay.textContent = '...';
-        return;
-    }
-    
-    calendarManager.updateNavigationControls(calendar);
-    
-    const monthHTML = monthRenderer.render(calendar, appState.currentDate, 'DOM');
-    periodDisplay.textContent = getMonthName(appState.currentDate);
-    gridWrapper.innerHTML = monthHTML;
-    
-    setupDragAndDrop(gridWrapper, calendar);
+    viewManager.renderCurrentView();
 }
 
 // === NAVEGACIÓ ENTRE PERÍODES ===
 function navigatePeriod(direction) {
-    if (!appState.currentCalendarId) return;
-    
-    const newDate = createUTCDate(
-        appState.currentDate.getUTCFullYear(), 
-        appState.currentDate.getUTCMonth() + direction, 
-        1
-    );
-    
-    const calendar = getCurrentCalendar();
-    const calendarStart = parseUTCDate(calendar.startDate);
-    const calendarEnd = parseUTCDate(calendar.endDate);
-    const newDateEnd = createUTCDate(newDate.getUTCFullYear(), newDate.getUTCMonth() + 1, 0);
-    
-    if (newDate <= calendarEnd && newDateEnd >= calendarStart) {
-        appState.currentDate = newDate;
-        renderCalendar();
-    }
+    viewManager.navigatePeriod(direction);
 }
+
 
 // === INICIALITZACIÓ DE L'APLICACIÓ ===
 function initializeApp() {
@@ -96,6 +67,7 @@ function initializeApp() {
         }
         
         // Inicialitzar resta de l'aplicació
+        initializeViewManager();
         document.addEventListener('click', handleAction);
         document.addEventListener('dblclick', handleAction);
         loadFromStorage();

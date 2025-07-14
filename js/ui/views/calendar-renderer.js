@@ -78,8 +78,11 @@ class CalendarRenderer {
         
         // Configurar segons el format de sortida
         if (outputFormat === 'DOM') {
+            // Afegir acció de click per canviar a vista dia (només si no és dia fora de mes)
+            const dayClickAction = !dayData.isOutOfMonth ? `data-action="day-click"` : '';
+            
             return `
-                <div class="${classes.join(' ')}" data-date="${dayData.dateStr}">
+                <div class="${classes.join(' ')}" data-date="${dayData.dateStr}" ${dayClickAction}>
                     <span class="day-number">${dayData.dayNumber}</span>
                     ${weekPillHTML}
                     <div class="events-container">${eventsHTML}</div>

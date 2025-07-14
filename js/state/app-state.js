@@ -9,6 +9,7 @@ let appState = {
     editingCalendarId: null,
     editingEventId: null,
     currentDate: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)),
+    currentView: 'month',  // Vista actual: month, day, week, semester
     categoryTemplates: [],  // Catálogo global de categorías de usuario
     unplacedEvents: []  // Eventos no ubicados en replicación
 };
