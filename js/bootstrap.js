@@ -1,5 +1,5 @@
 // =================================================================
-// CORE.JS - COORDINACIÓ CENTRAL DE L'APLICACIÓ CALENDARI IOC
+// BOOTSTRAP.JS - INICIALITZACIÓ I COORDINACIÓ DE L'APLICACIÓ CALENDARI IOC
 // =================================================================
 
 // === GESTOR D'ACCIONS CENTRALITZAT ===
