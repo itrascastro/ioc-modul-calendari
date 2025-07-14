@@ -94,6 +94,7 @@ const calendarCssStyles = `
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         gap: 1px;
+        width: 100%;
     }
     
     .day-header {
@@ -113,6 +114,9 @@ const calendarCssStyles = `
         border-bottom: 1px solid #dee2e6;
         position: relative;
         background: white;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .day-cell.out-of-month {
@@ -145,9 +149,10 @@ const calendarCssStyles = `
         border-radius: 3px;
         color: white;
         font-weight: 500;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        line-height: 1.2;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
     
     .event-item.system {

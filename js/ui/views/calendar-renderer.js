@@ -38,14 +38,13 @@ class CalendarRenderer {
         const color = category ? category.color : '#888';
         const isUserEvent = !event.isSystemEvent;
         
-        const truncatedTitle = truncateText(event.title, 30);
-        
         if (outputFormat === 'HTML') {
-            // Per a exportació HTML - sense interactivitat
+            // Per a exportació HTML - text complet, sense interactivitat
             const systemClass = event.isSystemEvent ? ' system' : '';
-            return `<div class="event-item${systemClass}" style="background-color: ${color};" title="${event.title}">${truncatedTitle}</div>`;
+            return `<div class="event-item${systemClass}" style="background-color: ${color};" title="${event.title}">${event.title}</div>`;
         } else {
-            // Per a DOM - amb interactivitat
+            // Per a DOM - text truncat per a millor UI
+            const truncatedTitle = truncateText(event.title, 30);
             const eventClasses = ['event', isUserEvent ? 'is-user-event' : 'is-system-event'];
             const openModalAction = isUserEvent ? `data-action="open-event-modal" data-event="${JSON.stringify(event).replace(/"/g, '&quot;')}"` : '';
             const draggableAttr = isUserEvent ? 'draggable="true"' : '';
@@ -79,7 +78,7 @@ class CalendarRenderer {
         
         // Número de setmana per a dies dins del calendari
         const weekPillHTML = (dayData.weekNumber && !dayData.isOutOfMonth) ? 
-            `<div class="week-pill">S${dayData.weekNumber}</div>` : '';
+            `<div class="week-pill" data-action="week-click" data-date="${dayData.dateStr}" title="Canviar a vista setmanal">S${dayData.weekNumber}</div>` : '';
         
         // Verificar si el dia està dins del rang vàlid del calendari
         const isDayInRange = this.isDayInCalendarRange(dayData, calendar);
@@ -111,6 +110,38 @@ class CalendarRenderer {
                 </div>
             `;
         }
+    }
+    
+    // === MÈTODES COMUNS PER GRAELLES DE DIES ===
+    
+    // Generar graella de dies per DOM (reutilitzable per month, week i semester views)
+    generateCalendarGridDOM(dayDataArray, calendar) {
+        const dayHeaders = getDayHeaders();
+        const daysHTML = dayDataArray.map(dayData => 
+            this.generateDayCellHTML(dayData, calendar, 'DOM')
+        ).join('');
+        
+        return `
+            <div class="calendar-grid">
+                ${dayHeaders.map(day => `<div class="day-header">${day}</div>`).join('')}
+                ${daysHTML}
+            </div>
+        `;
+    }
+    
+    // Generar graella de dies per HTML (utilitzat principalment per vista mensual)
+    generateCalendarGridHTML(dayDataArray, calendar) {
+        const dayHeaders = getDayHeaders();
+        const daysHTML = dayDataArray.map(dayData => 
+            this.generateDayCellHTML(dayData, calendar, 'HTML')
+        ).join('');
+        
+        return `
+            <div class="calendar-grid">
+                ${dayHeaders.map(day => `<div class="day-header">${day}</div>`).join('')}
+                ${daysHTML}
+            </div>
+        `;
     }
     
     // === MÈTODES VIRTUALS ===

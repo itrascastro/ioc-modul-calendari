@@ -571,6 +571,8 @@ body.dark-mode .day-cell.out-of-month { background-color: #212938; }
 body.dark-mode .day-cell.out-of-month .day-number { color: #667081;}
 .day-number { font-weight: 500; font-size: 0.9em; color: var(--main-text-color); }
 .week-pill { position: absolute; top: 8px; right: 8px; font-size: 0.75em; background-color: #6c757d; color: white; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
+.week-pill[data-action="week-click"] { cursor: pointer; transition: background-color 0.2s ease; }
+.week-pill[data-action="week-click"]:hover { background-color: var(--accent-color); }
 .events-container { margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
 .event {
     font-size: 0.85em;
@@ -818,6 +820,8 @@ body.dark-mode .unplaced-event-item.active {
     font-weight: 500;
     margin-top: 8px;
 }
+.week-info[data-action="week-click"] { cursor: pointer; transition: background-color 0.2s ease; }
+.week-info[data-action="week-click"]:hover { background-color: var(--accent-hover); }
 
 .add-event-day-btn {
     padding: 10px 20px;

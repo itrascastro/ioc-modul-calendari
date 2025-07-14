@@ -78,34 +78,13 @@ class WeekViewRenderer extends CalendarRenderer {
     
     // === GENERACIÓ DE SORTIDA DOM ===
     generateDOMOutput(weekData, calendar) {
-        const dayHeaders = getDayHeaders();
-        const daysHTML = weekData.days.map(dayData => 
-            this.generateDayCellHTML(dayData, calendar, 'DOM')
-        ).join('');
-        
-        return `
-            <div class="calendar-grid">
-                ${dayHeaders.map(day => `<div class="day-header">${day}</div>`).join('')}
-                ${daysHTML}
-            </div>
-        `;
+        return this.generateCalendarGridDOM(weekData.days, calendar);
     }
     
     // === GENERACIÓ DE SORTIDA HTML ===
+    // Nota: La vista setmanal no s'exporta, només la vista mensual
     generateHTMLOutput(weekData, calendar) {
-        const dayHeaders = getDayHeaders();
-        const daysHTML = weekData.days.map(dayData => 
-            this.generateDayCellHTML(dayData, calendar, 'HTML')
-        ).join('');
-        
-        return `
-            <div class="week-section">
-                <div class="week-grid">
-                    ${dayHeaders.map(day => `<div class="day-header">${day}</div>`).join('')}
-                    ${daysHTML}
-                </div>
-            </div>
-        `;
+        return '<!-- Vista setmanal no disponible per exportació -->';
     }
     
     // === GENERACIÓ D'ELEMENTS ESPECÍFICS ===

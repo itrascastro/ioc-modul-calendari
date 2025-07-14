@@ -97,6 +97,42 @@ class ViewManager {
         return true;
     }
     
+    // Canviar a vista setmanal d'una data específica
+    changeToWeekView(dateStr) {
+        if (!dateStr) {
+            console.warn('[ViewManager] Data no vàlida per canviar a vista setmanal');
+            return false;
+        }
+        
+        // Parsejar la data i actualitzar appState.currentDate
+        const targetDate = parseUTCDate(dateStr);
+        if (!targetDate) {
+            console.warn('[ViewManager] No es pot parsejar la data:', dateStr);
+            return false;
+        }
+        
+        // Verificar que la data està dins del rang del calendari
+        const calendar = getCurrentCalendar();
+        if (!calendar) {
+            console.warn('[ViewManager] No hi ha calendari actiu');
+            return false;
+        }
+        
+        if (dateStr < calendar.startDate || dateStr > calendar.endDate) {
+            console.warn('[ViewManager] Data fora del rang del calendari:', dateStr);
+            return false;
+        }
+        
+        // Actualitzar data actual
+        appState.currentDate = targetDate;
+        
+        // Canviar a vista setmanal
+        this.changeView('week');
+        
+        console.log(`[ViewManager] 📅 Canviat a vista setmanal de: ${dateStr}`);
+        return true;
+    }
+    
     // === RENDERITZACIÓ ===
     
     // Renderitzar vista actual

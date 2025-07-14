@@ -56,33 +56,15 @@ class MonthViewRenderer extends CalendarRenderer {
     
     // === GENERACIÓ DE SORTIDA DOM ===
     generateDOMOutput(monthData, calendar) {
-        const dayHeaders = getDayHeaders();
-        const daysHTML = monthData.days.map(dayData => 
-            this.generateDayCellHTML(dayData, calendar, 'DOM')
-        ).join('');
-        
-        return `
-            <div class="calendar-grid">
-                ${dayHeaders.map(day => `<div class="day-header">${day}</div>`).join('')}
-                ${daysHTML}
-            </div>
-        `;
+        return this.generateCalendarGridDOM(monthData.days, calendar);
     }
     
     // === GENERACIÓ DE SORTIDA HTML ===
     generateHTMLOutput(monthData, calendar) {
-        const dayHeaders = getDayHeaders();
-        const daysHTML = monthData.days.map(dayData => 
-            this.generateDayCellHTML(dayData, calendar, 'HTML')
-        ).join('');
-        
         return `
             <div class="month-section">
                 <div class="month-header">${monthData.monthName}</div>
-                <div class="month-grid">
-                    ${dayHeaders.map(day => `<div class="day-header">${day}</div>`).join('')}
-                    ${daysHTML}
-                </div>
+                ${this.generateCalendarGridHTML(monthData.days, calendar)}
             </div>
         `;
     }

@@ -40,6 +40,7 @@ function handleAction(e) {
         case 'execute-replication': replicationManager.executeReplication(); break;
         case 'change-view': viewManager.changeView(target.dataset.view); break;
         case 'day-click': viewManager.changeToDateView(target.dataset.date); break;
+        case 'week-click': viewManager.changeToWeekView(target.dataset.date); break;
         default: console.warn(`Acción no reconocida: ${action}`);
     }
 }
