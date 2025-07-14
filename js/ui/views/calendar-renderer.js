@@ -54,6 +54,16 @@ class CalendarRenderer {
         }
     }
     
+    // === UTILITATS ===
+    
+    // Verificar si un dia està dins del rang vàlid del calendari
+    isDayInCalendarRange(dayData, calendar) {
+        return calendar && 
+               !dayData.isOutOfMonth && 
+               dayData.dateStr >= calendar.startDate && 
+               dayData.dateStr <= calendar.endDate;
+    }
+    
     // === GENERACIÓ DE HTML DE CEL·LA DE DIA ===
     generateDayCellHTML(dayData, calendar, outputFormat = 'DOM') {
         const isToday = dayData.dateStr === dateToUTCString(new Date());
@@ -71,15 +81,17 @@ class CalendarRenderer {
         const weekPillHTML = (dayData.weekNumber && !dayData.isOutOfMonth) ? 
             `<div class="week-pill">S${dayData.weekNumber}</div>` : '';
         
+        // Verificar si el dia està dins del rang vàlid del calendari
+        const isDayInRange = this.isDayInCalendarRange(dayData, calendar);
+        
         // Botó d'afegir esdeveniment només per a DOM i dies dins del calendari acadèmic
-        const addEventBtnHTML = (outputFormat === 'DOM' && !dayData.isOutOfMonth && 
-            calendar && dayData.dateStr >= calendar.startDate && dayData.dateStr <= calendar.endDate) ? 
+        const addEventBtnHTML = (outputFormat === 'DOM' && isDayInRange) ? 
             `<button class="add-event-btn" data-action="add-event" data-date="${dayData.dateStr}" title="Afegir event">+</button>` : '';
         
         // Configurar segons el format de sortida
         if (outputFormat === 'DOM') {
-            // Afegir acció de click per canviar a vista dia (només si no és dia fora de mes)
-            const dayClickAction = !dayData.isOutOfMonth ? `data-action="day-click"` : '';
+            // Afegir acció de click per canviar a vista dia (només si està dins del rang)
+            const dayClickAction = isDayInRange ? `data-action="day-click"` : '';
             
             return `
                 <div class="${classes.join(' ')}" data-date="${dayData.dateStr}" ${dayClickAction}>

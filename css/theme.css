@@ -560,9 +560,10 @@ body.dark-mode .view-toggles button.active { background-color: #4a5568; }
 .calendar-grid-wrapper { flex-grow: 1; background-color: var(--bg-color); padding: 8px; border-radius: 8px; overflow-y: auto;}
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 .day-header { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 8px; text-align: center; font-weight: 600; color: var(--secondary-text-color); font-size: 0.9em; }
-.day-cell { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 6px; min-height: 140px; padding: 8px; position: relative; display: flex; flex-direction: column; transition: border-color 0.2s, box-shadow 0.2s; cursor: pointer;}
-.day-cell:hover { border-color: var(--accent-color); background-color: #f8f9fa; }
-body.dark-mode .day-cell:hover { background-color: #374151; } 
+.day-cell { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 6px; min-height: 140px; padding: 8px; position: relative; display: flex; flex-direction: column; transition: border-color 0.2s, box-shadow 0.2s;}
+.day-cell[data-action="day-click"] { cursor: pointer; }
+.day-cell[data-action="day-click"]:hover { border-color: var(--accent-color); background-color: #f8f9fa; }
+body.dark-mode .day-cell[data-action="day-click"]:hover { background-color: #374151; } 
 .day-cell:hover .add-event-btn { opacity: 1; transform: scale(1.1); }
 .day-cell.out-of-month { background-color: #fdfdfd; cursor: default; }
 body.dark-mode .day-cell.out-of-month { background-color: #212938; }
