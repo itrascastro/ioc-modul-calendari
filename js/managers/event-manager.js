@@ -260,7 +260,7 @@ class EventManager {
                     // Manejar esdeveniment no ubicat
                     const eventData = JSON.parse(e.dataTransfer.getData('text/plain'));
                     if (eventData.isUnplacedEvent) {
-                        placeUnplacedEvent(eventData.unplacedIndex, dateStr);
+                        replicationManager.placeUnplacedEvent(eventData.unplacedIndex, dateStr);
                     }
                 } else if (draggedFromDate !== dateStr) {
                     // Manejar esdeveniment normal
@@ -302,30 +302,6 @@ class EventManager {
 const eventManager = new EventManager();
 
 // === FUNCIONS PÚBLIQUES ===
-function saveEvent() {
-    eventManager.saveEvent();
-}
-
-function deleteEvent() {
-    eventManager.deleteEvent();
-}
-
-function moveEvent(eventId, newDate) {
-    eventManager.moveEvent(eventId, newDate);
-}
-
-function isValidEventMove(event, targetDate, calendar) {
-    return eventManager.isValidEventMove(event, targetDate, calendar);
-}
-
-function populateCategorySelect() {
-    console.log('[EventManager] Funció populateCategorySelect cridada');
-    try {
-        eventManager.populateCategorySelect();
-    } catch (error) {
-        console.error('[EventManager] Error en populateCategorySelect:', error);
-    }
-}
 
 // Funció temporal per debug - mostra l'estat del catàleg
 function debugCatalog() {
@@ -341,13 +317,6 @@ function debugCatalog() {
     }
 }
 
-function makeEventDraggable(eventElement, event, dateStr) {
-    eventManager.makeEventDraggable(eventElement, event, dateStr);
-}
-
-function makeDayDroppable(dayElement, dateStr) {
-    eventManager.makeDayDroppable(dayElement, dateStr);
-}
 
 // === INICIALITZACIÓ ===
 function initializeEventManager() {

@@ -195,7 +195,7 @@ class CategoryManager {
         });
 
         saveToStorage();
-        updateUI();
+        calendarManager.updateUI();
         showMessage('Categoria eliminada del catàleg i de tots els calendaris', 'success');
     }
     
@@ -278,25 +278,6 @@ class CategoryManager {
 const categoryManager = new CategoryManager();
 
 // === FUNCIONS PÚBLIQUES ===
-function addCategory() {
-    categoryManager.addCategory();
-}
-
-function deleteCategory(element) {
-    categoryManager.deleteCategory(element);
-}
-
-function startEditCategory(element) {
-    categoryManager.startEditCategory(element);
-}
-
-function saveEditCategory(inputElement) {
-    categoryManager.saveEditCategory(inputElement);
-}
-
-function generateRandomColor() {
-    return categoryManager.generateRandomColor();
-}
 
 // === INICIALITZACIÓ ===
 function initializeCategoryManager() {

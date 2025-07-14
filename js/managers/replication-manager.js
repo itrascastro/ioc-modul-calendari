@@ -106,7 +106,7 @@ class ReplicationManager {
 
             // Persistir canvis
             saveToStorage();
-            updateUI();
+            calendarManager.updateUI();
             closeModal('replicationModal');
             
             // Netejar variable global
@@ -117,7 +117,7 @@ class ReplicationManager {
             showMessage(message, 'success');
 
             // Actualitzar UI per mostrar esdeveniments no ubicats
-            updateUI();
+            calendarManager.updateUI();
 
         } catch (error) {
             console.error('[Replicació] Error:', error);
@@ -283,30 +283,6 @@ class ReplicationManager {
 const replicationManager = new ReplicationManager();
 
 // === FUNCIONS PÚBLIQUES ===
-function openReplicationModal(sourceCalendarId) {
-    replicationManager.openReplicationModal(sourceCalendarId);
-}
-
-function executeReplication() {
-    replicationManager.executeReplication();
-}
-
-function showUnplacedEventsPanel() {
-    replicationManager.showUnplacedEventsPanel();
-}
-
-function placeUnplacedEvent(eventIndex, targetDate) {
-    replicationManager.placeUnplacedEvent(eventIndex, targetDate);
-}
-
-function dismissUnplacedEvent(eventIndex) {
-    replicationManager.dismissUnplacedEvent(eventIndex);
-}
-
-
-function setupUnplacedEventsDragDrop() {
-    replicationManager.setupUnplacedEventsDragDrop();
-}
 
 // === INICIALITZACIÓ ===
 function initializeReplicationManager() {

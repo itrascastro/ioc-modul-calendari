@@ -52,7 +52,7 @@ class CalendarManager {
                 }
                 
                 saveToStorage();
-                updateUI();
+                this.updateUI();
                 showMessage('Calendari eliminat correctament', 'success');
             }
         );
@@ -69,7 +69,7 @@ class CalendarManager {
         appState.currentDate = parseUTCDate(activeCalendar.startDate);
         
         saveToStorage();
-        updateUI();
+        this.updateUI();
     }
     
     // === VALIDACIONS ===
@@ -146,7 +146,7 @@ class CalendarManager {
     // Completar desament del calendari
     completeCalendarSave() {
         saveToStorage();
-        updateUI();
+        this.updateUI();
         closeModal('calendarSetupModal');
         showMessage('Calendari guardat correctament', 'success');
     }
@@ -237,7 +237,7 @@ class CalendarManager {
                         appState.currentDate = parseUTCDate(calendarData.startDate);
                         
                         saveToStorage();
-                        updateUI();
+                        this.updateUI();
                         showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
                         
                     } catch (error) {
@@ -265,25 +265,6 @@ class CalendarManager {
 const calendarManager = new CalendarManager();
 
 // === FUNCIONS PÚBLIQUES ===
-function saveCalendar() {
-    calendarManager.saveCalendar();
-}
-
-function deleteCalendar(calendarId) {
-    calendarManager.deleteCalendar(calendarId);
-}
-
-function switchCalendar(calendarId) {
-    calendarManager.switchCalendar(calendarId);
-}
-
-function updateNavigationControls(calendar) {
-    calendarManager.updateNavigationControls(calendar);
-}
-
-function updateUI() {
-    calendarManager.updateUI();
-}
 
 // === INICIALITZACIÓ ===
 function initializeCalendarManager() {

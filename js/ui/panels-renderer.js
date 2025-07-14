@@ -104,7 +104,7 @@ class PanelsRenderer {
         ).join('');
         
         // Configurar drag & drop para eventos no ubicados
-        setupUnplacedEventsDragDrop();
+        replicationManager.setupUnplacedEventsDragDrop();
     }
     
     // === GENERACIÓ DE HTML D'ESDEVENIMENTS NO UBICATS ===

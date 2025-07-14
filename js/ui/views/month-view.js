@@ -163,7 +163,7 @@ function setupCalendarDragDrop() {
                 isValid = !dayElement.classList.contains('out-of-month');
             } else {
                 // Esdeveniment normal: usar validació estàndard
-                isValid = isValidEventMove(draggedEvent, dateStr, calendar);
+                isValid = eventManager.isValidEventMove(draggedEvent, dateStr, calendar);
             }
             
             if (isValid) {
@@ -195,7 +195,7 @@ function setupCalendarDragDrop() {
                     }
                 } else if (draggedFromDate !== dateStr) {
                     // Manejar esdeveniment normal
-                    moveEvent(draggedEvent.id, dateStr);
+                    eventManager.moveEvent(draggedEvent.id, dateStr);
                 }
             }
             

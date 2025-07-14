@@ -133,7 +133,7 @@ function openEventModal(event = null, date = null) {
     const deleteBtn = document.getElementById('deleteEventBtn');
     
     console.log('[Modal] Cridant populateCategorySelect...');
-    populateCategorySelect();
+    eventManager.populateCategorySelect();
     console.log('[Modal] populateCategorySelect completada');
 
     if (event && !event.isSystemEvent) {

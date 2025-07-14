@@ -13,7 +13,7 @@ function setupDragAndDrop(container, calendar) {
         const dateStr = dayCell?.dataset.date;
         
         if (eventData.id && dateStr) {
-            makeEventDraggable(eventEl, eventData, dateStr);
+            eventManager.makeEventDraggable(eventEl, eventData, dateStr);
         }
     });
     
@@ -21,7 +21,7 @@ function setupDragAndDrop(container, calendar) {
     container.querySelectorAll('.day-cell[data-date]').forEach(dayEl => {
         const dateStr = dayEl.dataset.date;
         if (dateStr) {
-            makeDayDroppable(dayEl, dateStr);
+            eventManager.makeDayDroppable(dayEl, dateStr);
         }
     });
 }
