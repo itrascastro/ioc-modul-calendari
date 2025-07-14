@@ -1,0 +1,387 @@
+// =================================================================
+// REPLICATION MANAGER - GESTIÓ DE REPLICACIÓ I ESDEVENIMENTS NO UBICATS
+// =================================================================
+
+// Variable global per emmagatzemar l'ID del calendari origen
+let currentSourceCalendarId = null;
+
+// Classe per gestionar la replicació de calendaris i esdeveniments no ubicats
+class ReplicationManager {
+    constructor() {
+        this.managerType = 'replication';
+    }
+    
+    // === GESTIÓ DE REPLICACIÓ ===
+    
+    // Obrir modal de replicació
+    openReplicationModal(sourceCalendarId) {
+        const sourceCalendar = appState.calendars[sourceCalendarId];
+        if (!sourceCalendar) {
+            showMessage('Calendari origen no trobat', 'error');
+            return;
+        }
+
+        // Obtenir llista de calendaris objectiu (tots excepte l'origen)
+        const availableTargets = Object.entries(appState.calendars)
+            .filter(([id, _]) => id !== sourceCalendarId)
+            .map(([id, calendar]) => ({ id, calendar }));
+
+        if (availableTargets.length === 0) {
+            showMessage('Necessites almenys 2 calendaris per fer una replicació', 'warning');
+            return;
+        }
+
+        // Guardar ID del calendari origen per usar en executeReplication
+        currentSourceCalendarId = sourceCalendarId;
+
+        // Poblar modal estàtic amb contingut dinàmic
+        document.getElementById('sourceCalendarName').textContent = sourceCalendar.name;
+        
+        // Poblar select de calendaris destí
+        this.populateTargetCalendarSelect(availableTargets);
+        
+        // Obrir modal
+        openModal('replicationModal');
+    }
+    
+    // Poblar selector de calendaris destí
+    populateTargetCalendarSelect(availableTargets) {
+        const select = document.getElementById('targetCalendarSelect');
+        if (!select) return;
+
+        select.innerHTML = '<option value="" disabled selected>Selecciona el calendari destí</option>';
+        
+        availableTargets.forEach(({ id, calendar }) => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = calendar.name;
+            select.appendChild(option);
+        });
+    }
+    
+    // Executar replicació
+    executeReplication() {
+        const sourceCalendarId = currentSourceCalendarId;
+        const targetCalendarId = document.getElementById('targetCalendarSelect').value;
+        
+        if (!sourceCalendarId) {
+            showMessage('Error: No s\'ha seleccionat calendari origen', 'error');
+            return;
+        }
+        
+        if (!targetCalendarId) {
+            showMessage('Selecciona un calendari destí', 'error');
+            return;
+        }
+
+        const sourceCalendar = appState.calendars[sourceCalendarId];
+        const targetCalendar = appState.calendars[targetCalendarId];
+
+        if (!sourceCalendar || !targetCalendar) {
+            showMessage('Error accedint als calendaris', 'error');
+            return;
+        }
+
+        try {
+            console.log(`[Replicació] Iniciant replicació: ${sourceCalendar.name} → ${targetCalendar.name}`);
+            
+            // Executar replicació usant el motor
+            const result = replicationEngine.replicate(sourceCalendar, targetCalendar);
+            
+            // Aplicar esdeveniments replicats al calendari destí
+            result.placed.forEach(placedItem => {
+                const newEvent = {
+                    ...placedItem.event,
+                    id: generateNextEventId(targetCalendarId),
+                    date: placedItem.newDate
+                };
+                targetCalendar.events.push(newEvent);
+            });
+
+            // Guardar esdeveniments no ubicats globalment
+            if (result.unplaced.length > 0) {
+                appState.unplacedEvents = result.unplaced;
+                console.log(`[Replicació] ${result.unplaced.length} events no ubicats guardats per gestió manual`);
+            }
+
+            // Persistir canvis
+            saveToStorage();
+            updateUI();
+            closeModal('replicationModal');
+            
+            // Netejar variable global
+            currentSourceCalendarId = null;
+            
+            const message = `Replicació completada: ${result.placed.length} events ubicats` + 
+                           (result.unplaced.length > 0 ? `, ${result.unplaced.length} pendents` : '');
+            showMessage(message, 'success');
+
+            // Actualitzar UI per mostrar esdeveniments no ubicats
+            updateUI();
+
+        } catch (error) {
+            console.error('[Replicació] Error:', error);
+            showMessage('Error durant la replicació: ' + error.message, 'error');
+        }
+    }
+    
+    // === GESTIÓ D'ESDEVENIMENTS NO UBICATS ===
+    
+    // Mostrar panel d'esdeveniments no ubicats
+    showUnplacedEventsPanel() {
+        if (!appState.unplacedEvents || appState.unplacedEvents.length === 0) {
+            this.hideUnplacedEventsPanel();
+            return;
+        }
+
+        // Buscar si ja existeix la secció al sidebar
+        let existingSection = document.getElementById('unplacedEventsSection');
+        if (existingSection) {
+            existingSection.remove();
+        }
+        
+        const sectionHTML = `
+            <div class="sidebar-section" id="unplacedEventsSection">
+                <h2>Events Pendents de Col·locar</h2>
+                
+                <div class="unplaced-events-list">
+                    ${appState.unplacedEvents.map((item, index) => 
+                        panelsRenderer.generateUnplacedEventHTML(item, index)
+                    ).join('')}
+                </div>
+            </div>
+        `;
+
+        // Inserir al sidebar al principi (abans de totes les seccions)
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.insertAdjacentHTML('afterbegin', sectionHTML);
+            
+            // Configurar drag & drop per esdeveniments no ubicats
+            this.setupUnplacedEventsDragDrop();
+        }
+    }
+    
+    // Tancar panel d'esdeveniments no ubicats
+    closeUnplacedEventsPanel() {
+        const panel = document.getElementById('unplacedEventsSection');
+        if (panel) {
+            panel.remove();
+        }
+    }
+    
+    // Amagar panel d'esdeveniments no ubicats
+    hideUnplacedEventsPanel() {
+        const panel = document.getElementById('unplacedEventsSection');
+        if (panel) {
+            panel.remove();
+        }
+    }
+    
+    // Configurar drag & drop per esdeveniments no ubicats
+    setupUnplacedEventsDragDrop() {
+        const unplacedEventElements = document.querySelectorAll('.unplaced-event-item[draggable="true"]');
+        
+        unplacedEventElements.forEach(eventEl => {
+            eventEl.addEventListener('dragstart', (e) => {
+                const eventIndex = eventEl.dataset.eventIndex;
+                const unplacedItem = appState.unplacedEvents[eventIndex];
+                
+                if (unplacedItem) {
+                    draggedEvent = unplacedItem.event;
+                    draggedFromDate = 'unplaced';
+                    eventEl.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', JSON.stringify({
+                        ...unplacedItem.event,
+                        isUnplacedEvent: true,
+                        unplacedIndex: eventIndex
+                    }));
+                }
+            });
+            
+            eventEl.addEventListener('dragend', (e) => {
+                eventEl.classList.remove('dragging');
+                cleanupDragState();
+            });
+        });
+    }
+    
+    // Col·locar esdeveniment no ubicat
+    placeUnplacedEvent(eventIndex, targetDate) {
+        const unplacedItem = appState.unplacedEvents[eventIndex];
+        const calendar = getCurrentCalendar();
+        
+        if (!unplacedItem || !calendar) return;
+        
+        // Validar data objectiu
+        if (targetDate < calendar.startDate || targetDate > calendar.endDate) {
+            showMessage('La data ha d\'estar dins del període del calendari', 'error');
+            return;
+        }
+        
+        // Crear nou esdeveniment al calendari
+        const newEvent = {
+            ...unplacedItem.event,
+            id: generateNextEventId(appState.currentCalendarId),
+            date: targetDate,
+            isReplicated: true,
+            replicatedFrom: unplacedItem.event.date
+        };
+        
+        calendar.events.push(newEvent);
+        
+        // Eliminar d'esdeveniments no ubicats
+        appState.unplacedEvents.splice(eventIndex, 1);
+        
+        // Persistir i actualitzar
+        saveToStorage();
+        renderCalendar();
+        
+        // Actualitzar UI
+        panelsRenderer.renderUnplacedEvents();
+        
+        if (appState.unplacedEvents.length === 0) {
+            showMessage('Tots els events han estat col·locats', 'success');
+        }
+        
+        showMessage(`Event "${newEvent.title}" col·locat correctament`, 'success');
+    }
+    
+    // Descartar esdeveniment no ubicat
+    dismissUnplacedEvent(eventIndex) {
+        const unplacedItem = appState.unplacedEvents[eventIndex];
+        
+        if (!unplacedItem) return;
+        
+        showConfirmModal(
+            `Estàs segur que vols descartar l'event "${unplacedItem.event.title}"?\\n\\nAquesta acció no es pot desfer.`,
+            'Descartar event',
+            () => {
+                // Eliminar d'esdeveniments no ubicats
+                appState.unplacedEvents.splice(eventIndex, 1);
+                
+                // Persistir canvis
+                saveToStorage();
+                
+                // Actualitzar UI
+                panelsRenderer.renderUnplacedEvents();
+                
+                if (appState.unplacedEvents.length === 0) {
+                    showMessage('Tots els events han estat gestionats', 'success');
+                }
+                
+                showMessage('Event descartat', 'info');
+            }
+        );
+    }
+    
+    // === GESTIÓ D'ARXIUS ===
+    
+    // Carregar fitxer de calendari
+    loadCalendarFile() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const calendarData = JSON.parse(e.target.result);
+                        
+                        // Validar estructura bàsica
+                        if (!calendarData.name || !calendarData.startDate || !calendarData.endDate) {
+                            throw new Error('Estructura del fitxer incorrecta');
+                        }
+
+                        // Crear nou calendari amb ID únic
+                        const calendarId = Date.now().toString();
+                        appState.calendars[calendarId] = {
+                            name: calendarData.name,
+                            startDate: calendarData.startDate,
+                            endDate: calendarData.endDate,
+                            eventCounter: calendarData.eventCounter || 0,
+                            categoryCounter: calendarData.categoryCounter || 0,
+                            categories: calendarData.categories || [...defaultCategories],
+                            events: calendarData.events || []
+                        };
+                        
+                        // Migrar categories del fitxer carregat al catàleg
+                        if (calendarData.categories) {
+                            calendarData.categories
+                                .filter(cat => !cat.isSystem)
+                                .forEach(category => {
+                                    const existsInCatalog = appState.categoryTemplates.some(template => 
+                                        template.id === category.id
+                                    );
+                                    
+                                    if (!existsInCatalog) {
+                                        appState.categoryTemplates.push({
+                                            id: category.id,
+                                            name: category.name,
+                                            color: category.color,
+                                            isSystem: false
+                                        });
+                                        console.log(`[Carga] Añadida "${category.name}" al catálogo desde archivo`);
+                                    }
+                                });
+                        }
+                        
+                        // Activar calendari carregat
+                        appState.currentCalendarId = calendarId;
+                        // Usar el renderitzador per parsejar la data correctament
+                        appState.currentDate = parseUTCDate(calendarData.startDate);
+                        
+                        saveToStorage();
+                        updateUI();
+                        showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
+                        
+                    } catch (error) {
+                        showMessage('Error carregant el fitxer: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+        input.click();
+    }
+}
+
+// === INSTÀNCIA GLOBAL ===
+const replicationManager = new ReplicationManager();
+
+// === FUNCIONS PÚBLIQUES ===
+function openReplicationModal(sourceCalendarId) {
+    replicationManager.openReplicationModal(sourceCalendarId);
+}
+
+function executeReplication() {
+    replicationManager.executeReplication();
+}
+
+function showUnplacedEventsPanel() {
+    replicationManager.showUnplacedEventsPanel();
+}
+
+function placeUnplacedEvent(eventIndex, targetDate) {
+    replicationManager.placeUnplacedEvent(eventIndex, targetDate);
+}
+
+function dismissUnplacedEvent(eventIndex) {
+    replicationManager.dismissUnplacedEvent(eventIndex);
+}
+
+function loadCalendarFile() {
+    replicationManager.loadCalendarFile();
+}
+
+function setupUnplacedEventsDragDrop() {
+    replicationManager.setupUnplacedEventsDragDrop();
+}
+
+// === INICIALITZACIÓ ===
+function initializeReplicationManager() {
+    console.log('[ReplicationManager] ✅ Gestor de replicació inicialitzat');
+}

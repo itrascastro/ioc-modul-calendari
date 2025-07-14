@@ -1,0 +1,100 @@
+{
+  "semester": {
+    "code": "24S2",
+    "startDate": "2025-02-14",
+    "endDate": "2025-06-27",
+    "name": "Segon Semestre 2024-25",
+    "description": "Configuració del semestre IOC - Febrer a Juny 2025"
+  },
+  "systemEvents": [
+    {
+      "id": "SYS_FESTIU_20250303",
+      "title": "Festiu centre",
+      "date": "2025-03-03",
+      "categoryId": "SYSTEMCAT_1",
+      "isSystemEvent": true,
+      "eventType": "FESTIU"
+    },
+    {
+      "id": "SYS_FESTIU_20250501",
+      "title": "Festa del Treball",
+      "date": "2025-05-01",
+      "categoryId": "SYSTEMCAT_1",
+      "isSystemEvent": true,
+      "eventType": "FESTIU"
+    },
+    {
+      "id": "SYS_IOC_ORIENTACIONS_PAF",
+      "title": "Orientacions PAF",
+      "date": "2025-05-14",
+      "categoryId": "SYSTEMCAT_2",
+      "isSystemEvent": true,
+      "eventType": "IOC_GENERIC"
+    },
+    {
+      "id": "SYS_PAF1_20250524",
+      "title": "PAF1",
+      "date": "2025-05-24",
+      "categoryId": "SYSTEMCAT_3",
+      "isSystemEvent": true,
+      "eventType": "PAF1"
+    },
+    {
+      "id": "SYS_PAF2_20250607",
+      "title": "PAF2",
+      "date": "2025-06-07",
+      "categoryId": "SYSTEMCAT_3",
+      "isSystemEvent": true,
+      "eventType": "PAF2"
+    }
+  ],
+  "systemRanges": [
+    {
+      "idPrefix": "SYS_SS_2025",
+      "title": "Vacances Setmana Santa",
+      "startDate": "2025-04-12",
+      "endDate": "2025-04-21",
+      "categoryId": "SYSTEMCAT_1",
+      "isSystemEvent": true,
+      "eventType": "FESTIU"
+    },
+    {
+      "idPrefix": "SYS_REVP1_2025",
+      "title": "Revisió PAF1",
+      "startDate": "2025-05-30",
+      "endDate": "2025-06-03",
+      "categoryId": "SYSTEMCAT_2",
+      "isSystemEvent": true,
+      "eventType": "IOC_GENERIC"
+    },
+    {
+      "idPrefix": "SYS_REVP2_2025",
+      "title": "Revisió PAF2",
+      "startDate": "2025-06-13",
+      "endDate": "2025-06-17",
+      "categoryId": "SYSTEMCAT_2",
+      "isSystemEvent": true,
+      "eventType": "IOC_GENERIC"
+    }
+  ],
+  "defaultCategories": [
+    {
+      "id": "SYSTEMCAT_1",
+      "name": "Festiu",
+      "color": "#f43f5e",
+      "isSystem": true
+    },
+    {
+      "id": "SYSTEMCAT_2",
+      "name": "IOC",
+      "color": "#3b82f6",
+      "isSystem": true
+    },
+    {
+      "id": "SYSTEMCAT_3",
+      "name": "PAF",
+      "color": "#8b5cf6",
+      "isSystem": true
+    }
+  ]
+}
