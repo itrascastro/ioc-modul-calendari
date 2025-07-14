@@ -43,6 +43,8 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; 
 .main-header { grid-area: header; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03); }
 .header-title { display: flex; align-items: center; gap: 12px; }
 .header-logo { height: 56px; width: auto; }
+/* Fondo oscuro para el logo en modo claro */
+body:not(.dark-mode) .header-logo { background-color: #2d3748; padding: 8px; border-radius: 8px; }
 .main-header h1 { font-size: 1.5em; color: var(--accent-color); margin: 0; }
 #theme-toggle { padding: 8px 16px; font-size: 0.9em; cursor: pointer; border: 1px solid var(--border-color); background-color: transparent; color: var(--main-text-color); border-radius: 20px; transition: background-color 0.2s, color 0.2s; }
 #theme-toggle:hover { background-color: #e9ecef; }

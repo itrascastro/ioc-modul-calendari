@@ -8,7 +8,7 @@
 function setupDragAndDrop(container, calendar) {
     // Fer esdeveniments draggables
     container.querySelectorAll('.event.is-user-event[draggable="true"]').forEach(eventEl => {
-        const eventData = JSON.parse(eventEl.dataset.event || '{}');
+        const eventData = JSON.parse((eventEl.dataset.event || '{}').replace(/&quot;/g, '"'));
         const dayCell = eventEl.closest('.day-cell');
         const dateStr = dayCell?.dataset.date;
         

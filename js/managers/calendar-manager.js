@@ -167,11 +167,11 @@ class CalendarManager {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
-        input.onchange = function(e) {
+        input.onchange = (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = (e) => {
                     try {
                         const calendarData = JSON.parse(e.target.result);
                         

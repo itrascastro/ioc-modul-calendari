@@ -104,6 +104,10 @@ class ReplicationManager {
                 console.log(`[Replicació] ${result.unplaced.length} events no ubicats guardats per gestió manual`);
             }
 
+            // Canviar al calendari destí
+            appState.currentCalendarId = targetCalendarId;
+            appState.currentDate = parseUTCDate(targetCalendar.startDate);
+            
             // Persistir canvis
             saveToStorage();
             calendarManager.updateUI();

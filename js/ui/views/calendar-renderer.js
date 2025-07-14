@@ -47,7 +47,7 @@ class CalendarRenderer {
         } else {
             // Per a DOM - amb interactivitat
             const eventClasses = ['event', isUserEvent ? 'is-user-event' : 'is-system-event'];
-            const openModalAction = isUserEvent ? `data-action="open-event-modal" data-event='${JSON.stringify(event)}'` : '';
+            const openModalAction = isUserEvent ? `data-action="open-event-modal" data-event="${JSON.stringify(event).replace(/"/g, '&quot;')}"` : '';
             const draggableAttr = isUserEvent ? 'draggable="true"' : '';
             
             return `<div class="${eventClasses.join(' ')}" style="background-color: ${color};" ${openModalAction} ${draggableAttr} title="${event.title}">${truncatedTitle}</div>`;
