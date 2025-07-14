@@ -244,7 +244,7 @@ class ReplicationEngine {
         }
         
         // Fallback: cercar en configuració IOC
-        const paf1Config = IOC_SEMESTER_TEMPLATE.events.find(event => event.eventType === 'PAF1');
+        const paf1Config = semesterConfig.getSystemEvents().find(event => event.eventType === 'PAF1');
         
         if (paf1Config && paf1Config.date >= calendar.startDate && paf1Config.date <= calendar.endDate) {
             console.log(`[PAF Detection] ✅ PAF1 de configuració: ${paf1Config.date}`);

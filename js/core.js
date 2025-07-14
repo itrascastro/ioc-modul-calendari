@@ -86,24 +86,37 @@ function navigatePeriod(direction) {
 
 // === INICIALITZACIÓ DE L'APLICACIÓ ===
 function initializeApp() {
-    document.addEventListener('click', handleAction);
-    document.addEventListener('dblclick', handleAction);
-    loadFromStorage();
-    loadSavedTheme();
-    getCurrentCalendar();
-    calendarManager.updateUI();
-    
-    console.log(`[Sistema] Aplicación inicializada con ${appState.categoryTemplates.length} categorías en catálogo`);
-    
-    // Event listener per Enter en input de nova categoria
-    const newCategoryInput = document.getElementById('new-category-name');
-    if (newCategoryInput) {
-        newCategoryInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                categoryManager.addCategory();
-            }
-        });
+    try {
+        // Carregar configuració del semestre primer de tot
+        console.log('[Sistema] Inicialitzant aplicació...');
+        const configLoaded = initializeCalendarManager();
+        if (!configLoaded) {
+            console.error('[Sistema] ❌ Error carregant configuració, no es pot continuar');
+            return;
+        }
+        
+        // Inicialitzar resta de l'aplicació
+        document.addEventListener('click', handleAction);
+        document.addEventListener('dblclick', handleAction);
+        loadFromStorage();
+        loadSavedTheme();
+        getCurrentCalendar();
+        calendarManager.updateUI();
+        
+        console.log(`[Sistema] ✅ Aplicació inicialitzada amb ${appState.categoryTemplates.length} categories al catàleg`);
+        
+        // Event listener per Enter en input de nova categoria
+        const newCategoryInput = document.getElementById('new-category-name');
+        if (newCategoryInput) {
+            newCategoryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    categoryManager.addCategory();
+                }
+            });
+        }
+    } catch (error) {
+        console.error('[Sistema] ❌ Error inicialitzant aplicació:', error);
     }
 }
 

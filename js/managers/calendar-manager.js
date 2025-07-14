@@ -20,10 +20,10 @@ class CalendarManager {
         }
         
         // Usar dates fixes del IOC
-        const startDate = IOC_SEMESTER_CONFIG.startDate;
-        const endDate = IOC_SEMESTER_CONFIG.endDate;
+        const startDate = semesterConfig.getStartDate();
+        const endDate = semesterConfig.getEndDate();
         
-        const calendarName = `${cicle}_${module}_${IOC_SEMESTER_CONFIG.semester}`;
+        const calendarName = `${cicle}_${module}_${semesterConfig.getSemesterCode()}`;
         const calendarId = calendarName;
         
         if (this.calendarExists(calendarId) && appState.editingCalendarId !== calendarId) {
@@ -100,7 +100,7 @@ class CalendarManager {
             endDate,
             eventCounter: 0,
             categoryCounter: 0,
-            categories: [...defaultCategories],
+            categories: [...semesterConfig.getDefaultCategories()],
             events: systemEvents
         };
         
@@ -113,32 +113,14 @@ class CalendarManager {
         const systemEvents = [];
         
         // Afegir esdeveniments puntuals
-        IOC_SEMESTER_TEMPLATE.events.forEach(event => {
+        semesterConfig.getSystemEvents().forEach(event => {
             if (event.date >= startDate && event.date <= endDate) {
                 systemEvents.push(event);
             }
         });
         
-        // Afegir rangs d'esdeveniments (ex: vacances)
-        IOC_SEMESTER_TEMPLATE.ranges.forEach(range => {
-            let currentDate = parseUTCDate(range.startDate);
-            const rangeEndDate = parseUTCDate(range.endDate);
-            
-            while (currentDate <= rangeEndDate) {
-                const dateStr = dateToUTCString(currentDate);
-                if (dateStr >= startDate && dateStr <= endDate) {
-                    systemEvents.push({
-                        id: `${range.idPrefix}_${dateStr}`,
-                        title: range.title,
-                        date: dateStr,
-                        categoryId: range.categoryId,
-                        isSystemEvent: range.isSystemEvent,
-                        eventType: range.eventType,
-                    });
-                }
-                currentDate.setUTCDate(currentDate.getUTCDate() + 1);
-            }
-        });
+        // Nota: Amb la nova configuració tots els events són individuals
+        // No cal processar rangs
         
         return systemEvents;
     }
@@ -206,7 +188,7 @@ class CalendarManager {
                             endDate: calendarData.endDate,
                             eventCounter: calendarData.eventCounter || 0,
                             categoryCounter: calendarData.categoryCounter || 0,
-                            categories: calendarData.categories || [...defaultCategories],
+                            categories: calendarData.categories || [...semesterConfig.getDefaultCategories()],
                             events: calendarData.events || []
                         };
                         
@@ -268,5 +250,13 @@ const calendarManager = new CalendarManager();
 
 // === INICIALITZACIÓ ===
 function initializeCalendarManager() {
+    // Carregar configuració del semestre
+    const configLoaded = semesterConfig.load();
+    if (!configLoaded || !semesterConfig.isValid()) {
+        console.error('[CalendarManager] ❌ Error carregant configuració del semestre');
+        return false;
+    }
+    
     console.log('[CalendarManager] ✅ Gestor de calendaris inicialitzat');
+    return true;
 }

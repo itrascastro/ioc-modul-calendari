@@ -19,7 +19,7 @@ function closeModal(modalId) {
 // Modal de configuració de calendari
 function openCalendarSetupModal() {
     appState.editingCalendarId = null;
-    document.getElementById('setupModalTitle').textContent = `Nou Calendari de Mòdul ${IOC_SEMESTER_CONFIG.semester}`;
+    document.getElementById('setupModalTitle').textContent = `Nou Calendari de Mòdul ${semesterConfig.getSemesterCode()}`;
     document.getElementById('cicleCode').value = '';
     document.getElementById('moduleCode').value = '';
     document.getElementById('saveCalendarBtn').textContent = 'Crear Calendari';
