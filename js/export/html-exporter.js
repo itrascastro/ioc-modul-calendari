@@ -17,7 +17,7 @@ class HtmlExporter {
         }
         
         const htmlContent = this.generateHTMLVisualCalendar(calendar);
-        this.downloadHtmlFile(htmlContent, `${calendar.name}_visual.html`);
+        this.downloadHtmlFile(htmlContent, `${calendar.name}_Calendari-Modul-IOC.html`);
         showMessage('Calendari HTML exportat correctament', 'success');
     }
     
