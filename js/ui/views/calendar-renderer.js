@@ -92,6 +92,9 @@ class CalendarRenderer {
         
         if (dayData.isOutOfMonth) classes.push('out-of-month');
         if (isToday) classes.push('today');
+        if (dayData.monthAlternate !== undefined) {
+            classes.push(dayData.monthAlternate === 0 ? 'month-even' : 'month-odd');
+        }
         
         // Esdeveniments del dia
         const eventsHTML = dayData.events.map(event => 

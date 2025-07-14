@@ -41,6 +41,9 @@ class ViewManager {
         this.currentView = viewType;
         appState.currentView = viewType;
         
+        // Actualitzar atribut del body per CSS
+        document.body.setAttribute('data-current-view', viewType);
+        
         // Actualitzar botons actius
         this.updateViewButtons(viewType);
         

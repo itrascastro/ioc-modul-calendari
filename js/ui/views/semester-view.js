@@ -54,8 +54,22 @@ class SemesterViewRenderer extends CalendarRenderer {
         
         // Afegir tots els dies del semestre
         let currentDate = new Date(startDate);
+        let monthIndex = 0;
+        let currentMonth = currentDate.getUTCMonth();
+        
         while (currentDate <= endDate) {
-            semesterData.days.push(this.generateDayData(currentDate, calendar, false));
+            const dayData = this.generateDayData(currentDate, calendar, false);
+            
+            // Detectar canvi de mes per alternar colors
+            if (currentDate.getUTCMonth() !== currentMonth) {
+                monthIndex++;
+                currentMonth = currentDate.getUTCMonth();
+            }
+            
+            // Afegir classe de mes alternatiu
+            dayData.monthAlternate = monthIndex % 2;
+            
+            semesterData.days.push(dayData);
             currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
         

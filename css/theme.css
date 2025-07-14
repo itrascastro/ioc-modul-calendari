@@ -1031,3 +1031,24 @@ body.dark-mode .day-view-container.drop-invalid {
     }
 }
 
+/* === VISTA SEMESTRAL - CAPÇALERES FIXES === */
+body[data-current-view="semester"] .calendar-grid .day-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--card-bg-color);
+}
+
+/* === DIFERENCIACIÓ DE MESOS A VISTA SEMESTRAL === */
+body[data-current-view="semester"] .day-cell.month-even {
+    background-color: var(--card-bg-color);
+}
+
+body[data-current-view="semester"] .day-cell.month-odd {
+    background-color: rgba(79, 93, 149, 0.03);
+}
+
+body.dark-mode[data-current-view="semester"] .day-cell.month-odd {
+    background-color: rgba(138, 154, 214, 0.05);
+}
+
