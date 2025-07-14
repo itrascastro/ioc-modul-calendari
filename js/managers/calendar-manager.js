@@ -178,6 +178,78 @@ class CalendarManager {
         nextBtn.disabled = nextMonthStart > calendarEnd;
     }
     
+    // === CÀRREGA DE CALENDARIS ===
+    
+    // Carregar fitxer de calendari
+    loadCalendarFile() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const calendarData = JSON.parse(e.target.result);
+                        
+                        // Validar estructura bàsica
+                        if (!calendarData.name || !calendarData.startDate || !calendarData.endDate) {
+                            throw new Error('Estructura del fitxer incorrecta');
+                        }
+
+                        // Crear nou calendari amb ID basat en el nom
+                        const calendarId = calendarData.name;
+                        appState.calendars[calendarId] = {
+                            name: calendarData.name,
+                            startDate: calendarData.startDate,
+                            endDate: calendarData.endDate,
+                            eventCounter: calendarData.eventCounter || 0,
+                            categoryCounter: calendarData.categoryCounter || 0,
+                            categories: calendarData.categories || [...defaultCategories],
+                            events: calendarData.events || []
+                        };
+                        
+                        // Migrar categories del fitxer carregat al catàleg
+                        if (calendarData.categories) {
+                            calendarData.categories
+                                .filter(cat => !cat.isSystem)
+                                .forEach(category => {
+                                    const existsInCatalog = appState.categoryTemplates.some(template => 
+                                        template.id === category.id
+                                    );
+                                    
+                                    if (!existsInCatalog) {
+                                        appState.categoryTemplates.push({
+                                            id: category.id,
+                                            name: category.name,
+                                            color: category.color,
+                                            isSystem: false
+                                        });
+                                        console.log(`[Carga] Añadida "${category.name}" al catálogo desde archivo`);
+                                    }
+                                });
+                        }
+                        
+                        // Activar calendari carregat
+                        appState.currentCalendarId = calendarId;
+                        // Usar el renderitzador per parsejar la data correctament
+                        appState.currentDate = parseUTCDate(calendarData.startDate);
+                        
+                        saveToStorage();
+                        updateUI();
+                        showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
+                        
+                    } catch (error) {
+                        showMessage('Error carregant el fitxer: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+        input.click();
+    }
+    
     // === INTERFÍCIE D'USUARI ===
     
     // Actualitzar tota la interfície

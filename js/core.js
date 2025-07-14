@@ -24,7 +24,7 @@ function handleAction(e) {
         case 'start-edit-category': startEditCategory(target); break;
         case 'save-edit-category': saveEditCategory(target); break;
         case 'delete-category': deleteCategory(target); break;
-        case 'load-calendar-file': loadCalendarFile(); break;
+        case 'load-calendar-file': calendarManager.loadCalendarFile(); break;
         case 'show-unplaced-events': showUnplacedEventsPanel(); break;
         case 'place-unplaced-event': placeUnplacedEvent(target.dataset.eventIndex, target.dataset.date); break;
         case 'dismiss-unplaced-event': dismissUnplacedEvent(target.dataset.eventIndex); break;
