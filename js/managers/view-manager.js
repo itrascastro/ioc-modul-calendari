@@ -22,7 +22,7 @@ class ViewManager {
     initializeRenderers() {
         this.renderers.month = monthRenderer;
         this.renderers.day = dayRenderer;
-        // this.renderers.week = weekRenderer;     // TODO: implementar
+        this.renderers.week = weekRenderer;
         // this.renderers.semester = semesterRenderer; // TODO: implementar
         
         console.log('[ViewManager] ✅ Renderitzadors inicialitzats');
@@ -170,10 +170,31 @@ class ViewManager {
         this.updateNavigationButtons();
     }
     
-    // Renderitzar vista setmanal (placeholder)
+    // Renderitzar vista setmanal
     renderWeekView(calendar) {
-        console.warn('[ViewManager] ⚠️ Vista setmanal no implementada encara');
-        this.renderMonthView(calendar); // Fallback
+        if (!this.renderers.week) {
+            console.error('[ViewManager] ❌ Renderitzador de vista setmanal no disponible');
+            this.renderMonthView(calendar); // Fallback
+            return;
+        }
+        
+        const gridWrapper = document.getElementById('calendar-grid-wrapper');
+        const periodDisplay = document.getElementById('current-period-display');
+        
+        const weekHTML = this.renderers.week.render(calendar, appState.currentDate, 'DOM');
+        gridWrapper.innerHTML = weekHTML;
+        
+        // Actualitzar títol del període
+        const weekStart = this.renderers.week.getWeekStart(appState.currentDate);
+        const weekEnd = this.renderers.week.getWeekEnd(weekStart);
+        const weekTitle = this.renderers.week.generateWeekTitle({ weekStart, weekEnd });
+        periodDisplay.textContent = weekTitle;
+        
+        // Configurar drag & drop (reutilitza la lògica de la vista mensual)
+        setupDragAndDrop(gridWrapper, calendar);
+        
+        // Actualitzar navegació
+        this.updateNavigationButtons();
     }
     
     // Renderitzar vista semestral (placeholder)
@@ -233,7 +254,29 @@ class ViewManager {
     
     // Navegació específica per setmanes
     navigateWeek(direction, calendarStart, calendarEnd) {
-        console.warn('[ViewManager] ⚠️ Navegació setmanal no implementada');
+        if (!this.renderers.week) {
+            console.warn('[ViewManager] ⚠️ Renderitzador setmanal no disponible');
+            return null;
+        }
+        
+        // Obtenir inici de la setmana actual
+        const currentWeekStart = this.renderers.week.getWeekStart(appState.currentDate);
+        
+        // Calcular nova setmana (direction = 1 per següent, -1 per anterior)
+        const newWeekStart = createUTCDate(
+            currentWeekStart.getUTCFullYear(),
+            currentWeekStart.getUTCMonth(),
+            currentWeekStart.getUTCDate() + (direction * 7)
+        );
+        
+        const newWeekEnd = this.renderers.week.getWeekEnd(newWeekStart);
+        
+        // Verificar que la nova setmana tingui algun dia dins del rang del calendari
+        if (newWeekStart <= calendarEnd && newWeekEnd >= calendarStart) {
+            // Retornar el dilluns de la nova setmana
+            return newWeekStart;
+        }
+        
         return null;
     }
     
@@ -288,6 +331,9 @@ class ViewManager {
             case 'day':
                 this.updateDayNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd);
                 break;
+            case 'week':
+                this.updateWeekNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd);
+                break;
             case 'month':
             default:
                 calendarManager.updateNavigationControls(calendar);
@@ -312,6 +358,30 @@ class ViewManager {
             appState.currentDate.getUTCDate() + 1
         );
         nextBtn.disabled = nextDay > calendarEnd;
+    }
+    
+    // Actualitzar navegació per vista setmanal
+    updateWeekNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd) {
+        if (!this.renderers.week) return;
+        
+        const currentWeekStart = this.renderers.week.getWeekStart(appState.currentDate);
+        
+        // Setmana anterior
+        const prevWeekStart = createUTCDate(
+            currentWeekStart.getUTCFullYear(),
+            currentWeekStart.getUTCMonth(),
+            currentWeekStart.getUTCDate() - 7
+        );
+        const prevWeekEnd = this.renderers.week.getWeekEnd(prevWeekStart);
+        prevBtn.disabled = prevWeekEnd < calendarStart;
+        
+        // Setmana següent
+        const nextWeekStart = createUTCDate(
+            currentWeekStart.getUTCFullYear(),
+            currentWeekStart.getUTCMonth(),
+            currentWeekStart.getUTCDate() + 7
+        );
+        nextBtn.disabled = nextWeekStart > calendarEnd;
     }
     
     // === DRAG & DROP ===
@@ -387,6 +457,7 @@ class ViewManager {
             cleanupDragState();
         });
     }
+    
     
     // === UTILITATS ===
     

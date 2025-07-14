@@ -943,6 +943,7 @@ body.dark-mode .day-view-container.drop-invalid {
     border-color: #ef5350;
 }
 
+
 .unplaced-event-item .event-title {
     font-weight: 600;
     color: var(--main-text-color);
