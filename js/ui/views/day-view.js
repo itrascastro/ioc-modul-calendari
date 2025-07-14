@@ -48,7 +48,7 @@ class DayViewRenderer extends CalendarRenderer {
                 <div class="day-view-header">
                     <div class="day-title">
                         <h2>${dayName}, ${dayData.dayNumber} de ${monthName}</h2>
-                        ${dayData.weekNumber ? `<span class="week-info" data-action="week-click" data-date="${dayData.dateStr}" title="Canviar a vista setmanal">Setmana ${dayData.weekNumber}</span>` : ''}
+                        ${this.generateClickableWeekNumber(dayData.weekNumber, dayData.dateStr, 'badge', 'DOM')}
                     </div>
                     ${addEventBtn}
                 </div>
@@ -75,7 +75,7 @@ class DayViewRenderer extends CalendarRenderer {
             <div class="day-section">
                 <div class="day-header">
                     <h3>${dayName}, ${dayData.dayNumber} de ${monthName}</h3>
-                    ${dayData.weekNumber ? `<span class="week-info" data-action="week-click" data-date="${dayData.dateStr}" title="Canviar a vista setmanal">Setmana ${dayData.weekNumber}</span>` : ''}
+                    ${this.generateClickableWeekNumber(dayData.weekNumber, dayData.dateStr, 'badge', 'HTML')}
                 </div>
                 <div class="day-events">
                     ${eventsHTML}

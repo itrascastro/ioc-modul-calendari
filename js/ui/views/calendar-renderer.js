@@ -63,6 +63,28 @@ class CalendarRenderer {
                dayData.dateStr <= calendar.endDate;
     }
     
+    // Generar número de setmana clickable (reutilitzable per totes les vistes)
+    generateClickableWeekNumber(weekNumber, dateStr, format = 'pill', outputFormat = 'DOM') {
+        if (!weekNumber) return '';
+        
+        const baseAttributes = outputFormat === 'DOM' ? 
+            `data-action="week-click" data-date="${dateStr}" title="Canviar a vista setmanal"` : '';
+        
+        switch (format) {
+            case 'pill':
+                // Format petit per cel·les de dies (S4)
+                return `<div class="week-pill" ${baseAttributes}>S${weekNumber}</div>`;
+            case 'badge':
+                // Format gran per capçaleres (Setmana 4)
+                return `<span class="week-info" ${baseAttributes}>Setmana ${weekNumber}</span>`;
+            case 'inline':
+                // Format en línia per textos
+                return `<span class="week-inline" ${baseAttributes}>setmana ${weekNumber}</span>`;
+            default:
+                return `<span class="week-number" ${baseAttributes}>${weekNumber}</span>`;
+        }
+    }
+    
     // === GENERACIÓ DE HTML DE CEL·LA DE DIA ===
     generateDayCellHTML(dayData, calendar, outputFormat = 'DOM') {
         const isToday = dayData.dateStr === dateToUTCString(new Date());
@@ -78,7 +100,7 @@ class CalendarRenderer {
         
         // Número de setmana per a dies dins del calendari
         const weekPillHTML = (dayData.weekNumber && !dayData.isOutOfMonth) ? 
-            `<div class="week-pill" data-action="week-click" data-date="${dayData.dateStr}" title="Canviar a vista setmanal">S${dayData.weekNumber}</div>` : '';
+            this.generateClickableWeekNumber(dayData.weekNumber, dayData.dateStr, 'pill', outputFormat) : '';
         
         // Verificar si el dia està dins del rang vàlid del calendari
         const isDayInRange = this.isDayInCalendarRange(dayData, calendar);

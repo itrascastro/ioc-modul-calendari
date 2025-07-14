@@ -68,6 +68,9 @@ class CalendarManager {
         // Usar el renderitzador per parsejar la data correctament
         appState.currentDate = parseUTCDate(activeCalendar.startDate);
         
+        // Sempre tornar a vista mensual quan es canvia de calendari
+        viewManager.changeView('month');
+        
         saveToStorage();
         this.updateUI();
     }
