@@ -86,11 +86,9 @@ class DayViewRenderer extends CalendarRenderer {
     
     // === GENERACIÓ D'ESDEVENIMENTS EN LLISTA ===
     generateEventListItem(event, calendar, outputFormat = 'DOM') {
-        // Cercar categoria
-        const category = calendar.categories.find(c => c.id === event.categoryId) ||
-                        appState.categoryTemplates.find(t => t.id === event.categoryId);
-        const color = category ? category.color : '#888';
-        const categoryName = category ? category.name : 'Sense categoria';
+        // Cercar categoria utilitzant el servei centralitzat
+        const color = CategoryService.getCategoryColor(event.categoryId, calendar);
+        const categoryName = CategoryService.getCategoryName(event.categoryId, calendar);
         const isUserEvent = !event.isSystemEvent;
         
         if (outputFormat === 'HTML') {

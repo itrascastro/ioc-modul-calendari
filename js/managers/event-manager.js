@@ -162,17 +162,15 @@ class EventManager {
         const systemCategories = calendar.categories.filter(cat => cat.isSystem);
         
         // PER ESDEVENIMENTS D'USUARI: Només categories del catàleg (no sistema)
-        // Les categories de sistema són només per esdeveniments institucionals
-        const userCategories = appState.categoryTemplates; // Només categories d'usuari
-        
-        const allCategories = userCategories; // Només mostrar categories d'usuari
+        // Obtenir categories disponibles utilitzant el servei centralitzat
+        const allCategories = CategoryService.getAvailableCategories(calendar);
         
         // Debug: Mostrar quantes categories tenim
         console.log(`[EventManager] Categories de sistema (no mostrades): ${systemCategories.length}`);
-        console.log(`[EventManager] Categories d'usuari disponibles: ${userCategories.length}`);
+        console.log(`[EventManager] Categories d'usuari disponibles: ${allCategories.length}`);
         console.log(`[EventManager] Total categories al selector: ${allCategories.length}`);
         console.log(`[EventManager] Categories de sistema (ocultes):`, systemCategories.map(c => c.name));
-        console.log(`[EventManager] Categories d'usuari disponibles:`, userCategories.map(c => c.name));
+        console.log(`[EventManager] Categories d'usuari disponibles:`, allCategories.map(c => c.name));
         
         if (allCategories.length === 0) {
             console.warn('[EventManager] ⚠️ No hi ha categories disponibles!');

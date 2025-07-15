@@ -46,9 +46,8 @@ class IcsExporter {
     
     // === GENERACIÓ D'ESDEVENIMENT ICS ===
     generateIcsEvent(event, calendar) {
-        // Buscar categoria en calendari local i catàleg global
-        const category = calendar.categories.find(c => c.id === event.categoryId) ||
-                        appState.categoryTemplates.find(t => t.id === event.categoryId);
+        // Buscar categoria utilitzant el servei centralitzat
+        const category = CategoryService.findCategoryById(event.categoryId, calendar);
         const date = event.date.replace(/-/g, '');
         
         let eventContent = 'BEGIN:VEVENT\r\n';

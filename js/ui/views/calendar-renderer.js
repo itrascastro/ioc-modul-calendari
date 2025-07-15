@@ -32,10 +32,8 @@ class CalendarRenderer {
     
     // === GENERACIÓ DE HTML D'ESDEVENIMENTS ===
     generateEventHTML(event, calendar, outputFormat = 'DOM') {
-        // Cercar categoria en calendari local i catàleg global
-        const category = calendar.categories.find(c => c.id === event.categoryId) ||
-                        appState.categoryTemplates.find(t => t.id === event.categoryId);
-        const color = category ? category.color : '#888';
+        // Cercar categoria utilitzant el servei centralitzat
+        const color = CategoryService.getCategoryColor(event.categoryId, calendar);
         const isUserEvent = !event.isSystemEvent;
         
         if (outputFormat === 'HTML') {

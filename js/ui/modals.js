@@ -76,8 +76,7 @@ function openColorPickerModal(categoryId, colorDotElement) {
     const calendar = getCurrentCalendar();
     if (!calendar) return;
     
-    const category = calendar.categories.find(c => c.id === categoryId) ||
-                    appState.categoryTemplates.find(t => t.id === categoryId);
+    const category = CategoryService.findCategoryById(categoryId, calendar);
     if (!category) return;
     
     const modal = document.getElementById('colorPickerModal');
