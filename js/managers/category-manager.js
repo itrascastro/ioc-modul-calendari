@@ -262,7 +262,7 @@ class CategoryManager {
     completeCategoryEdit() {
         saveToStorage();
         panelsRenderer.renderCategories();
-        renderCalendar(); // Re-renderitzar per mostrar canvis en esdeveniments
+        viewManager.renderCurrentView(); // Re-renderitzar per mostrar canvis en esdeveniments
         showMessage('Categoria actualitzada en tots els calendaris', 'success');
     }
     

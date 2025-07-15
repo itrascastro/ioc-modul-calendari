@@ -250,7 +250,7 @@ class CalendarManager {
         panelsRenderer.renderSavedCalendars();
         panelsRenderer.renderCategories();
         panelsRenderer.renderUnplacedEvents();
-        renderCalendar();
+        viewManager.renderCurrentView();
     }
 }
 

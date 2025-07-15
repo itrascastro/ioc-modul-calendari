@@ -46,9 +46,7 @@ function handleAction(e) {
 }
 
 // === RENDERITZAT PRINCIPAL DEL CALENDARI ===
-function renderCalendar() {
-    viewManager.renderCurrentView();
-}
+// Funció eliminada - usar directament viewManager.renderCurrentView()
 
 // === NAVEGACIÓ ENTRE PERÍODES ===
 function navigatePeriod(direction) {

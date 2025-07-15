@@ -239,7 +239,7 @@ class ReplicationManager {
         
         // Persistir i actualitzar
         saveToStorage();
-        renderCalendar();
+        viewManager.renderCurrentView();
         
         // Actualitzar UI
         panelsRenderer.renderUnplacedEvents();

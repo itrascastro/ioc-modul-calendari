@@ -133,10 +133,7 @@ const dayRenderer = new DayViewRenderer();
 
 // === FUNCIONS AUXILIARS ===
 
-// Generar HTML d'esdeveniment per vista diària
-function generateDayEventHTML(event, calendar) {
-    return dayRenderer.generateEventListItem(event, calendar, 'DOM');
-}
+// Funció eliminada - usar directament dayRenderer.generateEventListItem()
 
 // === INICIALITZACIÓ ===
 

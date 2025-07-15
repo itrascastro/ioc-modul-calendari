@@ -183,7 +183,7 @@ function selectCategoryColor(newColor) {
     closeModal('colorPickerModal');
     saveToStorage();
     panelsRenderer.renderCategories();
-    renderCalendar(); // Re-renderitzar per mostrar canvis en esdeveniments
+    viewManager.renderCurrentView(); // Re-renderitzar per mostrar canvis en esdeveniments
     
     clearSelectedCategoryId();
 }
