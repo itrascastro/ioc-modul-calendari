@@ -139,5 +139,5 @@ const dayRenderer = new DayViewRenderer();
 
 // Inicialitzar sistema de renderitzat diari
 function initializeDayView() {
-    console.log('[DayView] ✅ Vista diària inicialitzada');
+    console.log('[DayView] Vista diària inicialitzada');
 }

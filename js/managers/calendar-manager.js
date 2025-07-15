@@ -264,10 +264,10 @@ function initializeCalendarManager() {
     // Carregar configuració del semestre
     const configLoaded = semesterConfig.load();
     if (!configLoaded || !semesterConfig.isValid()) {
-        console.error('[CalendarManager] ❌ Error carregant configuració del semestre');
+        console.error('[CalendarManager] Error carregant configuració del semestre');
         return false;
     }
     
-    console.log('[CalendarManager] ✅ Gestor de calendaris inicialitzat');
+    console.log('[CalendarManager] Gestor de calendaris inicialitzat');
     return true;
 }

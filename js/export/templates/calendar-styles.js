@@ -192,5 +192,5 @@ const calendarCssStyles = `
 
 // === INICIALITZACIÓ ===
 function initializeCalendarStyles() {
-    console.log('[CalendarStyles] ✅ Estilos CSS inicialitzats');
+    console.log('[CalendarStyles] Estilos CSS inicialitzats');
 }

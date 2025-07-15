@@ -203,5 +203,5 @@ function generateDayCell(date, calendar, isOutOfMonth = false) {
 
 // Inicialitzar sistema de renderitzat mensual
 function initializeMonthView() {
-    console.log('[MonthView] ✅ Vista mensual inicialitzada');
+    console.log('[MonthView] Vista mensual inicialitzada');
 }

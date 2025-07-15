@@ -144,5 +144,5 @@ function getWeekEndDate(date) {
 
 // Inicialitzar sistema de renderitzat setmanal
 function initializeWeekView() {
-    console.log('[WeekView] ✅ Vista setmanal inicialitzada');
+    console.log('[WeekView] Vista setmanal inicialitzada');
 }

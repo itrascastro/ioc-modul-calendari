@@ -76,5 +76,5 @@ function createDayCellHTML(date, isOutOfMonth, calendar) {
 
 // === INICIALITZACIÓ ===
 function initializeUIHelpers() {
-    console.log('[UIHelpers] ✅ Utilitats d\'interfície inicialitzades');
+    console.log('[UIHelpers] Utilitats d\'interfície inicialitzades');
 }

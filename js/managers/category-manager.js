@@ -281,5 +281,5 @@ const categoryManager = new CategoryManager();
 
 // === INICIALITZACIÓ ===
 function initializeCategoryManager() {
-    console.log('[CategoryManager] ✅ Gestor de categories inicialitzat');
+    console.log('[CategoryManager] Gestor de categories inicialitzat');
 }

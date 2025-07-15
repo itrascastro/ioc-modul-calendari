@@ -24,5 +24,5 @@ function generateNextCategoryId(calendarId) {
 
 // === INICIALITZACIÓ ===
 function initializeIDGenerators() {
-    console.log('[IDGenerators] ✅ Generadors d\'ID inicialitzats');
+    console.log('[IDGenerators] Generadors d\'ID inicialitzats');
 }

@@ -119,5 +119,5 @@ function exportCalendarEventsJSON(calendarId) {
 
 // === INICIALITZACIÓ ===
 function initializeJsonExporter() {
-    console.log('[JsonExporter] ✅ Exportador JSON inicialitzat');
+    console.log('[JsonExporter] Exportador JSON inicialitzat');
 }

@@ -241,7 +241,7 @@ class SemesterConfig {
     
     // Inicialitzar configuració (síncron)
     load() {
-        console.log('[SemesterConfig] 📥 Configuració del semestre carregada');
+        console.log('[SemesterConfig] Configuració del semestre carregada');
         this.logConfigInfo();
         return true;
     }
@@ -256,7 +256,7 @@ class SemesterConfig {
     // Obtenir informació del semestre
     getSemester() {
         if (!this.isLoaded()) {
-            console.error('[SemesterConfig] ❌ Configuració no carregada');
+            console.error('[SemesterConfig] Configuració no carregada');
             return null;
         }
         return this.data.semester;
@@ -265,7 +265,7 @@ class SemesterConfig {
     // Obtenir events del sistema
     getSystemEvents() {
         if (!this.isLoaded()) {
-            console.error('[SemesterConfig] ❌ Configuració no carregada');
+            console.error('[SemesterConfig] Configuració no carregada');
             return [];
         }
         return this.data.systemEvents || [];
@@ -274,7 +274,7 @@ class SemesterConfig {
     // Obtenir categories per defecte
     getDefaultCategories() {
         if (!this.isLoaded()) {
-            console.error('[SemesterConfig] ❌ Configuració no carregada');
+            console.error('[SemesterConfig] Configuració no carregada');
             return [];
         }
         return this.data.defaultCategories || [];
@@ -305,10 +305,10 @@ class SemesterConfig {
         if (!this.isLoaded()) return;
         
         const semester = this.getSemester();
-        console.log(`[SemesterConfig] 📅 Semestre: ${semester.code}`);
-        console.log(`[SemesterConfig] 📅 Període: ${semester.startDate} → ${semester.endDate}`);
-        console.log(`[SemesterConfig] 🎯 Events sistema: ${this.getSystemEvents().length}`);
-        console.log(`[SemesterConfig] 🏷️ Categories per defecte: ${this.getDefaultCategories().length}`);
+        console.log(`[SemesterConfig] Semestre: ${semester.code}`);
+        console.log(`[SemesterConfig] Període: ${semester.startDate} → ${semester.endDate}`);
+        console.log(`[SemesterConfig] Events sistema: ${this.getSystemEvents().length}`);
+        console.log(`[SemesterConfig] Categories per defecte: ${this.getDefaultCategories().length}`);
     }
     
     // Validar que la configuració sigui vàlida
@@ -317,19 +317,19 @@ class SemesterConfig {
         
         const semester = this.getSemester();
         if (!semester || !semester.startDate || !semester.endDate || !semester.code) {
-            console.error('[SemesterConfig] ❌ Dades del semestre no vàlides');
+            console.error('[SemesterConfig] Dades del semestre no vàlides');
             return false;
         }
         
         const systemEvents = this.getSystemEvents();
         if (!Array.isArray(systemEvents)) {
-            console.error('[SemesterConfig] ❌ Events del sistema no vàlids');
+            console.error('[SemesterConfig] Events del sistema no vàlids');
             return false;
         }
         
         const defaultCategories = this.getDefaultCategories();
         if (!Array.isArray(defaultCategories) || defaultCategories.length === 0) {
-            console.error('[SemesterConfig] ❌ Categories per defecte no vàlides');
+            console.error('[SemesterConfig] Categories per defecte no vàlides');
             return false;
         }
         
@@ -342,5 +342,5 @@ const semesterConfig = new SemesterConfig();
 
 // === INICIALITZACIÓ ===
 function initializeSemesterConfig() {
-    console.log('[SemesterConfig] ✅ Gestor de configuració inicialitzat');
+    console.log('[SemesterConfig] Gestor de configuració inicialitzat');
 }

@@ -187,5 +187,5 @@ class CalendarRenderer {
 
 // Inicialitzar sistema de renderitzat base
 function initializeCalendarRenderer() {
-    console.log('[CalendarRenderer] ✅ Classe base de renderitzat inicialitzada');
+    console.log('[CalendarRenderer] Classe base de renderitzat inicialitzada');
 }

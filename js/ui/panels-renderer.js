@@ -162,5 +162,5 @@ const panelsRenderer = new PanelsRenderer();
 
 // Inicialitzar sistema de renderitzat de panells
 function initializePanelsRenderer() {
-    console.log('[PanelsRenderer] ✅ Renderitzador de panells inicialitzat');
+    console.log('[PanelsRenderer] Renderitzador de panells inicialitzat');
 }

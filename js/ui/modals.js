@@ -196,5 +196,5 @@ function selectCategoryColor(newColor) {
 
 // Inicialitzar esdeveniments de modal
 function initializeModalEvents() {
-    console.log('[Modals] ✅ Sistema de modals inicialitzat');
+    console.log('[Modals] Sistema de modals inicialitzat');
 }

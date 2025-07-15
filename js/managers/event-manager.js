@@ -168,7 +168,7 @@ class EventManager {
         console.log(`[EventManager] Categories d'usuari disponibles:`, allCategories.map(c => c.name));
         
         if (allCategories.length === 0) {
-            console.warn('[EventManager] ⚠️ No hi ha categories disponibles!');
+            console.warn('[EventManager] No hi ha categories disponibles!');
         }
         
         allCategories.forEach((cat, index) => {
@@ -311,5 +311,5 @@ function debugCatalog() {
 
 // === INICIALITZACIÓ ===
 function initializeEventManager() {
-    console.log('[EventManager] ✅ Gestor d\'esdeveniments inicialitzat');
+    console.log('[EventManager] Gestor d\'esdeveniments inicialitzat');
 }

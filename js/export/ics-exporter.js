@@ -103,5 +103,5 @@ function exportCalendarICS(calendarId) {
 
 // === INICIALITZACIÓ ===
 function initializeIcsExporter() {
-    console.log('[IcsExporter] ✅ Exportador ICS inicialitzat');
+    console.log('[IcsExporter] Exportador ICS inicialitzat');
 }

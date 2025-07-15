@@ -61,7 +61,7 @@ function initializeApp() {
         console.log('[Sistema] Inicialitzant aplicació...');
         const configLoaded = initializeCalendarManager();
         if (!configLoaded) {
-            console.error('[Sistema] ❌ Error carregant configuració, no es pot continuar');
+            console.error('[Sistema] Error carregant configuració, no es pot continuar');
             return;
         }
         
@@ -74,7 +74,7 @@ function initializeApp() {
         getCurrentCalendar();
         calendarManager.updateUI();
         
-        console.log(`[Sistema] ✅ Aplicació inicialitzada amb ${appState.categoryTemplates.length} categories al catàleg`);
+        console.log(`[Sistema] Aplicació inicialitzada amb ${appState.categoryTemplates.length} categories al catàleg`);
         
         // Event listener per Enter en input de nova categoria
         const newCategoryInput = document.getElementById('new-category-name');
@@ -87,7 +87,7 @@ function initializeApp() {
             });
         }
     } catch (error) {
-        console.error('[Sistema] ❌ Error inicialitzant aplicació:', error);
+        console.error('[Sistema] Error inicialitzant aplicació:', error);
     }
 }
 

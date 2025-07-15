@@ -24,7 +24,7 @@ class ReplicationEngine {
     
     // Função principal del motor proporcional
     replicate(sourceCalendar, targetCalendar) {
-        console.log(`[${this.ENGINE_NAME}] 🚀 Iniciant replicació amb configuració simplificada...`);
+        console.log(`[${this.ENGINE_NAME}] Iniciant replicació amb configuració simplificada...`);
         
         try {
             // Validació bàsica
@@ -37,10 +37,10 @@ class ReplicationEngine {
                 .filter(event => this.isProfessorEvent(event))
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
             
-            console.log(`[${this.ENGINE_NAME}] 👨‍🏫 Events del professor a replicar: ${professorEvents.length}`);
+            console.log(`[${this.ENGINE_NAME}] Events del professor a replicar: ${professorEvents.length}`);
             
             if (professorEvents.length === 0) {
-                console.log(`[${this.ENGINE_NAME}] ⚠️ No hi ha events del professor per replicar`);
+                console.log(`[${this.ENGINE_NAME}] No hi ha events del professor per replicar`);
                 return { placed: [], unplaced: [] };
             }
             
@@ -48,11 +48,11 @@ class ReplicationEngine {
             const espaiUtilOrigen = this.analyzeWorkableSpace(sourceCalendar);
             const espaiUtilDesti = this.analyzeWorkableSpace(targetCalendar);
             
-            console.log(`[${this.ENGINE_NAME}] 📊 Espai Origen: ${espaiUtilOrigen.length} dies útils`);
-            console.log(`[${this.ENGINE_NAME}] 📊 Espai Destí: ${espaiUtilDesti.length} dies útils`);
+            console.log(`[${this.ENGINE_NAME}] Espai Origen: ${espaiUtilOrigen.length} dies útils`);
+            console.log(`[${this.ENGINE_NAME}] Espai Destí: ${espaiUtilDesti.length} dies útils`);
             
             if (espaiUtilDesti.length === 0) {
-                console.warn(`[${this.ENGINE_NAME}] ⚠️ Calendari destí sense espai útil disponible`);
+                console.warn(`[${this.ENGINE_NAME}] Calendari destí sense espai útil disponible`);
                 return { 
                     placed: [], 
                     unplaced: professorEvents.map(event => ({ 
@@ -65,7 +65,7 @@ class ReplicationEngine {
             
             // Calcular factor de proporció
             const factorProporcio = espaiUtilDesti.length / espaiUtilOrigen.length;
-            console.log(`[${this.ENGINE_NAME}] ⚖️ Factor de proporció: ${factorProporcio.toFixed(3)}`);
+            console.log(`[${this.ENGINE_NAME}] Factor de proporció: ${factorProporcio.toFixed(3)}`);
             
             // Mapa d'ocupació del destí
             const ocupacioEspaiDesti = new Map(espaiUtilDesti.map(date => [date, 'LLIURE']));
@@ -75,13 +75,13 @@ class ReplicationEngine {
             
             // Bucle principal de replicació
             professorEvents.forEach((event, index) => {
-                console.log(`[${this.ENGINE_NAME}] 🔄 Processant (${index + 1}/${professorEvents.length}): "${event.title}"`);
+                console.log(`[${this.ENGINE_NAME}] Processant (${index + 1}/${professorEvents.length}): "${event.title}"`);
                 
                 // Trobar posició en espai origen
                 const indexOrigen = espaiUtilOrigen.indexOf(event.date);
                 
                 if (indexOrigen === -1) {
-                    console.warn(`[${this.ENGINE_NAME}] ⚠️ Event "${event.title}" no troba posició en espai origen`);
+                    console.warn(`[${this.ENGINE_NAME}] Event "${event.title}" no troba posició en espai origen`);
                     unplacedEvents.push({ 
                         event, 
                         sourceCalendar,
@@ -97,7 +97,7 @@ class ReplicationEngine {
                 const indexFinal = this.findNearestFreeSlot(ocupacioEspaiDesti, indexIdeal);
                 
                 if (indexFinal === -1) {
-                    console.warn(`[${this.ENGINE_NAME}] ⚠️ No es troba slot lliure per "${event.title}"`);
+                    console.warn(`[${this.ENGINE_NAME}] No es troba slot lliure per "${event.title}"`);
                     unplacedEvents.push({ 
                         event, 
                         sourceCalendar,
@@ -129,31 +129,31 @@ class ReplicationEngine {
                     reason: this.generateProportionalReason(indexOrigen, indexIdeal, indexFinal, factorProporcio)
                 });
                 
-                console.log(`[${this.ENGINE_NAME}] ✅ "${event.title}": ${event.date} → ${newDate} (pos ${indexOrigen + 1}→${indexFinal + 1})`);
+                console.log(`[${this.ENGINE_NAME}] "${event.title}": ${event.date} → ${newDate} (pos ${indexOrigen + 1}→${indexFinal + 1})`);
             });
             
-            console.log(`[${this.ENGINE_NAME}] 📈 Resultat: ${placedEvents.length} ubicats, ${unplacedEvents.length} no ubicats`);
+            console.log(`[${this.ENGINE_NAME}] Resultat: ${placedEvents.length} ubicats, ${unplacedEvents.length} no ubicats`);
             
             // Validació final de seguretat
             const weekendEvents = placedEvents.filter(item => !isWeekdayStr(item.newDate));
             if (weekendEvents.length > 0) {
-                console.error(`[${this.ENGINE_NAME}] ❌ ERROR CRÍTIC: ${weekendEvents.length} events en caps de setmana!`);
+                console.error(`[${this.ENGINE_NAME}] ERROR CRÍTIC: ${weekendEvents.length} events en caps de setmana!`);
                 throw new Error(`Error de disseny: ${weekendEvents.length} events generats en caps de setmana`);
             }
             
-            console.log(`[${this.ENGINE_NAME}] ✅ Replicació proporcional completada amb èxit`);
+            console.log(`[${this.ENGINE_NAME}] Replicació proporcional completada amb èxit`);
             
             return { placed: placedEvents, unplaced: unplacedEvents };
             
         } catch (error) {
-            console.error(`[${this.ENGINE_NAME}] ❌ Error en replicació proporcional:`, error);
+            console.error(`[${this.ENGINE_NAME}] Error en replicació proporcional:`, error);
             throw error;
         }
     }
     
     // Anàlisi de l'espai útil
     analyzeWorkableSpace(calendar) {
-        console.log(`[Espai Útil] 🔍 Analitzant espai útil per: ${calendar.name}`);
+        console.log(`[Espai Útil] Analitzant espai útil per: ${calendar.name}`);
         
         const espaiUtil = [];
         const dataFiAvalucions = this.findEvaluationEndDate(calendar);
@@ -165,8 +165,8 @@ class ReplicationEngine {
                 .map(e => e.date)
         );
         
-        console.log(`[Espai Útil] 📅 Període: ${calendar.startDate} → ${dataFiAvalucions}`);
-        console.log(`[Espai Útil] 🚫 Dies ocupats pel sistema: ${occupiedBySystem.size}`);
+        console.log(`[Espai Útil] Període: ${calendar.startDate} → ${dataFiAvalucions}`);
+        console.log(`[Espai Útil] Dies ocupats pel sistema: ${occupiedBySystem.size}`);
         
         // Iterar dia a dia
         let currentDate = parseUTCDate(calendar.startDate);
@@ -183,7 +183,7 @@ class ReplicationEngine {
             currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
         
-        console.log(`[Espai Útil] ✅ Espai útil construït: ${espaiUtil.length} dies disponibles`);
+        console.log(`[Espai Útil] Espai útil construït: ${espaiUtil.length} dies disponibles`);
         
         return espaiUtil;
     }
@@ -233,13 +233,13 @@ class ReplicationEngine {
     
     // Detectar data de fi d'avaluacions (cercar PAF1)
     findEvaluationEndDate(calendar) {
-        console.log(`[PAF Detection] 🎯 Buscant PAF1 al calendari: ${calendar.name}`);
+        console.log(`[PAF Detection] Buscant PAF1 al calendari: ${calendar.name}`);
         
         // Cercar PAF1 en esdeveniments del calendari
         const paf1Event = calendar.events.find(event => event.eventType === 'PAF1');
         
         if (paf1Event) {
-            console.log(`[PAF Detection] ✅ PAF1 trobat: ${paf1Event.date}`);
+            console.log(`[PAF Detection] PAF1 trobat: ${paf1Event.date}`);
             return paf1Event.date;
         }
         
@@ -247,11 +247,11 @@ class ReplicationEngine {
         const paf1Config = semesterConfig.getSystemEvents().find(event => event.eventType === 'PAF1');
         
         if (paf1Config && paf1Config.date >= calendar.startDate && paf1Config.date <= calendar.endDate) {
-            console.log(`[PAF Detection] ✅ PAF1 de configuració: ${paf1Config.date}`);
+            console.log(`[PAF Detection] PAF1 de configuració: ${paf1Config.date}`);
             return paf1Config.date;
         }
         
-        console.error('[PAF Detection] ❌ PAF1 no trobat! Usant final de calendari');
+        console.error('[PAF Detection] PAF1 no trobat! Usant final de calendari');
         return calendar.endDate;
     }
     
@@ -302,5 +302,5 @@ const replicationEngine = new ReplicationEngine();
 
 // Inicialitzar motor de replicació
 function initializeReplicationEngine() {
-    console.log('[ReplicationEngine] ✅ Motor de replicació inicialitzat');
+    console.log('[ReplicationEngine] Motor de replicació inicialitzat');
 }

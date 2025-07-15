@@ -120,5 +120,5 @@ function exportCalendarHTML(calendarId) {
 
 // === INICIALITZACIÓ ===
 function initializeHtmlExporter() {
-    console.log('[HtmlExporter] ✅ Exportador HTML inicialitzat');
+    console.log('[HtmlExporter] Exportador HTML inicialitzat');
 }

@@ -168,5 +168,5 @@ function getSemesterName(calendar) {
 
 // Inicialitzar sistema de renderitzat semestral
 function initializeSemesterView() {
-    console.log('[SemesterView] ✅ Vista semestral inicialitzada');
+    console.log('[SemesterView] Vista semestral inicialitzada');
 }

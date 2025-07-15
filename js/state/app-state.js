@@ -11,7 +11,7 @@ let appState = {
     currentDate: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)),
     currentView: 'month',  // Vista actual: month, day, week, semester
     categoryTemplates: [],  // Catálogo global de categorías de usuario
-    unplacedEvents: []  // Eventos no ubicados en replicación
+    unplacedEvents: [] // Eventos no ubicados en replicación
 };
 
 // === VARIABLES DE DRAG & DROP ===
@@ -104,22 +104,22 @@ function getStateInfo() {
 // Validar l'estat de l'aplicació
 function validateAppState() {
     if (!appState || typeof appState !== 'object') {
-        console.error('[AppState] ❌ Estat principal no vàlid');
+        console.error('[AppState] Estat principal no vàlid');
         return false;
     }
     
     if (!appState.calendars || typeof appState.calendars !== 'object') {
-        console.error('[AppState] ❌ Calendaris no vàlids');
+        console.error('[AppState] Calendaris no vàlids');
         return false;
     }
     
     if (!Array.isArray(appState.categoryTemplates)) {
-        console.error('[AppState] ❌ Plantilles de categories no vàlides');
+        console.error('[AppState] Plantilles de categories no vàlides');
         return false;
     }
     
     if (!Array.isArray(appState.unplacedEvents)) {
-        console.error('[AppState] ❌ Events no ubicats no vàlids');
+        console.error('[AppState] Events no ubicats no vàlids');
         return false;
     }
     

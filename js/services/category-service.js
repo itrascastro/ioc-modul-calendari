@@ -93,5 +93,5 @@ class CategoryService {
 
 // Inicialitzar servei de categories
 function initializeCategoryService() {
-    console.log('[CategoryService] ✅ Servei de categories inicialitzat');
+    console.log('[CategoryService] Servei de categories inicialitzat');
 }

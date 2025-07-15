@@ -33,5 +33,5 @@ const calendarHtmlTemplate = `<!DOCTYPE html>
 
 // === INICIALITZACIÓ ===
 function initializeCalendarTemplate() {
-    console.log('[CalendarTemplate] ✅ Template HTML inicialitzat');
+    console.log('[CalendarTemplate] Template HTML inicialitzat');
 }

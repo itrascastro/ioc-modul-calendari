@@ -32,5 +32,5 @@ function toggleActionsMenu(target) {
 
 // === INICIALITZACIÓ ===
 function initializeMenuHelpers() {
-    console.log('[MenuHelpers] ✅ Utilitats de menús inicialitzades');
+    console.log('[MenuHelpers] Utilitats de menús inicialitzades');
 }

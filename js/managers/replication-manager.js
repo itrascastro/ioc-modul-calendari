@@ -289,5 +289,5 @@ const replicationManager = new ReplicationManager();
 
 // === INICIALITZACIÓ ===
 function initializeReplicationManager() {
-    console.log('[ReplicationManager] ✅ Gestor de replicació inicialitzat');
+    console.log('[ReplicationManager] Gestor de replicació inicialitzat');
 }

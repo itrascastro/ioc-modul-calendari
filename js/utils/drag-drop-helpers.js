@@ -28,5 +28,5 @@ function setupDragAndDrop(container, calendar) {
 
 // === INICIALITZACIÓ ===
 function initializeDragDropHelpers() {
-    console.log('[DragDropHelpers] ✅ Utilitats de drag & drop inicialitzades');
+    console.log('[DragDropHelpers] Utilitats de drag & drop inicialitzades');
 }

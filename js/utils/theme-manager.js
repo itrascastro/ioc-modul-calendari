@@ -28,5 +28,5 @@ function loadSavedTheme() {
 
 // === INICIALITZACIÓ ===
 function initializeThemeManager() {
-    console.log('[ThemeManager] ✅ Gestor de temes inicialitzat');
+    console.log('[ThemeManager] Gestor de temes inicialitzat');
 }

@@ -25,7 +25,7 @@ class ViewManager {
         this.renderers.week = weekRenderer;
         this.renderers.semester = semesterRenderer;
         
-        console.log('[ViewManager] ✅ Renderitzadors inicialitzats');
+        console.log('[ViewManager] Renderitzadors inicialitzats');
     }
     
     // === GESTIÓ DE VISTES ===
@@ -50,7 +50,7 @@ class ViewManager {
         // Re-renderitzar amb la nova vista
         this.renderCurrentView();
         
-        console.log(`[ViewManager] 📱 Canviat a vista: ${viewType}`);
+        console.log(`[ViewManager] Canviat a vista: ${viewType}`);
         return true;
     }
     
@@ -95,7 +95,7 @@ class ViewManager {
         // Canviar a vista dia
         this.changeView('day');
         
-        console.log(`[ViewManager] 📅 Canviat a vista dia de: ${dateStr}`);
+        console.log(`[ViewManager] Canviat a vista dia de: ${dateStr}`);
         return true;
     }
     
@@ -130,7 +130,7 @@ class ViewManager {
         // Canviar a vista setmanal
         this.changeView('week');
         
-        console.log(`[ViewManager] 📅 Canviat a vista setmanal de: ${dateStr}`);
+        console.log(`[ViewManager] Canviat a vista setmanal de: ${dateStr}`);
         return true;
     }
     
@@ -185,7 +185,7 @@ class ViewManager {
     // Renderitzar vista diària
     renderDayView(calendar) {
         if (!this.renderers.day) {
-            console.error('[ViewManager] ❌ Renderitzador de vista diària no disponible');
+            console.error('[ViewManager] Renderitzador de vista diària no disponible');
             this.renderMonthView(calendar); // Fallback
             return;
         }
@@ -210,7 +210,7 @@ class ViewManager {
     // Renderitzar vista setmanal
     renderWeekView(calendar) {
         if (!this.renderers.week) {
-            console.error('[ViewManager] ❌ Renderitzador de vista setmanal no disponible');
+            console.error('[ViewManager] Renderitzador de vista setmanal no disponible');
             this.renderMonthView(calendar); // Fallback
             return;
         }
@@ -237,7 +237,7 @@ class ViewManager {
     // Renderitzar vista semestral
     renderSemesterView(calendar) {
         if (!this.renderers.semester) {
-            console.error('[ViewManager] ❌ Renderitzador de vista semestral no disponible');
+            console.error('[ViewManager] Renderitzador de vista semestral no disponible');
             this.renderMonthView(calendar); // Fallback
             return;
         }
@@ -311,7 +311,7 @@ class ViewManager {
     // Navegació específica per setmanes
     navigateWeek(direction, calendarStart, calendarEnd) {
         if (!this.renderers.week) {
-            console.warn('[ViewManager] ⚠️ Renderitzador setmanal no disponible');
+            console.warn('[ViewManager] Renderitzador setmanal no disponible');
             return null;
         }
         
@@ -340,7 +340,7 @@ class ViewManager {
     navigateSemester(direction, calendarStart, calendarEnd) {
         // Per a vista semestral, la navegació està limitada al semestre actual
         // ja que cada calendari representa exactament un semestre
-        console.log('[ViewManager] ℹ️ Navegació semestral: un calendari = un semestre');
+        console.log('[ViewManager] Navegació semestral: un calendari = un semestre');
         return null; // No navegar fora del semestre actual
     }
     
@@ -551,5 +551,5 @@ const viewManager = new ViewManager();
 // Inicialitzar gestor de vistes
 function initializeViewManager() {
     viewManager.initializeRenderers();
-    console.log('[ViewManager] ✅ Gestor de vistes inicialitzat');
+    console.log('[ViewManager] Gestor de vistes inicialitzat');
 }
