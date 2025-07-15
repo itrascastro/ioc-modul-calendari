@@ -58,7 +58,7 @@ function initializeApp() {
         console.log('[Sistema] Inicialitzant aplicació...');
         
         // Inicialitzar resta de l'aplicació
-        initializeViewManager();
+        viewManager.initializeRenderers();
         document.addEventListener('click', handleAction);
         document.addEventListener('dblclick', handleAction);
         loadFromStorage();
