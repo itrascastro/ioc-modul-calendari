@@ -98,24 +98,7 @@ body.dark-mode #theme-toggle:hover { background-color: #4a5568; }
     color: var(--accent-color);
 }
 
-/* Scrollbar personalizada */
-.panel-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.panel-content::-webkit-scrollbar-track {
-    background: var(--bg-color);
-    border-radius: 3px;
-}
-
-.panel-content::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
-}
-
-.panel-content::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-text-color);
-}
+/* Scrollbar personalizada - ELIMINADA: usa la configuració global */
 
 /* Botones del sidebar */
 .sidebar-actions {
@@ -669,25 +652,7 @@ body.dark-mode .btn-secondary:hover { background-color: #8b96a8; }
     gap: 12px;
 }
 
-/* Scrollbar personalizada para el sidebar principal */
-.sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background: var(--card-bg-color);
-    border-radius: 3px;
-    border: 1px solid var(--border-color);
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background: var(--secondary-text-color);
-}
+/* Scrollbar personalizada para el sidebar - ELIMINADA: usa la configuració global */
 
 /* Scrollbar personalizada para el panel de eventos - ELIMINADA porque ahora maneja panel-content */
 
