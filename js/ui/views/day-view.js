@@ -17,8 +17,8 @@ class DayViewRenderer extends CalendarRenderer {
         const dayData = this.generateDayData(currentDate, calendar, false);
         
         // Verificar si el dia està dins del rang del calendari
-        const isInRange = calendar && dateStr >= calendar.startDate && dateStr <= calendar.endDate;
-        const isWeekday = isWeekdayStr(dateStr);
+        const isInRange = DateValidationService.isDateInCalendarRange(dateStr, calendar);
+        const isWeekday = DateValidationService.isWeekday(dateStr);
         
         // Generar sortida segons format
         if (outputFormat === 'HTML') {

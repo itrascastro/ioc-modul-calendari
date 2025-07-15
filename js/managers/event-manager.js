@@ -127,13 +127,8 @@ class EventManager {
             return false;
         }
         
-        // Ha d'estar dins del rang del calendari
-        if (targetDate < calendar.startDate || targetDate > calendar.endDate) {
-            showMessage('La data ha d\'estar dins del període del calendari', 'error');
-            return false;
-        }
-        
-        return true;
+        // Validar data utilitzant el servei centralitzat
+        return DateValidationService.validateEventWithMessage(targetDate, calendar);
     }
     
     // === CATEGORIES ===
@@ -215,9 +210,7 @@ class EventManager {
         if (!calendar) return;
         
         // Només permetre drop en dies dins del rang del calendari
-        const isValidDay = dateStr >= calendar.startDate && dateStr <= calendar.endDate;
-        
-        if (!isValidDay) return;
+        if (!DateValidationService.isDateInCalendarRange(dateStr, calendar)) return;
         
         dayElement.addEventListener('dragover', (e) => {
             if (!draggedEvent) return;
@@ -226,8 +219,8 @@ class EventManager {
             
             // Validar segons el tipus d'esdeveniment
             if (draggedFromDate === 'unplaced') {
-                // Esdeveniment no ubicat: només validar que estigui en rang
-                isValid = dateStr >= calendar.startDate && dateStr <= calendar.endDate;
+                // Esdeveniment no ubicat (de replicació): només dies laborables
+                isValid = DateValidationService.isValidReplicationDate(dateStr, calendar);
             } else {
                 // Esdeveniment normal: usar validació estàndard
                 isValid = this.isValidEventMove(draggedEvent, dateStr, calendar);

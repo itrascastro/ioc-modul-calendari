@@ -131,6 +131,9 @@ class CalendarManager {
     
     // Completar desament del calendari
     completeCalendarSave() {
+        // Sempre tornar a vista mensual quan es crea un calendari
+        viewManager.changeView('month');
+        
         saveToStorage();
         this.updateUI();
         closeModal('calendarSetupModal');
@@ -222,6 +225,9 @@ class CalendarManager {
                         appState.currentCalendarId = calendarId;
                         // Usar el renderitzador per parsejar la data correctament
                         appState.currentDate = parseUTCDate(calendarData.startDate);
+                        
+                        // Sempre tornar a vista mensual quan es carrega un calendari
+                        viewManager.changeView('month');
                         
                         saveToStorage();
                         this.updateUI();

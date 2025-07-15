@@ -218,9 +218,8 @@ class ReplicationManager {
         
         if (!unplacedItem || !calendar) return;
         
-        // Validar data objectiu
-        if (targetDate < calendar.startDate || targetDate > calendar.endDate) {
-            showMessage('La data ha d\'estar dins del període del calendari', 'error');
+        // Validar data objectiu per replicació (només dies laborables)
+        if (!DateValidationService.validateReplicationWithMessage(targetDate, calendar)) {
             return;
         }
         

@@ -85,8 +85,7 @@ class ViewManager {
             return false;
         }
         
-        if (dateStr < calendar.startDate || dateStr > calendar.endDate) {
-            console.warn('[ViewManager] Data fora del rang del calendari:', dateStr);
+        if (!DateValidationService.validateDateWithMessage(dateStr, calendar, 'Vista dia')) {
             return false;
         }
         
@@ -121,8 +120,7 @@ class ViewManager {
             return false;
         }
         
-        if (dateStr < calendar.startDate || dateStr > calendar.endDate) {
-            console.warn('[ViewManager] Data fora del rang del calendari:', dateStr);
+        if (!DateValidationService.validateDateWithMessage(dateStr, calendar, 'Vista setmanal')) {
             return false;
         }
         
@@ -489,7 +487,7 @@ class ViewManager {
             let isValid = false;
             
             if (draggedFromDate === 'unplaced') {
-                isValid = isWeekdayStr(dateStr) && dateStr >= calendar.startDate && dateStr <= calendar.endDate;
+                isValid = DateValidationService.isValidEventDate(dateStr, calendar);
             } else {
                 isValid = eventManager.isValidEventMove(draggedEvent, dateStr, calendar);
             }
