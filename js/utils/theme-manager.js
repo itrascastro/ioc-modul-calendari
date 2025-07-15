@@ -10,14 +10,21 @@ function toggleTheme() {
     body.classList.toggle('dark-mode');
     const isDarkMode = body.classList.contains('dark-mode');
     document.getElementById('theme-toggle').textContent = isDarkMode ? 'Canviar a Mode Clar' : 'Canviar a Mode Fosc';
-    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    // No guardar a localStorage - sempre tornar al tema del sistema en recarregar
 }
 
-// Carregar tema guardat des de localStorage
+// Detectar preferència de tema del sistema
+function getSystemTheme() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+// Carregar tema sempre segons el sistema
 function loadSavedTheme() {
-    const savedTheme = localStorage.getItem('theme');
+    const systemTheme = getSystemTheme();
     const body = document.body;
-    if (savedTheme === 'dark') {
+    
+    // Sempre començar amb el tema del sistema
+    if (systemTheme === 'dark') {
         body.classList.add('dark-mode');
         document.getElementById('theme-toggle').textContent = 'Canviar a Mode Clar';
     } else {
