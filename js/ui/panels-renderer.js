@@ -135,10 +135,10 @@ class PanelsRenderer {
     // === CONFIGURACIÓ D'EVENT LISTENERS ===
     setupCategoryEditListeners(container) {
         container.querySelectorAll('.category-input').forEach(input => {
-            input.addEventListener('blur', (e) => saveEditCategory(e.target));
+            input.addEventListener('blur', (e) => categoryManager.saveEditCategory(e.target));
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    saveEditCategory(e.target);
+                    categoryManager.saveEditCategory(e.target);
                 } else if (e.key === 'Escape') {
                     const categoryItem = e.target.closest('.category-list-item');
                     categoryItem.classList.remove('is-editing');
