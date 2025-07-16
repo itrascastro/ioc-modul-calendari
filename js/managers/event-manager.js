@@ -1,6 +1,22 @@
-// =================================================================
-// EVENT MANAGER - GESTIÓ D'ESDEVENIMENTS
-// =================================================================
+/**
+ * =================================================================
+ * EVENT MANAGER - GESTIÓ D'ESDEVENIMENTS
+ * =================================================================
+ * 
+ * @file        event-manager.js
+ * @description Gestió d'esdeveniments del calendari, creació i edició
+ * @author      Ismael Trascastro <itrascastro@ioc.cat>
+ * @version     1.0.0
+ * @date        2025-01-16
+ * @project     Calendari Mòdul IOC
+ * @repository  https://github.com/itrascastro/ioc-modul-calendari
+ * @license     MIT
+ * 
+ * Aquest fitxer forma part del projecte Calendari Mòdul IOC,
+ * una aplicació web per gestionar calendaris acadèmics.
+ * 
+ * =================================================================
+ */
 
 // Classe per gestionar tots els esdeveniments del calendari
 class EventManager {

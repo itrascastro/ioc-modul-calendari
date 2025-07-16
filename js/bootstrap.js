@@ -1,6 +1,22 @@
-// =================================================================
-// BOOTSTRAP.JS - INICIALITZACIÓ I COORDINACIÓ DE L'APLICACIÓ CALENDARI IOC
-// =================================================================
+/**
+ * =================================================================
+ * BOOTSTRAP.JS - INICIALITZACIÓ I COORDINACIÓ DE L'APLICACIÓ
+ * =================================================================
+ * 
+ * @file        bootstrap.js
+ * @description Classe Bootstrap per inicialitzar l'aplicació i gestionar accions
+ * @author      Ismael Trascastro <itrascastro@ioc.cat>
+ * @version     1.0.0
+ * @date        2025-01-16
+ * @project     Calendari Mòdul IOC
+ * @repository  https://github.com/itrascastro/ioc-modul-calendari
+ * @license     MIT
+ * 
+ * Aquest fitxer forma part del projecte Calendari Mòdul IOC,
+ * una aplicació web per gestionar calendaris acadèmics.
+ * 
+ * =================================================================
+ */
 
 class Bootstrap {
     constructor() {

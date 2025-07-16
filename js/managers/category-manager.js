@@ -1,6 +1,22 @@
-// =================================================================
-// CATEGORY MANAGER - GESTIÓ DE CATEGORIES
-// =================================================================
+/**
+ * =================================================================
+ * CATEGORY MANAGER - GESTIÓ DE CATEGORIES
+ * =================================================================
+ * 
+ * @file        category-manager.js
+ * @description Gestió de categories d'esdeveniments i catàleg global
+ * @author      Ismael Trascastro <itrascastro@ioc.cat>
+ * @version     1.0.0
+ * @date        2025-01-16
+ * @project     Calendari Mòdul IOC
+ * @repository  https://github.com/itrascastro/ioc-modul-calendari
+ * @license     MIT
+ * 
+ * Aquest fitxer forma part del projecte Calendari Mòdul IOC,
+ * una aplicació web per gestionar calendaris acadèmics.
+ * 
+ * =================================================================
+ */
 
 // Colors predefinits per categories
 const PREDEFINED_COLORS = [

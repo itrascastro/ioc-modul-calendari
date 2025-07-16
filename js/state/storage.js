@@ -1,6 +1,22 @@
-// =================================================================
-// STORAGE - GESTIÓ DE PERSISTÈNCIA DE DADES
-// =================================================================
+/**
+ * =================================================================
+ * STORAGE - GESTIÓ DE PERSISTÈNCIA DE DADES
+ * =================================================================
+ * 
+ * @file        storage.js
+ * @description Funcions per guardar i carregar dades des de localStorage
+ * @author      Ismael Trascastro <itrascastro@ioc.cat>
+ * @version     1.0.0
+ * @date        2025-01-16
+ * @project     Calendari Mòdul IOC
+ * @repository  https://github.com/itrascastro/ioc-modul-calendari
+ * @license     MIT
+ * 
+ * Aquest fitxer forma part del projecte Calendari Mòdul IOC,
+ * una aplicació web per gestionar calendaris acadèmics.
+ * 
+ * =================================================================
+ */
 
 // Clau per localStorage
 const STORAGE_KEY = 'calendari-ioc-data';
