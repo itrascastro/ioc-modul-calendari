@@ -108,9 +108,6 @@ function renderCalendar() {
     gridWrapper.innerHTML = monthHTML;
     periodDisplay.textContent = getMonthName(appStateManager.currentDate);
     
-    // Configurar drag & drop per a noves cel·les
-    setupCalendarDragDrop();
-    
     // Actualitzar navegació
     updateNavigationButtons();
 }
@@ -143,64 +140,6 @@ function updateNavigationButtons() {
     nextBtn.disabled = nextMonthStart > calendarEnd;
 }
 
-// Configurar drag & drop per a cel·les del calendari
-function setupCalendarDragDrop() {
-    document.querySelectorAll('.day-cell').forEach(dayElement => {
-        const dateStr = dayElement.dataset.date;
-        
-        dayElement.addEventListener('dragover', (e) => {
-            if (!appStateManager.draggedEvent) return;
-            
-            const calendar = appStateManager.getCurrentCalendar();
-            if (!calendar) return;
-            
-            // Verificar si el moviment és vàlid
-            let isValid = false;
-            if (appStateManager.draggedFromDate === 'unplaced') {
-                // Esdeveniment no ubicat: usar validació bàsica
-                isValid = !dayElement.classList.contains('out-of-month');
-            } else {
-                // Esdeveniment normal: usar validació estàndard
-                isValid = eventManager.isValidEventMove(appStateManager.draggedEvent, dateStr, calendar);
-            }
-            
-            if (isValid) {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                dayElement.classList.add('drop-target');
-            } else {
-                dayElement.classList.add('drop-invalid');
-            }
-        });
-        
-        dayElement.addEventListener('dragleave', (e) => {
-            // Només netejar si realment sortim de l'element
-            if (!dayElement.contains(e.relatedTarget)) {
-                dayElement.classList.remove('drop-target', 'drop-invalid');
-            }
-        });
-        
-        dayElement.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dayElement.classList.remove('drop-target', 'drop-invalid');
-            
-            if (appStateManager.draggedEvent) {
-                if (appStateManager.draggedFromDate === 'unplaced') {
-                    // Manejar esdeveniment no ubicat
-                    const eventData = JSON.parse(e.dataTransfer.getData('text/plain'));
-                    if (eventData.isUnplacedEvent) {
-                        placeUnplacedEvent(eventData.unplacedIndex, dateStr);
-                    }
-                } else if (appStateManager.draggedFromDate !== dateStr) {
-                    // Manejar esdeveniment normal
-                    eventManager.moveEvent(appStateManager.draggedEvent.id, dateStr);
-                }
-            }
-            
-            appStateManager.cleanupDragState();
-        });
-    });
-}
 
 // === FUNCIONS AUXILIARS ===
 
@@ -214,4 +153,3 @@ function generateDayCell(date, calendar, isOutOfMonth = false) {
     const dayData = monthRenderer.generateDayData(date, calendar, isOutOfMonth);
     return monthRenderer.generateDayCellHTML(dayData, calendar, 'DOM');
 }
-
