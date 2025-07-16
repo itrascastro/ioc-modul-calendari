@@ -95,7 +95,7 @@ const monthRenderer = new MonthViewRenderer();
 
 // Renderitzar calendari principal
 function renderCalendar() {
-    const calendar = getCurrentCalendar();
+    const calendar = appStateManager.getCurrentCalendar();
     if (!calendar) {
         document.getElementById('calendar-grid-wrapper').innerHTML = '<p style="color: var(--secondary-text-color); font-style: italic; text-align: center; padding: 20px;">Selecciona un calendari.</p>';
         return;
@@ -104,9 +104,9 @@ function renderCalendar() {
     const gridWrapper = document.getElementById('calendar-grid-wrapper');
     const periodDisplay = document.getElementById('current-period-display');
     
-    const monthHTML = monthRenderer.render(calendar, appState.currentDate, 'DOM');
+    const monthHTML = monthRenderer.render(calendar, appStateManager.currentDate, 'DOM');
     gridWrapper.innerHTML = monthHTML;
-    periodDisplay.textContent = getMonthName(appState.currentDate);
+    periodDisplay.textContent = getMonthName(appStateManager.currentDate);
     
     // Configurar drag & drop per a noves cel·les
     setupCalendarDragDrop();
@@ -117,7 +117,7 @@ function renderCalendar() {
 
 // Actualitzar botons de navegació
 function updateNavigationButtons() {
-    const calendar = getCurrentCalendar();
+    const calendar = appStateManager.getCurrentCalendar();
     if (!calendar) return;
     
     const prevBtn = document.querySelector('[data-direction="-1"]');
@@ -129,15 +129,15 @@ function updateNavigationButtons() {
     const calendarEnd = parseUTCDate(calendar.endDate);
     
     const prevMonthEnd = createUTCDate(
-        appState.currentDate.getUTCFullYear(), 
-        appState.currentDate.getUTCMonth(), 
+        appStateManager.currentDate.getUTCFullYear(), 
+        appStateManager.currentDate.getUTCMonth(), 
         0
     );
     prevBtn.disabled = prevMonthEnd < calendarStart;
     
     const nextMonthStart = createUTCDate(
-        appState.currentDate.getUTCFullYear(), 
-        appState.currentDate.getUTCMonth() + 1, 
+        appStateManager.currentDate.getUTCFullYear(), 
+        appStateManager.currentDate.getUTCMonth() + 1, 
         1
     );
     nextBtn.disabled = nextMonthStart > calendarEnd;
@@ -149,19 +149,19 @@ function setupCalendarDragDrop() {
         const dateStr = dayElement.dataset.date;
         
         dayElement.addEventListener('dragover', (e) => {
-            if (!draggedEvent) return;
+            if (!appStateManager.draggedEvent) return;
             
-            const calendar = getCurrentCalendar();
+            const calendar = appStateManager.getCurrentCalendar();
             if (!calendar) return;
             
             // Verificar si el moviment és vàlid
             let isValid = false;
-            if (draggedFromDate === 'unplaced') {
+            if (appStateManager.draggedFromDate === 'unplaced') {
                 // Esdeveniment no ubicat: usar validació bàsica
                 isValid = !dayElement.classList.contains('out-of-month');
             } else {
                 // Esdeveniment normal: usar validació estàndard
-                isValid = eventManager.isValidEventMove(draggedEvent, dateStr, calendar);
+                isValid = eventManager.isValidEventMove(appStateManager.draggedEvent, dateStr, calendar);
             }
             
             if (isValid) {
@@ -184,20 +184,20 @@ function setupCalendarDragDrop() {
             e.preventDefault();
             dayElement.classList.remove('drop-target', 'drop-invalid');
             
-            if (draggedEvent) {
-                if (draggedFromDate === 'unplaced') {
+            if (appStateManager.draggedEvent) {
+                if (appStateManager.draggedFromDate === 'unplaced') {
                     // Manejar esdeveniment no ubicat
                     const eventData = JSON.parse(e.dataTransfer.getData('text/plain'));
                     if (eventData.isUnplacedEvent) {
                         placeUnplacedEvent(eventData.unplacedIndex, dateStr);
                     }
-                } else if (draggedFromDate !== dateStr) {
+                } else if (appStateManager.draggedFromDate !== dateStr) {
                     // Manejar esdeveniment normal
-                    eventManager.moveEvent(draggedEvent.id, dateStr);
+                    eventManager.moveEvent(appStateManager.draggedEvent.id, dateStr);
                 }
             }
             
-            cleanupDragState();
+            appStateManager.cleanupDragState();
         });
     });
 }

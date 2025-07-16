@@ -26,7 +26,7 @@ class HtmlExporter {
     
     // === EXPORTACIÓ PRINCIPAL ===
     exportCalendar(calendarId) {
-        const calendar = appState.calendars[calendarId];
+        const calendar = appStateManager.calendars[calendarId];
         if (!calendar) {
             showMessage('Calendari no trobat', 'error');
             return;
@@ -64,7 +64,7 @@ class HtmlExporter {
                 .filter(id => !systemCategories.some(cat => cat.id === id))
         );
         
-        const userCategories = appState.categoryTemplates.filter(template => 
+        const userCategories = appStateManager.categoryTemplates.filter(template => 
             usedUserCategoryIds.has(template.id)
         );
         
