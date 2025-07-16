@@ -158,7 +158,7 @@ class CategoryManager {
     // Completar afegit de categoria
     completeCategoryAdd(nameInput) {
         nameInput.value = '';
-        saveToStorage();
+        storageManager.saveToStorage();
         panelsRenderer.renderCategories();
         showMessage('Categoria creada i afegida al catàleg', 'success');
     }
@@ -210,7 +210,7 @@ class CategoryManager {
             cal.categories = cal.categories.filter(c => c.id !== categoryId);
         });
 
-        saveToStorage();
+        storageManager.saveToStorage();
         calendarManager.updateUI();
         showMessage('Categoria eliminada del catàleg i de tots els calendaris', 'success');
     }
@@ -276,7 +276,7 @@ class CategoryManager {
     
     // Completar edició de categoria
     completeCategoryEdit() {
-        saveToStorage();
+        storageManager.saveToStorage();
         panelsRenderer.renderCategories();
         viewManager.renderCurrentView(); // Re-renderitzar per mostrar canvis en esdeveniments
         showMessage('Categoria actualitzada en tots els calendaris', 'success');

@@ -71,7 +71,7 @@ class EventManager {
             'Eliminar event',
             () => {
                 calendar.events = calendar.events.filter(e => e.id !== appState.editingEventId);
-                saveToStorage();
+                storageManager.saveToStorage();
                 viewManager.renderCurrentView();
                 closeModal('eventModal');
                 showMessage('Event eliminat correctament', 'success');
@@ -104,7 +104,7 @@ class EventManager {
         calendar.events = newEvents;
         
         // Persistir i re-renderitzar
-        saveToStorage();
+        storageManager.saveToStorage();
         viewManager.renderCurrentView();
         
         showMessage(`Event "${event.title}" mogut correctament`, 'success');
@@ -297,7 +297,7 @@ class EventManager {
     
     // Completar desament d'esdeveniment
     completeEventSave() {
-        saveToStorage();
+        storageManager.saveToStorage();
         viewManager.renderCurrentView();
         panelsRenderer.renderCategories(); // Re-renderitzar per mostrar nova categoria si s'ha afegit
         closeModal('eventModal');

@@ -28,7 +28,7 @@ class Bootstrap {
             viewManager.initializeRenderers();
             document.addEventListener('click', (e) => this.handleAction(e));
             document.addEventListener('dblclick', (e) => this.handleAction(e));
-            loadFromStorage();
+            storageManager.loadFromStorage();
             loadSavedTheme();
             getCurrentCalendar();
             calendarManager.updateUI();

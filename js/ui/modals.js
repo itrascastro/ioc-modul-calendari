@@ -197,7 +197,7 @@ function selectCategoryColor(newColor) {
     });
     
     closeModal('colorPickerModal');
-    saveToStorage();
+    storageManager.saveToStorage();
     panelsRenderer.renderCategories();
     viewManager.renderCurrentView(); // Re-renderitzar per mostrar canvis en esdeveniments
     

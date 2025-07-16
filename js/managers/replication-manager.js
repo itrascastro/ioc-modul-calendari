@@ -125,7 +125,7 @@ class ReplicationManager {
             appState.currentDate = parseUTCDate(targetCalendar.startDate);
             
             // Persistir canvis
-            saveToStorage();
+            storageManager.saveToStorage();
             calendarManager.updateUI();
             closeModal('replicationModal');
             
@@ -254,7 +254,7 @@ class ReplicationManager {
         appState.unplacedEvents.splice(eventIndex, 1);
         
         // Persistir i actualitzar
-        saveToStorage();
+        storageManager.saveToStorage();
         viewManager.renderCurrentView();
         
         // Actualitzar UI
@@ -281,7 +281,7 @@ class ReplicationManager {
                 appState.unplacedEvents.splice(eventIndex, 1);
                 
                 // Persistir canvis
-                saveToStorage();
+                storageManager.saveToStorage();
                 
                 // Actualitzar UI
                 panelsRenderer.renderUnplacedEvents();

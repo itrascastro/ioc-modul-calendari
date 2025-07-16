@@ -67,7 +67,7 @@ class CalendarManager {
                     appState.currentCalendarId = null;
                 }
                 
-                saveToStorage();
+                storageManager.saveToStorage();
                 this.updateUI();
                 showMessage('Calendari eliminat correctament', 'success');
             }
@@ -87,7 +87,7 @@ class CalendarManager {
         // Sempre tornar a vista mensual quan es canvia de calendari
         viewManager.changeView('month');
         
-        saveToStorage();
+        storageManager.saveToStorage();
         this.updateUI();
     }
     
@@ -147,7 +147,7 @@ class CalendarManager {
         // Sempre tornar a vista mensual quan es crea un calendari
         viewManager.changeView('month');
         
-        saveToStorage();
+        storageManager.saveToStorage();
         this.updateUI();
         closeModal('calendarSetupModal');
         showMessage('Calendari guardat correctament', 'success');
@@ -241,7 +241,7 @@ class CalendarManager {
                         // Sempre tornar a vista mensual quan es carrega un calendari
                         viewManager.changeView('month');
                         
-                        saveToStorage();
+                        storageManager.saveToStorage();
                         this.updateUI();
                         showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
                         
