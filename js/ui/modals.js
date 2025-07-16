@@ -203,4 +203,3 @@ function selectCategoryColor(newColor) {
     
     appStateManager.clearSelectedCategoryId();
 }
-

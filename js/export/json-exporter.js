@@ -123,12 +123,3 @@ class JsonExporter {
 
 // === INSTÀNCIA GLOBAL ===
 const jsonExporter = new JsonExporter();
-
-// === FUNCIONS PÚBLIQUES ===
-function saveCalendarJSON(calendarId) {
-    jsonExporter.exportCalendar(calendarId);
-}
-
-function exportCalendarEventsJSON(calendarId) {
-    jsonExporter.exportEventsOnly(calendarId);
-}

@@ -307,21 +307,3 @@ class EventManager {
 
 // === INSTÀNCIA GLOBAL ===
 const eventManager = new EventManager();
-
-// === FUNCIONS PÚBLIQUES ===
-
-// Funció temporal per debug - mostra l'estat del catàleg
-function debugCatalog() {
-    console.log('=== DEBUG CATÀLEG DE CATEGORIES ===');
-    console.log('appStateManager.categoryTemplates:', appStateManager.categoryTemplates);
-    console.log('Quantitat:', appStateManager.categoryTemplates.length);
-    
-    const calendar = appStateManager.getCurrentCalendar();
-    if (calendar) {
-        console.log('Categories del calendari actual:', calendar.categories);
-        console.log('Categories de sistema:', calendar.categories.filter(c => c.isSystem));
-        console.log('Categories d\'usuari al calendari:', calendar.categories.filter(c => !c.isSystem));
-    }
-}
-
-

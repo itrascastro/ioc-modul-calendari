@@ -274,4 +274,3 @@ class StorageManager {
 
 // Crear instància global de StorageManager
 const storageManager = new StorageManager();
-

@@ -145,4 +145,3 @@ class DayViewRenderer extends CalendarRenderer {
 
 // Renderitzador principal per a vista diària
 const dayRenderer = new DayViewRenderer();
-

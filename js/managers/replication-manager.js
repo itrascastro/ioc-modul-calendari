@@ -300,6 +300,3 @@ class ReplicationManager {
 
 // === INSTÀNCIA GLOBAL ===
 const replicationManager = new ReplicationManager();
-
-// === FUNCIONS PÚBLIQUES ===
-

@@ -128,8 +128,3 @@ class HtmlExporter {
 
 // === INSTÀNCIA GLOBAL ===
 const htmlExporter = new HtmlExporter();
-
-// === FUNCIONS PÚBLIQUES ===
-function exportCalendarHTML(calendarId) {
-    htmlExporter.exportCalendar(calendarId);
-}

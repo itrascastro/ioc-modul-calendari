@@ -139,4 +139,3 @@ function getWeekStartDate(date) {
 function getWeekEndDate(date) {
     return weekRenderer.getWeekEnd(date);
 }
-

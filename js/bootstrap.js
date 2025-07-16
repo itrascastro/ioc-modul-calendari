@@ -80,9 +80,9 @@ class Bootstrap {
             case 'open-calendar-actions-modal': openCalendarActionsModal(target.dataset.calendarId); break;
             case 'open-color-picker-modal': openColorPickerModal(target.dataset.categoryId, target); break;
             case 'select-color': selectCategoryColor(target.dataset.color); break;
-            case 'save-calendar-json': saveCalendarJSON(appStateManager.getSelectedCalendarId()); break;
-            case 'export-calendar-ics': exportCalendarICS(appStateManager.getSelectedCalendarId()); break;
-            case 'export-calendar-html': exportCalendarHTML(appStateManager.getSelectedCalendarId()); break;
+            case 'save-calendar-json': jsonExporter.exportCalendar(appStateManager.getSelectedCalendarId()); break;
+            case 'export-calendar-ics': icsExporter.exportCalendar(appStateManager.getSelectedCalendarId()); break;
+            case 'export-calendar-html': htmlExporter.exportCalendar(appStateManager.getSelectedCalendarId()); break;
             case 'delete-calendar': calendarManager.deleteCalendar(appStateManager.getSelectedCalendarId()); break;
             case 'replicate-calendar': replicationManager.openReplicationModal(appStateManager.getSelectedCalendarId()); break;
             case 'execute-replication': replicationManager.executeReplication(); break;

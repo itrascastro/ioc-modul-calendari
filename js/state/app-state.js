@@ -265,4 +265,3 @@ class AppStateManager {
 
 // Crear instància global de AppStateManager
 const appStateManager = new AppStateManager();
-

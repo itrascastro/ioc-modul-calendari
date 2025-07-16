@@ -111,8 +111,3 @@ class IcsExporter {
 
 // === INSTÀNCIA GLOBAL ===
 const icsExporter = new IcsExporter();
-
-// === FUNCIONS PÚBLIQUES ===
-function exportCalendarICS(calendarId) {
-    icsExporter.exportCalendar(calendarId);
-}

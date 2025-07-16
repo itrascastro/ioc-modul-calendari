@@ -292,6 +292,3 @@ class CategoryManager {
 
 // === INSTÀNCIA GLOBAL ===
 const categoryManager = new CategoryManager();
-
-// === FUNCIONS PÚBLIQUES ===
-

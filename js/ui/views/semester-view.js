@@ -163,4 +163,3 @@ function generateSemesterMonthHTML(monthData, calendar) {
 function getSemesterName(calendar) {
     return semesterRenderer.generateSemesterName(calendar);
 }
-

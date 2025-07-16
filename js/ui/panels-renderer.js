@@ -173,4 +173,3 @@ class PanelsRenderer {
 
 // Renderitzador principal per als panells laterals
 const panelsRenderer = new PanelsRenderer();
-
