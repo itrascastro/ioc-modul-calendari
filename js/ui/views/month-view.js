@@ -215,9 +215,3 @@ function generateDayCell(date, calendar, isOutOfMonth = false) {
     return monthRenderer.generateDayCellHTML(dayData, calendar, 'DOM');
 }
 
-// === INICIALITZACIÓ ===
-
-// Inicialitzar sistema de renderitzat mensual
-function initializeMonthView() {
-    console.log('[MonthView] Vista mensual inicialitzada');
-}

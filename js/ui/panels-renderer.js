@@ -174,9 +174,3 @@ class PanelsRenderer {
 // Renderitzador principal per als panells laterals
 const panelsRenderer = new PanelsRenderer();
 
-// === INICIALITZACIÓ ===
-
-// Inicialitzar sistema de renderitzat de panells
-function initializePanelsRenderer() {
-    console.log('[PanelsRenderer] Renderitzador de panells inicialitzat');
-}

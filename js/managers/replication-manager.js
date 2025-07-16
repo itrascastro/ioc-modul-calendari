@@ -303,7 +303,3 @@ const replicationManager = new ReplicationManager();
 
 // === FUNCIONS PÚBLIQUES ===
 
-// === INICIALITZACIÓ ===
-function initializeReplicationManager() {
-    console.log('[ReplicationManager] Gestor de replicació inicialitzat');
-}

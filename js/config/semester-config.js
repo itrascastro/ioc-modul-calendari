@@ -305,8 +305,3 @@ class SemesterConfig {
 
 // === INSTÀNCIA GLOBAL ===
 const semesterConfig = new SemesterConfig();
-
-// === INICIALITZACIÓ ===
-function initializeSemesterConfig() {
-    console.log('[SemesterConfig] Gestor de configuració inicialitzat');
-}

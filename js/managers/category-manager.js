@@ -295,7 +295,3 @@ const categoryManager = new CategoryManager();
 
 // === FUNCIONS PÚBLIQUES ===
 
-// === INICIALITZACIÓ ===
-function initializeCategoryManager() {
-    console.log('[CategoryManager] Gestor de categories inicialitzat');
-}

@@ -104,10 +104,3 @@ class CategoryService {
         return { total, system, user };
     }
 }
-
-// === INICIALITZACIÓ ===
-
-// Inicialitzar servei de categories
-function initializeCategoryService() {
-    console.log('[CategoryService] Servei de categories inicialitzat');
-}

@@ -198,10 +198,3 @@ class CalendarRenderer {
         throw new Error('El mètode generateHTMLOutput() ha de ser implementat per la classe filla');
     }
 }
-
-// === INICIALITZACIÓ ===
-
-// Inicialitzar sistema de renderitzat base
-function initializeCalendarRenderer() {
-    console.log('[CalendarRenderer] Classe base de renderitzat inicialitzada');
-}

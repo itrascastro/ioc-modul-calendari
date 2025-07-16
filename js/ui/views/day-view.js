@@ -146,9 +146,3 @@ class DayViewRenderer extends CalendarRenderer {
 // Renderitzador principal per a vista diària
 const dayRenderer = new DayViewRenderer();
 
-// === INICIALITZACIÓ ===
-
-// Inicialitzar sistema de renderitzat diari
-function initializeDayView() {
-    console.log('[DayView] Vista diària inicialitzada');
-}

@@ -133,8 +133,3 @@ const htmlExporter = new HtmlExporter();
 function exportCalendarHTML(calendarId) {
     htmlExporter.exportCalendar(calendarId);
 }
-
-// === INICIALITZACIÓ ===
-function initializeHtmlExporter() {
-    console.log('[HtmlExporter] Exportador HTML inicialitzat');
-}

@@ -313,10 +313,3 @@ class ReplicationEngine {
 
 // Motor de replicació
 const replicationEngine = new ReplicationEngine();
-
-// === INICIALITZACIÓ ===
-
-// Inicialitzar motor de replicació
-function initializeReplicationEngine() {
-    console.log('[ReplicationEngine] Motor de replicació inicialitzat');
-}

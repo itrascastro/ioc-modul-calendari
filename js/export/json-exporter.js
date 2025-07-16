@@ -132,8 +132,3 @@ function saveCalendarJSON(calendarId) {
 function exportCalendarEventsJSON(calendarId) {
     jsonExporter.exportEventsOnly(calendarId);
 }
-
-// === INICIALITZACIÓ ===
-function initializeJsonExporter() {
-    console.log('[JsonExporter] Exportador JSON inicialitzat');
-}

@@ -164,9 +164,3 @@ function getSemesterName(calendar) {
     return semesterRenderer.generateSemesterName(calendar);
 }
 
-// === INICIALITZACIÓ ===
-
-// Inicialitzar sistema de renderitzat semestral
-function initializeSemesterView() {
-    console.log('[SemesterView] Vista semestral inicialitzada');
-}

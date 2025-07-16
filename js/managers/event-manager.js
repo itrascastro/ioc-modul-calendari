@@ -325,7 +325,3 @@ function debugCatalog() {
 }
 
 
-// === INICIALITZACIÓ ===
-function initializeEventManager() {
-    console.log('[EventManager] Gestor d\'esdeveniments inicialitzat');
-}

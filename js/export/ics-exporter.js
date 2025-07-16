@@ -116,8 +116,3 @@ const icsExporter = new IcsExporter();
 function exportCalendarICS(calendarId) {
     icsExporter.exportCalendar(calendarId);
 }
-
-// === INICIALITZACIÓ ===
-function initializeIcsExporter() {
-    console.log('[IcsExporter] Exportador ICS inicialitzat');
-}

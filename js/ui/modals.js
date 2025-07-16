@@ -204,9 +204,3 @@ function selectCategoryColor(newColor) {
     appStateManager.clearSelectedCategoryId();
 }
 
-// === GESTIÓ D'ESDEVENIMENTS DE MODAL ===
-
-// Inicialitzar esdeveniments de modal
-function initializeModalEvents() {
-    console.log('[Modals] Sistema de modals inicialitzat');
-}

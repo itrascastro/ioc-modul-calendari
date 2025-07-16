@@ -37,8 +37,3 @@ function generateNextCategoryId(calendarId) {
     calendar.categoryCounter = (calendar.categoryCounter || 0) + 1;
     return `${calendar.name}_C${calendar.categoryCounter}`;
 }
-
-// === INICIALITZACIÓ ===
-function initializeIDGenerators() {
-    console.log('[IDGenerators] Generadors d\'ID inicialitzats');
-}
