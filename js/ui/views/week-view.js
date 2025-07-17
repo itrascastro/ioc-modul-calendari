@@ -26,27 +26,16 @@ class WeekViewRenderer extends CalendarRenderer {
         }
     }
     
-    // === CÀLCULS DE SETMANA ===
+    // === CÀLCULS DE SETMANA (ara usa mètodes del pare) ===
     
     // Obtenir inici de setmana (dilluns)
     getWeekStart(date) {
-        const dayOfWeek = date.getUTCDay(); // 0 = diumenge, 1 = dilluns, etc.
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Ajustar per començar en dilluns
-        
-        return createUTCDate(
-            date.getUTCFullYear(),
-            date.getUTCMonth(),
-            date.getUTCDate() - daysToMonday
-        );
+        return super.getWeekStart(date);
     }
     
     // Obtenir final de setmana (diumenge)
     getWeekEnd(weekStart) {
-        return createUTCDate(
-            weekStart.getUTCFullYear(),
-            weekStart.getUTCMonth(),
-            weekStart.getUTCDate() + 6
-        );
+        return super.getWeekEnd(weekStart);
     }
     
     // Generar dades de la setmana

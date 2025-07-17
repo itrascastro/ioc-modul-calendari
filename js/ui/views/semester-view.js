@@ -42,15 +42,9 @@ class SemesterViewRenderer extends CalendarRenderer {
         const firstDay = new Date(startDate);
         const startDayOfWeek = firstDay.getUTCDay() === 0 ? 6 : firstDay.getUTCDay() - 1;
         
-        // Afegir dies anteriors per completar la primera setmana
-        for (let i = startDayOfWeek; i > 0; i--) {
-            const dayDate = createUTCDate(
-                firstDay.getUTCFullYear(),
-                firstDay.getUTCMonth(),
-                firstDay.getUTCDate() - i
-            );
-            semesterData.days.push(this.generateDayData(dayDate, calendar, true));
-        }
+        // Afegir dies anteriors per completar la primera setmana (usa mètode del pare)
+        const prevDays = this.completePeriodStartDays(firstDay, startDayOfWeek, calendar);
+        semesterData.days.push(...prevDays);
         
         // Afegir tots els dies del semestre
         let currentDate = new Date(startDate);
@@ -73,19 +67,11 @@ class SemesterViewRenderer extends CalendarRenderer {
             currentDate.setUTCDate(currentDate.getUTCDate() + 1);
         }
         
-        // Afegir dies posteriors per completar l'última setmana
+        // Afegir dies posteriors per completar l'última setmana (usa mètode del pare)
         const lastDay = new Date(endDate);
         const endDayOfWeek = lastDay.getUTCDay() === 0 ? 6 : lastDay.getUTCDay() - 1;
-        const daysToComplete = 6 - endDayOfWeek;
-        
-        for (let i = 1; i <= daysToComplete; i++) {
-            const dayDate = createUTCDate(
-                lastDay.getUTCFullYear(),
-                lastDay.getUTCMonth(),
-                lastDay.getUTCDate() + i
-            );
-            semesterData.days.push(this.generateDayData(dayDate, calendar, true));
-        }
+        const nextDays = this.completePeriodEndDays(lastDay, endDayOfWeek, calendar);
+        semesterData.days.push(...nextDays);
         
         return semesterData;
     }
@@ -111,29 +97,14 @@ class SemesterViewRenderer extends CalendarRenderer {
     
     // === UTILITATS ===
     
-    // Generar nom del semestre
+    // Generar nom del semestre (ara usa mètode del pare)
     generateSemesterName(calendar) {
-        // Usar la propietat code del calendari
-        return `Semestre ${calendar.code}`;
+        return this.generatePeriodName(calendar, 'semester');
     }
     
-    // Formatar rang de dates
+    // Formatar rang de dates (ara usa el mètode del pare)
     formatDateRange(startDate, endDate) {
-        const startFormatted = startDate.toLocaleDateString('ca-ES', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            timeZone: 'UTC'
-        });
-        
-        const endFormatted = endDate.toLocaleDateString('ca-ES', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            timeZone: 'UTC'
-        });
-        
-        return `${startFormatted} - ${endFormatted}`;
+        return super.formatDateRange(startDate, endDate);
     }
     
     // Obtenir primer dia del semestre

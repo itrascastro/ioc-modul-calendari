@@ -42,11 +42,9 @@ class MonthViewRenderer extends CalendarRenderer {
             days: []
         };
         
-        // Dies del mes anterior
-        for (let i = startDayOfWeek; i > 0; i--) {
-            const date = createUTCDate(year, month, 1 - i);
-            monthData.days.push(this.generateDayData(date, calendar, true));
-        }
+        // Dies del mes anterior (usa mètode del pare)
+        const prevDays = this.completePeriodStartDays(firstDayOfMonth, startDayOfWeek, calendar);
+        monthData.days.push(...prevDays);
         
         // Dies del mes actual
         for (let i = 1; i <= lastDayOfMonth.getUTCDate(); i++) {
@@ -57,9 +55,11 @@ class MonthViewRenderer extends CalendarRenderer {
         // Dies del mes següent per completar la graella
         const totalCells = startDayOfWeek + lastDayOfMonth.getUTCDate();
         const nextMonthCells = (7 - (totalCells % 7)) % 7;
-        for (let i = 1; i <= nextMonthCells; i++) {
-            const date = createUTCDate(year, month + 1, i);
-            monthData.days.push(this.generateDayData(date, calendar, true));
+        if (nextMonthCells > 0) {
+            const lastDayOfMonthDate = createUTCDate(year, month, lastDayOfMonth.getUTCDate());
+            const lastDayOfWeek = lastDayOfMonthDate.getUTCDay() === 0 ? 6 : lastDayOfMonthDate.getUTCDay() - 1;
+            const nextDays = this.completePeriodEndDays(lastDayOfMonthDate, lastDayOfWeek, calendar);
+            monthData.days.push(...nextDays.slice(0, nextMonthCells));
         }
         
         // Generar sortida segons format
