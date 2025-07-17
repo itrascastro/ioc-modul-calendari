@@ -31,7 +31,7 @@ class StorageManager {
             // Preparar estat per guardar (convertir dates a strings)
             const stateToSave = { 
                 ...appStateManager.appState, 
-                currentDate: dateToUTCString(appStateManager.currentDate) 
+                currentDate: dateHelper.toUTCString(appStateManager.currentDate) 
             };
             
             // Guardar a localStorage
@@ -78,7 +78,7 @@ class StorageManager {
             // Restaurar estat (convertir strings a dates)
             appStateManager.appState = { 
                 ...loadedState, 
-                currentDate: parseUTCDate(loadedState.currentDate.split('T')[0]) 
+                currentDate: dateHelper.parseUTC(loadedState.currentDate.split('T')[0]) 
             };
         
             // Migració automàtica: inicialitzar catàleg si no existeix
@@ -192,7 +192,7 @@ class StorageManager {
                 exportedAt: new Date().toISOString(),
                 data: {
                     ...appStateManager.appState,
-                    currentDate: dateToUTCString(appStateManager.currentDate)
+                    currentDate: dateHelper.toUTCString(appStateManager.currentDate)
                 }
             };
         
@@ -216,7 +216,7 @@ class StorageManager {
             // Restaurar estat
             appStateManager.appState = {
                 ...importData.data,
-                currentDate: parseUTCDate(importData.data.currentDate.split('T')[0])
+                currentDate: dateHelper.parseUTC(importData.data.currentDate.split('T')[0])
             };
         
             // Guardar estat importat

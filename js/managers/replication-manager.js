@@ -122,7 +122,7 @@ class ReplicationManager {
 
             // Canviar al calendari destí
             appStateManager.currentCalendarId = targetCalendarId;
-            appStateManager.currentDate = parseUTCDate(targetCalendar.startDate);
+            appStateManager.currentDate = dateHelper.parseUTC(targetCalendar.startDate);
             
             // Persistir canvis
             storageManager.saveToStorage();

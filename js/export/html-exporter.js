@@ -39,14 +39,14 @@ class HtmlExporter {
     
     // === GENERACIÓ DE HTML COMPLET ===
     generateHTMLVisualCalendar(calendar) {
-        const startDate = parseUTCDate(calendar.startDate);
-        const endDate = parseUTCDate(calendar.endDate);
+        const startDate = dateHelper.parseUTC(calendar.startDate);
+        const endDate = dateHelper.parseUTC(calendar.endDate);
         
         // Usar la plantilla i reemplaçar placeholders
         return calendarHtmlTemplate
             .replace('{{CALENDAR_NAME}}', calendar.name)
             .replace('{{CALENDAR_NAME}}', calendar.name) // Apareix dues vegades
-            .replace('{{PERIOD_TEXT}}', `${formatDateForDisplay(startDate)} - ${formatDateForDisplay(endDate)}`)
+            .replace('{{PERIOD_TEXT}}', `${dateHelper.formatForDisplay(startDate)} - ${dateHelper.formatForDisplay(endDate)}`)
             .replace('{{CALENDAR_CSS}}', calendarCssStyles)
             .replace('{{CATEGORIES_LEGEND}}', this.generateCategoriesLegend(calendar))
             .replace('{{MONTHS_HTML}}', this.generateAllMonthsHTML(calendar, startDate, endDate))
@@ -96,8 +96,8 @@ class HtmlExporter {
     // === GENERACIÓ DE MESOS ===
     generateAllMonthsHTML(calendar, startDate, endDate) {
         const months = [];
-        const currentDate = createUTCDate(startDate.getUTCFullYear(), startDate.getUTCMonth(), 1);
-        const lastMonth = createUTCDate(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1);
+        const currentDate = dateHelper.createUTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), 1);
+        const lastMonth = dateHelper.createUTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), 1);
         
         while (currentDate <= lastMonth) {
             months.push(this.generateMonthHTML(calendar, currentDate));

@@ -28,8 +28,8 @@ class SemesterViewRenderer extends CalendarRenderer {
     
     // === GENERACIÓ DE DADES DEL SEMESTRE ===
     generateSemesterData(calendar) {
-        const startDate = parseUTCDate(calendar.startDate);
-        const endDate = parseUTCDate(calendar.endDate);
+        const startDate = dateHelper.parseUTC(calendar.startDate);
+        const endDate = dateHelper.parseUTC(calendar.endDate);
         
         const semesterData = {
             startDate: startDate,
@@ -105,12 +105,12 @@ class SemesterViewRenderer extends CalendarRenderer {
     
     // Obtenir primer dia del semestre
     getSemesterStart(calendar) {
-        return parseUTCDate(calendar.startDate);
+        return dateHelper.parseUTC(calendar.startDate);
     }
     
     // Obtenir últim dia del semestre
     getSemesterEnd(calendar) {
-        return parseUTCDate(calendar.endDate);
+        return dateHelper.parseUTC(calendar.endDate);
     }
 }
 

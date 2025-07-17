@@ -31,14 +31,14 @@ class MonthViewRenderer extends CalendarRenderer {
         const month = currentDate.getUTCMonth();
         
         // Calcular dies del mes
-        const firstDayOfMonth = createUTCDate(year, month, 1);
-        const lastDayOfMonth = createUTCDate(year, month + 1, 0);
+        const firstDayOfMonth = dateHelper.createUTC(year, month, 1);
+        const lastDayOfMonth = dateHelper.createUTC(year, month + 1, 0);
         const startDayOfWeek = firstDayOfMonth.getUTCDay() === 0 ? 6 : firstDayOfMonth.getUTCDay() - 1;
         
         const monthData = {
             year: year,
             month: month,
-            monthName: getMonthName(currentDate),
+            monthName: dateHelper.getMonthName(currentDate),
             days: []
         };
         
@@ -48,7 +48,7 @@ class MonthViewRenderer extends CalendarRenderer {
         
         // Dies del mes actual
         for (let i = 1; i <= lastDayOfMonth.getUTCDate(); i++) {
-            const date = createUTCDate(year, month, i);
+            const date = dateHelper.createUTC(year, month, i);
             monthData.days.push(this.generateDayData(date, calendar, false));
         }
         
@@ -56,7 +56,7 @@ class MonthViewRenderer extends CalendarRenderer {
         const totalCells = startDayOfWeek + lastDayOfMonth.getUTCDate();
         const nextMonthCells = (7 - (totalCells % 7)) % 7;
         if (nextMonthCells > 0) {
-            const lastDayOfMonthDate = createUTCDate(year, month, lastDayOfMonth.getUTCDate());
+            const lastDayOfMonthDate = dateHelper.createUTC(year, month, lastDayOfMonth.getUTCDate());
             const lastDayOfWeek = lastDayOfMonthDate.getUTCDay() === 0 ? 6 : lastDayOfMonthDate.getUTCDay() - 1;
             const nextDays = this.completePeriodEndDays(lastDayOfMonthDate, lastDayOfWeek, calendar);
             monthData.days.push(...nextDays.slice(0, nextMonthCells));

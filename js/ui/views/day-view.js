@@ -27,7 +27,7 @@ class DayViewRenderer extends CalendarRenderer {
     
     // === RENDERITZACIÓ PRINCIPAL ===
     render(calendar, currentDate, outputFormat = 'DOM') {
-        const dateStr = dateToUTCString(currentDate);
+        const dateStr = dateHelper.toUTCString(currentDate);
         
         // Generar dades del dia
         const dayData = this.generateDayData(currentDate, calendar, false);
@@ -46,8 +46,8 @@ class DayViewRenderer extends CalendarRenderer {
     
     // === GENERACIÓ DE SORTIDA DOM ===
     generateDOMOutput(dayData, calendar, isInRange, isWeekday) {
-        const dayName = getDayHeaders()[dayData.date.getUTCDay() === 0 ? 6 : dayData.date.getUTCDay() - 1];
-        const monthName = getMonthName(dayData.date);
+        const dayName = dateHelper.getDayHeaders()[dayData.date.getUTCDay() === 0 ? 6 : dayData.date.getUTCDay() - 1];
+        const monthName = dateHelper.getMonthName(dayData.date);
         
         // Generar esdeveniments
         const eventsHTML = dayData.events.length > 0 
@@ -80,8 +80,8 @@ class DayViewRenderer extends CalendarRenderer {
     
     // === GENERACIÓ DE SORTIDA HTML ===
     generateHTMLOutput(dayData, calendar, isInRange, isWeekday) {
-        const dayName = getDayHeaders()[dayData.date.getUTCDay() === 0 ? 6 : dayData.date.getUTCDay() - 1];
-        const monthName = getMonthName(dayData.date);
+        const dayName = dateHelper.getDayHeaders()[dayData.date.getUTCDay() === 0 ? 6 : dayData.date.getUTCDay() - 1];
+        const monthName = dateHelper.getMonthName(dayData.date);
         
         const eventsHTML = dayData.events.length > 0 
             ? dayData.events.map(event => this.generateEventListItem(event, calendar, 'HTML')).join('')

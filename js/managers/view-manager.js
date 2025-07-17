@@ -88,7 +88,7 @@ class ViewManager {
         }
         
         // Parsejar la data i actualitzar data actual
-        const targetDate = parseUTCDate(dateStr);
+        const targetDate = dateHelper.parseUTC(dateStr);
         if (!targetDate) {
             console.warn('[ViewManager] No es pot parsejar la data:', dateStr);
             return false;
@@ -123,7 +123,7 @@ class ViewManager {
         }
         
         // Parsejar la data i actualitzar data actual
-        const targetDate = parseUTCDate(dateStr);
+        const targetDate = dateHelper.parseUTC(dateStr);
         if (!targetDate) {
             console.warn('[ViewManager] No es pot parsejar la data:', dateStr);
             return false;
@@ -192,7 +192,7 @@ class ViewManager {
         calendarManager.updateNavigationControls(calendar);
         
         const monthHTML = this.renderers.month.render(calendar, appStateManager.currentDate, 'DOM');
-        periodDisplay.textContent = getMonthName(appStateManager.currentDate);
+        periodDisplay.textContent = dateHelper.getMonthName(appStateManager.currentDate);
         gridWrapper.innerHTML = monthHTML;
         
         setupDragAndDrop(gridWrapper, calendar);
@@ -213,8 +213,8 @@ class ViewManager {
         gridWrapper.innerHTML = dayHTML;
         
         // Actualitzar títol del període
-        const dayName = getDayHeaders()[appStateManager.currentDate.getUTCDay() === 0 ? 6 : appStateManager.currentDate.getUTCDay() - 1];
-        periodDisplay.textContent = `${dayName}, ${appStateManager.currentDate.getUTCDate()} ${getMonthName(appStateManager.currentDate)}`;
+        const dayName = dateHelper.getDayHeaders()[appStateManager.currentDate.getUTCDay() === 0 ? 6 : appStateManager.currentDate.getUTCDay() - 1];
+        periodDisplay.textContent = `${dayName}, ${appStateManager.currentDate.getUTCDate()} ${dateHelper.getMonthName(appStateManager.currentDate)}`;
         
         // Configurar drag & drop específic per vista diària
         this.setupDayViewDragDrop();
@@ -285,8 +285,8 @@ class ViewManager {
         if (!appStateManager.currentCalendarId) return false;
         
         const calendar = appStateManager.getCurrentCalendar();
-        const calendarStart = parseUTCDate(calendar.startDate);
-        const calendarEnd = parseUTCDate(calendar.endDate);
+        const calendarStart = dateHelper.parseUTC(calendar.startDate);
+        const calendarEnd = dateHelper.parseUTC(calendar.endDate);
         
         let newDate;
         
@@ -318,7 +318,7 @@ class ViewManager {
     
     // Navegació específica per dies
     navigateDay(direction, calendarStart, calendarEnd) {
-        const newDate = createUTCDate(
+        const newDate = dateHelper.createUTC(
             appStateManager.currentDate.getUTCFullYear(), 
             appStateManager.currentDate.getUTCMonth(), 
             appStateManager.currentDate.getUTCDate() + direction
@@ -338,7 +338,7 @@ class ViewManager {
         const currentWeekStart = this.renderers.week.getWeekStart(appStateManager.currentDate);
         
         // Calcular nova setmana (direction = 1 per següent, -1 per anterior)
-        const newWeekStart = createUTCDate(
+        const newWeekStart = dateHelper.createUTC(
             currentWeekStart.getUTCFullYear(),
             currentWeekStart.getUTCMonth(),
             currentWeekStart.getUTCDate() + (direction * 7)
@@ -365,13 +365,13 @@ class ViewManager {
     
     // Navegació específica per mesos
     navigateMonth(direction, calendarStart, calendarEnd) {
-        const newDate = createUTCDate(
+        const newDate = dateHelper.createUTC(
             appStateManager.currentDate.getUTCFullYear(), 
             appStateManager.currentDate.getUTCMonth() + direction, 
             1
         );
         
-        const newDateEnd = createUTCDate(newDate.getUTCFullYear(), newDate.getUTCMonth() + 1, 0);
+        const newDateEnd = dateHelper.createUTC(newDate.getUTCFullYear(), newDate.getUTCMonth() + 1, 0);
         
         return (newDate <= calendarEnd && newDateEnd >= calendarStart) ? newDate : null;
     }
@@ -400,8 +400,8 @@ class ViewManager {
         
         if (!prevBtn || !nextBtn) return;
         
-        const calendarStart = parseUTCDate(calendar.startDate);
-        const calendarEnd = parseUTCDate(calendar.endDate);
+        const calendarStart = dateHelper.parseUTC(calendar.startDate);
+        const calendarEnd = dateHelper.parseUTC(calendar.endDate);
         
         // Lògica específica per vista
         switch (this.currentView) {
@@ -424,7 +424,7 @@ class ViewManager {
     // Actualitzar navegació per vista diària
     updateDayNavigationButtons(prevBtn, nextBtn, calendarStart, calendarEnd) {
         // Dia anterior
-        const prevDay = createUTCDate(
+        const prevDay = dateHelper.createUTC(
             appStateManager.currentDate.getUTCFullYear(), 
             appStateManager.currentDate.getUTCMonth(), 
             appStateManager.currentDate.getUTCDate() - 1
@@ -432,7 +432,7 @@ class ViewManager {
         prevBtn.disabled = prevDay < calendarStart;
         
         // Dia següent
-        const nextDay = createUTCDate(
+        const nextDay = dateHelper.createUTC(
             appStateManager.currentDate.getUTCFullYear(), 
             appStateManager.currentDate.getUTCMonth(), 
             appStateManager.currentDate.getUTCDate() + 1
@@ -447,7 +447,7 @@ class ViewManager {
         const currentWeekStart = this.renderers.week.getWeekStart(appStateManager.currentDate);
         
         // Setmana anterior
-        const prevWeekStart = createUTCDate(
+        const prevWeekStart = dateHelper.createUTC(
             currentWeekStart.getUTCFullYear(),
             currentWeekStart.getUTCMonth(),
             currentWeekStart.getUTCDate() - 7
@@ -456,7 +456,7 @@ class ViewManager {
         prevBtn.disabled = prevWeekEnd < calendarStart;
         
         // Setmana següent
-        const nextWeekStart = createUTCDate(
+        const nextWeekStart = dateHelper.createUTC(
             currentWeekStart.getUTCFullYear(),
             currentWeekStart.getUTCMonth(),
             currentWeekStart.getUTCDate() + 7
@@ -483,7 +483,7 @@ class ViewManager {
         // Fer esdeveniments de la llista draggables
         dayContainer.querySelectorAll('.event-list-item.is-user-event[draggable="true"]').forEach(eventEl => {
             const eventData = JSON.parse((eventEl.dataset.event || '{}').replace(/&quot;/g, '"'));
-            const dateStr = dateToUTCString(appStateManager.currentDate);
+            const dateStr = dateHelper.toUTCString(appStateManager.currentDate);
             
             if (eventData.id && dateStr) {
                 eventManager.makeEventDraggable(eventEl, eventData, dateStr);
@@ -502,7 +502,7 @@ class ViewManager {
             const calendar = appStateManager.getCurrentCalendar();
             if (!calendar) return;
             
-            const dateStr = dateToUTCString(appStateManager.currentDate);
+            const dateStr = dateHelper.toUTCString(appStateManager.currentDate);
             let isValid = false;
             
             if (appStateManager.draggedFromDate === 'unplaced') {
@@ -530,7 +530,7 @@ class ViewManager {
             e.preventDefault();
             dayContainer.classList.remove('drop-target', 'drop-invalid');
             
-            const dateStr = dateToUTCString(appStateManager.currentDate);
+            const dateStr = dateHelper.toUTCString(appStateManager.currentDate);
             
             if (appStateManager.draggedEvent) {
                 if (appStateManager.draggedFromDate === 'unplaced') {
@@ -581,8 +581,8 @@ class ViewManager {
         const containerBottom = containerRect.bottom;
         
         // Obtenir dates del calendari per validació
-        const calendarStart = parseUTCDate(calendar.startDate);
-        const calendarEnd = parseUTCDate(calendar.endDate);
+        const calendarStart = dateHelper.parseUTC(calendar.startDate);
+        const calendarEnd = dateHelper.parseUTC(calendar.endDate);
         
         // Obtenir tots els dies i agrupar per mes
         const dayElements = gridWrapper.querySelectorAll('.day-cell[data-date]');
@@ -592,11 +592,11 @@ class ViewManager {
             const rect = dayEl.getBoundingClientRect();
             const dateStr = dayEl.getAttribute('data-date');
             if (dateStr) {
-                const date = parseUTCDate(dateStr);
+                const date = dateHelper.parseUTC(dateStr);
                 if (date) {
                     // Només processar dies que estan dins del rang del calendari
                     if (date >= calendarStart && date <= calendarEnd) {
-                        const monthKey = getMonthName(date);
+                        const monthKey = dateHelper.getMonthName(date);
                         const monthYear = `${date.getUTCFullYear()}-${date.getUTCMonth()}`;
                         
                         if (!monthStats.has(monthKey)) {

@@ -151,7 +151,7 @@ class ReplicationEngine {
             console.log(`[${this.ENGINE_NAME}] Resultat: ${placedEvents.length} ubicats, ${unplacedEvents.length} no ubicats`);
             
             // Validació final de seguretat
-            const weekendEvents = placedEvents.filter(item => !isWeekdayStr(item.newDate));
+            const weekendEvents = placedEvents.filter(item => !dateHelper.isWeekday(item.newDate));
             if (weekendEvents.length > 0) {
                 console.error(`[${this.ENGINE_NAME}] ERROR CRÍTIC: ${weekendEvents.length} events en caps de setmana!`);
                 throw new Error(`Error de disseny: ${weekendEvents.length} events generats en caps de setmana`);
@@ -185,14 +185,14 @@ class ReplicationEngine {
         console.log(`[Espai Útil] Dies ocupats pel sistema: ${occupiedBySystem.size}`);
         
         // Iterar dia a dia
-        let currentDate = parseUTCDate(calendar.startDate);
-        const endDate = parseUTCDate(dataFiAvalucions);
+        let currentDate = dateHelper.parseUTC(calendar.startDate);
+        const endDate = dateHelper.parseUTC(dataFiAvalucions);
         
         while (currentDate <= endDate) {
-            const dateStr = dateToUTCString(currentDate);
+            const dateStr = dateHelper.toUTCString(currentDate);
             
             // Només dies laborals que no estan ocupats pel sistema
-            if (isWeekdayStr(dateStr) && !occupiedBySystem.has(dateStr)) {
+            if (dateHelper.isWeekday(dateStr) && !occupiedBySystem.has(dateStr)) {
                 espaiUtil.push(dateStr);
             }
             

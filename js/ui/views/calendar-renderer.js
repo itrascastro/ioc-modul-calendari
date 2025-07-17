@@ -26,7 +26,7 @@ class CalendarRenderer {
     
     // === GENERACIÓ DE DADES DE DIA ===
     generateDayData(date, calendar, isOutOfMonth = false) {
-        const dateStr = dateToUTCString(date);
+        const dateStr = dateHelper.toUTCString(date);
         const dayData = {
             date: date,
             dateStr: dateStr,
@@ -39,7 +39,7 @@ class CalendarRenderer {
         
         // Marcar només si està dins del calendari actiu i dins del rang de dates
         if (calendar && !isOutOfMonth && DateValidationService.isDateInCalendarRange(dateStr, calendar)) {
-            dayData.weekNumber = getCalendarWeekNumber(date, calendar.startDate);
+            dayData.weekNumber = dateHelper.getCalendarWeekNumber(date, calendar.startDate);
             dayData.events = calendar.events.filter(e => e.date === dateStr);
         }
         
@@ -58,7 +58,7 @@ class CalendarRenderer {
             return `<div class="event-item${systemClass}" style="background-color: ${color};" title="${event.title}">${event.title}</div>`;
         } else {
             // Per a DOM - text truncat per a millor UI
-            const truncatedTitle = truncateText(event.title, 30);
+            const truncatedTitle = textHelper.truncateText(event.title, 30);
             const eventClasses = ['event', isUserEvent ? 'is-user-event' : 'is-system-event'];
             const openModalAction = isUserEvent ? `data-action="open-event-modal" data-event="${JSON.stringify(event).replace(/"/g, '&quot;')}"` : '';
             const draggableAttr = isUserEvent ? 'draggable="true"' : '';
@@ -101,7 +101,7 @@ class CalendarRenderer {
     
     // === GENERACIÓ DE HTML DE CEL·LA DE DIA ===
     generateDayCellHTML(dayData, calendar, outputFormat = 'DOM') {
-        const isToday = dayData.dateStr === dateToUTCString(new Date());
+        const isToday = dayData.dateStr === dateHelper.toUTCString(new Date());
         const classes = ['day-cell'];
         
         if (dayData.isOutOfMonth) classes.push('out-of-month');
@@ -155,7 +155,7 @@ class CalendarRenderer {
     
     // Generar graella de dies per DOM (reutilitzable per month, week i semester views)
     generateCalendarGridDOM(dayDataArray, calendar) {
-        const dayHeaders = getDayHeaders();
+        const dayHeaders = dateHelper.getDayHeaders();
         const daysHTML = dayDataArray.map(dayData => 
             this.generateDayCellHTML(dayData, calendar, 'DOM')
         ).join('');
@@ -170,7 +170,7 @@ class CalendarRenderer {
     
     // Generar graella de dies per HTML (utilitzat principalment per vista mensual)
     generateCalendarGridHTML(dayDataArray, calendar) {
-        const dayHeaders = getDayHeaders();
+        const dayHeaders = dateHelper.getDayHeaders();
         const daysHTML = dayDataArray.map(dayData => 
             this.generateDayCellHTML(dayData, calendar, 'HTML')
         ).join('');
@@ -211,7 +211,7 @@ class CalendarRenderer {
         const dayOfWeek = date.getUTCDay(); // 0 = diumenge, 1 = dilluns, etc.
         const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Ajustar per començar en dilluns
         
-        return createUTCDate(
+        return dateHelper.createUTC(
             date.getUTCFullYear(),
             date.getUTCMonth(),
             date.getUTCDate() - daysToMonday
@@ -220,7 +220,7 @@ class CalendarRenderer {
     
     // Obtenir final de setmana (diumenge)
     getWeekEnd(weekStart) {
-        return createUTCDate(
+        return dateHelper.createUTC(
             weekStart.getUTCFullYear(),
             weekStart.getUTCMonth(),
             weekStart.getUTCDate() + 6
@@ -233,7 +233,7 @@ class CalendarRenderer {
     completePeriodStartDays(startDate, startDayOfWeek, calendar) {
         const days = [];
         for (let i = startDayOfWeek; i > 0; i--) {
-            const dayDate = createUTCDate(
+            const dayDate = dateHelper.createUTC(
                 startDate.getUTCFullYear(),
                 startDate.getUTCMonth(),
                 startDate.getUTCDate() - i
@@ -248,7 +248,7 @@ class CalendarRenderer {
         const days = [];
         const daysToComplete = 6 - endDayOfWeek;
         for (let i = 1; i <= daysToComplete; i++) {
-            const dayDate = createUTCDate(
+            const dayDate = dateHelper.createUTC(
                 endDate.getUTCFullYear(),
                 endDate.getUTCMonth(),
                 endDate.getUTCDate() + i
@@ -266,7 +266,7 @@ class CalendarRenderer {
             case 'semester':
                 return `Semestre ${calendar.code}`;
             case 'month':
-                return getMonthName(new Date()); // Les vistes mensuals ja gestionen això
+                return dateHelper.getMonthName(new Date()); // Les vistes mensuals ja gestionen això
             case 'week':
                 return 'Setmana'; // Les vistes setmanals ja gestionen això
             case 'day':

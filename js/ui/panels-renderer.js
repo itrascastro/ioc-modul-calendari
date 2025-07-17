@@ -38,8 +38,8 @@ class PanelsRenderer {
         container.innerHTML = calendarIds.map(id => {
             const calendar = appStateManager.calendars[id];
             const isActive = id === appStateManager.currentCalendarId;
-            const startDate = formatDateForDisplay(parseUTCDate(calendar.startDate));
-            const endDate = formatDateForDisplay(parseUTCDate(calendar.endDate));
+            const startDate = dateHelper.formatForDisplay(dateHelper.parseUTC(calendar.startDate));
+            const endDate = dateHelper.formatForDisplay(dateHelper.parseUTC(calendar.endDate));
             return `
                 <div class="calendar-list-item ${isActive ? 'active' : ''}" data-calendar-id="${id}">
                     <div class="calendar-info" data-action="switch-calendar">
@@ -134,7 +134,7 @@ class PanelsRenderer {
                 <div class="unplaced-event-content">
                     <div class="event-title">${item.event.title}</div>
                     <div class="event-category">${categoryName}</div>
-                    <div class="event-original-date">${formatDateForDisplay(parseUTCDate(item.event.date))}</div>
+                    <div class="event-original-date">${dateHelper.formatForDisplay(dateHelper.parseUTC(item.event.date))}</div>
                 </div>
                 <button class="dismiss-btn" data-action="dismiss-unplaced-event" data-event-index="${index}" title="Descartar event">×</button>
             </div>

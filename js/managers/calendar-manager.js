@@ -82,7 +82,7 @@ class CalendarManager {
         
         const activeCalendar = appStateManager.calendars[calendarId];
         
-        appStateManager.currentDate = parseUTCDate(activeCalendar.startDate);
+        appStateManager.currentDate = dateHelper.parseUTC(activeCalendar.startDate);
         
         // Sempre tornar a vista mensual quan es canvia de calendari
         viewManager.changeView('month');
@@ -125,7 +125,7 @@ class CalendarManager {
         };
         
         appStateManager.currentCalendarId = calendarId;
-        appStateManager.currentDate = parseUTCDate(startDate);
+        appStateManager.currentDate = dateHelper.parseUTC(startDate);
     }
     
     // Generar esdeveniments de sistema per al calendari
@@ -162,17 +162,17 @@ class CalendarManager {
         
         if (!prevBtn || !nextBtn || !calendar) return;
         
-        const calendarStart = parseUTCDate(calendar.startDate);
-        const calendarEnd = parseUTCDate(calendar.endDate);
+        const calendarStart = dateHelper.parseUTC(calendar.startDate);
+        const calendarEnd = dateHelper.parseUTC(calendar.endDate);
         
-        const prevMonthEnd = createUTCDate(
+        const prevMonthEnd = dateHelper.createUTC(
             appStateManager.currentDate.getUTCFullYear(), 
             appStateManager.currentDate.getUTCMonth(), 
             0
         );
         prevBtn.disabled = prevMonthEnd < calendarStart;
         
-        const nextMonthStart = createUTCDate(
+        const nextMonthStart = dateHelper.createUTC(
             appStateManager.currentDate.getUTCFullYear(), 
             appStateManager.currentDate.getUTCMonth() + 1, 
             1
@@ -236,7 +236,7 @@ class CalendarManager {
                         
                         // Activar calendari carregat
                         appStateManager.currentCalendarId = calendarId;
-                        appStateManager.currentDate = parseUTCDate(calendarData.startDate);
+                        appStateManager.currentDate = dateHelper.parseUTC(calendarData.startDate);
                         
                         // Sempre tornar a vista mensual quan es carrega un calendari
                         viewManager.changeView('month');

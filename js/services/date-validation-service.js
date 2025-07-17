@@ -48,14 +48,14 @@ class DateValidationService {
         }
         
         // Ha de ser un dia laborable (no cap de setmana)
-        return isWeekdayStr(dateStr);
+        return dateHelper.isWeekday(dateStr);
     }
     
     // Verificar si una data és un dia laborable
     static isWeekday(dateStr) {
         if (!dateStr) return false;
         
-        return isWeekdayStr(dateStr);
+        return dateHelper.isWeekday(dateStr);
     }
     
     // === VALIDACIONS AMB EXCEPCIONS ===
@@ -121,8 +121,8 @@ class DateValidationService {
     static isWeekInCalendarRange(weekStart, weekEnd, calendar) {
         if (!weekStart || !weekEnd || !calendar) return false;
         
-        const startStr = dateToUTCString(weekStart);
-        const endStr = dateToUTCString(weekEnd);
+        const startStr = dateHelper.toUTCString(weekStart);
+        const endStr = dateHelper.toUTCString(weekEnd);
         
         // La setmana és vàlida si té algun dia dins del rang
         return startStr <= calendar.endDate && endStr >= calendar.startDate;
@@ -132,11 +132,11 @@ class DateValidationService {
     static isMonthInCalendarRange(monthDate, calendar) {
         if (!monthDate || !calendar) return false;
         
-        const monthStart = createUTCDate(monthDate.getUTCFullYear(), monthDate.getUTCMonth(), 1);
-        const monthEnd = createUTCDate(monthDate.getUTCFullYear(), monthDate.getUTCMonth() + 1, 0);
+        const monthStart = dateHelper.createUTC(monthDate.getUTCFullYear(), monthDate.getUTCMonth(), 1);
+        const monthEnd = dateHelper.createUTC(monthDate.getUTCFullYear(), monthDate.getUTCMonth() + 1, 0);
         
-        const startStr = dateToUTCString(monthStart);
-        const endStr = dateToUTCString(monthEnd);
+        const startStr = dateHelper.toUTCString(monthStart);
+        const endStr = dateHelper.toUTCString(monthEnd);
         
         // El mes és vàlid si té algun dia dins del rang
         return startStr <= calendar.endDate && endStr >= calendar.startDate;
