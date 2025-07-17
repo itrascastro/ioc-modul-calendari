@@ -28,13 +28,13 @@ class HtmlExporter {
     exportCalendar(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) {
-            showMessage('Calendari no trobat', 'error');
+            uiHelper.showMessage('Calendari no trobat', 'error');
             return;
         }
         
         const htmlContent = this.generateHTMLVisualCalendar(calendar);
         this.downloadHtmlFile(htmlContent, `${calendar.name}_Calendari-Modul-IOC.html`);
-        showMessage('Calendari HTML exportat correctament', 'success');
+        uiHelper.showMessage('Calendari HTML exportat correctament', 'success');
     }
     
     // === GENERACIÓ DE HTML COMPLET ===

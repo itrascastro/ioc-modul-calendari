@@ -28,13 +28,13 @@ class IcsExporter {
     exportCalendar(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar || calendar.events.length === 0) {
-            showMessage('No hi ha events per exportar', 'warning');
+            uiHelper.showMessage('No hi ha events per exportar', 'warning');
             return;
         }
         
         const icsContent = this.generateIcsContent(calendar);
         this.downloadIcsFile(icsContent, calendar.name);
-        showMessage('Fitxer ICS exportat correctament', 'success');
+        uiHelper.showMessage('Fitxer ICS exportat correctament', 'success');
     }
     
     // === GENERACIÓ DE CONTINGUT ICS ===

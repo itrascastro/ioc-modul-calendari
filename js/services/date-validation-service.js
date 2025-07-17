@@ -161,7 +161,7 @@ class DateValidationService {
             this.validateEventDate(dateStr, calendar);
             return true;
         } catch (error) {
-            showMessage(error.message, 'error');
+            uiHelper.showMessage(error.message, 'error');
             return false;
         }
     }
@@ -172,7 +172,7 @@ class DateValidationService {
             this.validateReplicationDate(dateStr, calendar);
             return true;
         } catch (error) {
-            showMessage(error.message, 'error');
+            uiHelper.showMessage(error.message, 'error');
             return false;
         }
     }

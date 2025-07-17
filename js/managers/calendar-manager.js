@@ -43,7 +43,7 @@ class CalendarManager {
         const calendarId = calendarName;
         
         if (this.calendarExists(calendarId) && appStateManager.editingCalendarId !== calendarId) {
-            showMessage("Ja existeix un calendari amb aquest cicle i mòdul per aquest semestre.", 'error');
+            uiHelper.showMessage("Ja existeix un calendari amb aquest cicle i mòdul per aquest semestre.", 'error');
             return;
         }
         
@@ -56,7 +56,7 @@ class CalendarManager {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) return;
 
-        showConfirmModal(
+        uiHelper.showConfirmModal(
             `Estàs segur que vols eliminar el calendari "${calendar.name}"?\n\nAquesta acció no es pot desfer.`,
             'Eliminar calendari',
             () => {
@@ -69,7 +69,7 @@ class CalendarManager {
                 
                 storageManager.saveToStorage();
                 this.updateUI();
-                showMessage('Calendari eliminat correctament', 'success');
+                uiHelper.showMessage('Calendari eliminat correctament', 'success');
             }
         );
     }
@@ -96,7 +96,7 @@ class CalendarManager {
     // Validar dades del calendari
     validateCalendarData(cicle, module) {
         if (!cicle || !module) {
-            showMessage("Els camps Cicle i Mòdul són obligatoris.", 'error');
+            uiHelper.showMessage("Els camps Cicle i Mòdul són obligatoris.", 'error');
             return false;
         }
         return true;
@@ -150,7 +150,7 @@ class CalendarManager {
         storageManager.saveToStorage();
         this.updateUI();
         modalRenderer.close('calendarSetupModal');
-        showMessage('Calendari guardat correctament', 'success');
+        uiHelper.showMessage('Calendari guardat correctament', 'success');
     }
     
     // === NAVEGACIÓ ===
@@ -243,10 +243,10 @@ class CalendarManager {
                         
                         storageManager.saveToStorage();
                         this.updateUI();
-                        showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
+                        uiHelper.showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
                         
                     } catch (error) {
-                        showMessage('Error carregant el fitxer: ' + error.message, 'error');
+                        uiHelper.showMessage('Error carregant el fitxer: ' + error.message, 'error');
                     }
                 };
                 reader.readAsText(file);

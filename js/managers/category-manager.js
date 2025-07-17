@@ -49,7 +49,7 @@ class CategoryManager {
 
         // Verificar si ja existeix al catàleg
         if (this.categoryExistsInCatalog(name)) {
-            showMessage("Ja existeix una categoria amb aquest nom al catàleg.", 'error');
+            uiHelper.showMessage("Ja existeix una categoria amb aquest nom al catàleg.", 'error');
             return;
         }
 
@@ -111,7 +111,7 @@ class CategoryManager {
     // Validar nom de categoria
     validateCategoryName(name) {
         if (!name) {
-            showMessage("El nom de la categoria no pot estar buit.", 'error');
+            uiHelper.showMessage("El nom de la categoria no pot estar buit.", 'error');
             return false;
         }
         return true;
@@ -127,7 +127,7 @@ class CategoryManager {
     // Validar edició de categoria
     validateCategoryEdit(newName, categoryItem, categoryId) {
         if (!newName) {
-            showMessage("El nom de la categoria no pot estar buit.", 'error');
+            uiHelper.showMessage("El nom de la categoria no pot estar buit.", 'error');
             this.restoreOriginalCategoryName(categoryItem, categoryId);
             return false;
         }
@@ -160,7 +160,7 @@ class CategoryManager {
         nameInput.value = '';
         storageManager.saveToStorage();
         panelsRenderer.renderCategories();
-        showMessage('Categoria creada i afegida al catàleg', 'success');
+        uiHelper.showMessage('Categoria creada i afegida al catàleg', 'success');
     }
     
     // === ELIMINACIÓ ===
@@ -170,7 +170,7 @@ class CategoryManager {
         const eventCount = this.countEventsUsingCategory(categoryId);
         const confirmationMessage = this.buildDeleteConfirmationMessage(category, eventCount);
 
-        showConfirmModal(
+        uiHelper.showConfirmModal(
             confirmationMessage,
             'Eliminar categoria',
             () => {
@@ -212,7 +212,7 @@ class CategoryManager {
 
         storageManager.saveToStorage();
         calendarManager.updateUI();
-        showMessage('Categoria eliminada del catàleg i de tots els calendaris', 'success');
+        uiHelper.showMessage('Categoria eliminada del catàleg i de tots els calendaris', 'success');
     }
     
     // === EDICIÓ ===
@@ -279,7 +279,7 @@ class CategoryManager {
         storageManager.saveToStorage();
         panelsRenderer.renderCategories();
         viewManager.renderCurrentView(); // Re-renderitzar per mostrar canvis en esdeveniments
-        showMessage('Categoria actualitzada en tots els calendaris', 'success');
+        uiHelper.showMessage('Categoria actualitzada en tots els calendaris', 'success');
     }
     
     // === UTILITATS ===

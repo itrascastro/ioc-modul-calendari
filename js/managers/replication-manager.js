@@ -33,7 +33,7 @@ class ReplicationManager {
     openReplicationModal(sourceCalendarId) {
         const sourceCalendar = appStateManager.calendars[sourceCalendarId];
         if (!sourceCalendar) {
-            showMessage('Calendari origen no trobat', 'error');
+            uiHelper.showMessage('Calendari origen no trobat', 'error');
             return;
         }
 
@@ -43,7 +43,7 @@ class ReplicationManager {
             .map(([id, calendar]) => ({ id, calendar }));
 
         if (availableTargets.length === 0) {
-            showMessage('Necessites almenys 2 calendaris per fer una replicació', 'warning');
+            uiHelper.showMessage('Necessites almenys 2 calendaris per fer una replicació', 'warning');
             return;
         }
 
@@ -81,12 +81,12 @@ class ReplicationManager {
         const targetCalendarId = document.getElementById('targetCalendarSelect').value;
         
         if (!sourceCalendarId) {
-            showMessage('Error: No s\'ha seleccionat calendari origen', 'error');
+            uiHelper.showMessage('Error: No s\'ha seleccionat calendari origen', 'error');
             return;
         }
         
         if (!targetCalendarId) {
-            showMessage('Selecciona un calendari destí', 'error');
+            uiHelper.showMessage('Selecciona un calendari destí', 'error');
             return;
         }
 
@@ -94,7 +94,7 @@ class ReplicationManager {
         const targetCalendar = appStateManager.calendars[targetCalendarId];
 
         if (!sourceCalendar || !targetCalendar) {
-            showMessage('Error accedint als calendaris', 'error');
+            uiHelper.showMessage('Error accedint als calendaris', 'error');
             return;
         }
 
@@ -134,14 +134,14 @@ class ReplicationManager {
             
             const message = `Replicació completada: ${result.placed.length} events ubicats` + 
                            (result.unplaced.length > 0 ? `, ${result.unplaced.length} pendents` : '');
-            showMessage(message, 'success');
+            uiHelper.showMessage(message, 'success');
 
             // Actualitzar UI per mostrar esdeveniments no ubicats
             calendarManager.updateUI();
 
         } catch (error) {
             console.error('[Replicació] Error:', error);
-            showMessage('Error durant la replicació: ' + error.message, 'error');
+            uiHelper.showMessage('Error durant la replicació: ' + error.message, 'error');
         }
     }
     
@@ -261,10 +261,10 @@ class ReplicationManager {
         panelsRenderer.renderUnplacedEvents();
         
         if (appStateManager.unplacedEvents.length === 0) {
-            showMessage('Tots els events han estat col·locats', 'success');
+            uiHelper.showMessage('Tots els events han estat col·locats', 'success');
         }
         
-        showMessage(`Event "${newEvent.title}" col·locat correctament`, 'success');
+        uiHelper.showMessage(`Event "${newEvent.title}" col·locat correctament`, 'success');
     }
     
     // Descartar esdeveniment no ubicat
@@ -273,7 +273,7 @@ class ReplicationManager {
         
         if (!unplacedItem) return;
         
-        showConfirmModal(
+        uiHelper.showConfirmModal(
             `Estàs segur que vols descartar l'event "${unplacedItem.event.title}"?\\n\\nAquesta acció no es pot desfer.`,
             'Descartar event',
             () => {
@@ -287,10 +287,10 @@ class ReplicationManager {
                 panelsRenderer.renderUnplacedEvents();
                 
                 if (appStateManager.unplacedEvents.length === 0) {
-                    showMessage('Tots els events han estat gestionats', 'success');
+                    uiHelper.showMessage('Tots els events han estat gestionats', 'success');
                 }
                 
-                showMessage('Event descartat', 'info');
+                uiHelper.showMessage('Event descartat', 'info');
             }
         );
     }

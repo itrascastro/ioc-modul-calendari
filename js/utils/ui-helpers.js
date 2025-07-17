@@ -18,74 +18,69 @@
  * =================================================================
  */
 
-// === MISSATGES I MODALS ===
-
-// Mostrar missatges a l'usuari
-function showMessage(message, type = 'info') {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message message-${type}`;
-    messageDiv.textContent = message;
-    messageDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        background-color: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#17a2b8'};
-        color: ${type === 'warning' ? '#000' : '#fff'};
-    `;
+// Classe d'utilitats d'interfície d'usuari
+class UIHelper {
     
-    document.body.appendChild(messageDiv);
+    // === MISSATGES I MODALS ===
     
-    setTimeout(() => {
-        messageDiv.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => messageDiv.remove(), 300);
-    }, 3000);
-}
-
-// Modal de confirmació personalitzat
-function showConfirmModal(message, title = 'Confirmar acció', onConfirm = null) {
-    const modal = document.getElementById('confirmModal');
-    const titleElement = document.getElementById('confirmModalTitle');
-    const messageElement = document.getElementById('confirmModalMessage');
-    const confirmBtn = document.getElementById('confirmModalConfirmBtn');
-    
-    if (!modal || !titleElement || !messageElement || !confirmBtn) return false;
-    
-    // Configurar contingut
-    titleElement.textContent = title;
-    messageElement.textContent = message;
-    
-    // Netejar event listeners previs
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    // Configurar nou event listener
-    if (onConfirm) {
-        newConfirmBtn.addEventListener('click', () => {
-            modalRenderer.close('confirmModal');
-            onConfirm();
-        });
+    // Mostrar missatges a l'usuari
+    showMessage(message, type = 'info') {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message message-${type}`;
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            background-color: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#17a2b8'};
+            color: ${type === 'warning' ? '#000' : '#fff'};
+        `;
+        
+        document.body.appendChild(messageDiv);
+        
+        setTimeout(() => {
+            messageDiv.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => messageDiv.remove(), 300);
+        }, 3000);
     }
-    
-    // Mostrar modal
-    modalRenderer.open('confirmModal');
-    return true;
+
+    // Modal de confirmació personalitzat
+    showConfirmModal(message, title = 'Confirmar acció', onConfirm = null) {
+        const modal = document.getElementById('confirmModal');
+        const titleElement = document.getElementById('confirmModalTitle');
+        const messageElement = document.getElementById('confirmModalMessage');
+        const confirmBtn = document.getElementById('confirmModalConfirmBtn');
+        
+        if (!modal || !titleElement || !messageElement || !confirmBtn) return false;
+        
+        // Configurar contingut
+        titleElement.textContent = title;
+        messageElement.textContent = message;
+        
+        // Netejar event listeners previs
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+        
+        // Configurar nou event listener
+        if (onConfirm) {
+            newConfirmBtn.addEventListener('click', () => {
+                modalRenderer.close('confirmModal');
+                onConfirm();
+            });
+        }
+        
+        // Mostrar modal
+        modalRenderer.open('confirmModal');
+        return true;
+    }
+
 }
 
-// === HELPERS DE RENDERITZAT ===
-
-// Crear HTML d'un sol esdeveniment
-function createSingleEventHTML(event, calendar) {
-    return monthRenderer.generateEventHTML(event, calendar, 'DOM');
-}
-
-// Crear HTML d'una cel·la de dia
-function createDayCellHTML(date, isOutOfMonth, calendar) {
-    const dayData = monthRenderer.generateDayData(date, calendar, isOutOfMonth);
-    return monthRenderer.generateDayCellHTML(dayData, calendar, 'DOM');
-}
+// === INSTÀNCIA GLOBAL ===
+const uiHelper = new UIHelper();

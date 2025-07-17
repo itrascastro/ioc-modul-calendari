@@ -28,13 +28,13 @@ class JsonExporter {
     exportCalendar(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) {
-            showMessage('Calendari no trobat', 'error');
+            uiHelper.showMessage('Calendari no trobat', 'error');
             return;
         }
         
         const jsonContent = this.generateJsonContent(calendar);
         this.downloadJsonFile(jsonContent, calendar.name);
-        showMessage('Calendari guardat com a fitxer JSON', 'success');
+        uiHelper.showMessage('Calendari guardat com a fitxer JSON', 'success');
     }
     
     // === GENERACIÓ DE CONTINGUT JSON ===
@@ -81,7 +81,7 @@ class JsonExporter {
     exportEventsOnly(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar || calendar.events.length === 0) {
-            showMessage('No hi ha events per exportar', 'warning');
+            uiHelper.showMessage('No hi ha events per exportar', 'warning');
             return;
         }
         
@@ -104,7 +104,7 @@ class JsonExporter {
         
         const jsonContent = JSON.stringify(eventsData, null, 2);
         this.downloadJsonFile(jsonContent, `${calendar.name}_events`);
-        showMessage('Events exportats com a fitxer JSON', 'success');
+        uiHelper.showMessage('Events exportats com a fitxer JSON', 'success');
     }
     
     // === DESCÀRREGA D'ARXIU ===

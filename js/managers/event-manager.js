@@ -66,7 +66,7 @@ class EventManager {
         const calendar = appStateManager.getCurrentCalendar();
         if (!calendar || !appStateManager.editingEventId) return;
 
-        showConfirmModal(
+        uiHelper.showConfirmModal(
             "Estàs segur que vols eliminar aquest event?",
             'Eliminar event',
             () => {
@@ -74,7 +74,7 @@ class EventManager {
                 storageManager.saveToStorage();
                 viewManager.renderCurrentView();
                 modalRenderer.close('eventModal');
-                showMessage('Event eliminat correctament', 'success');
+                uiHelper.showMessage('Event eliminat correctament', 'success');
             }
         );
     }
@@ -107,7 +107,7 @@ class EventManager {
         storageManager.saveToStorage();
         viewManager.renderCurrentView();
         
-        showMessage(`Event "${event.title}" mogut correctament`, 'success');
+        uiHelper.showMessage(`Event "${event.title}" mogut correctament`, 'success');
     }
     
     // === VALIDACIONS ===
@@ -115,20 +115,20 @@ class EventManager {
     // Validar dades d'esdeveniment
     validateEventData(title, date, categoryId, calendar) {
         if (!title) {
-            showMessage("El títol de l'event és obligatori.", 'error');
+            uiHelper.showMessage("El títol de l'event és obligatori.", 'error');
             return false;
         }
         if (!date) {
-            showMessage("Has de seleccionar una data per a l'event.", 'error');
+            uiHelper.showMessage("Has de seleccionar una data per a l'event.", 'error');
             return false;
         }
         if (!categoryId) {
-            showMessage("Has de seleccionar una categoria de la llista.", 'error');
+            uiHelper.showMessage("Has de seleccionar una categoria de la llista.", 'error');
             return false;
         }
 
         if (date < calendar.startDate || date > calendar.endDate) {
-            showMessage("La data de l'event ha d'estar dins del període del calendari actiu.", 'error');
+            uiHelper.showMessage("La data de l'event ha d'estar dins del període del calendari actiu.", 'error');
             return false;
         }
         
@@ -139,7 +139,7 @@ class EventManager {
     isValidEventMove(event, targetDate, calendar) {
         // Només esdeveniments d'usuari es poden moure
         if (event.isSystemEvent) {
-            showMessage('No es poden moure els events del sistema IOC', 'error');
+            uiHelper.showMessage('No es poden moure els events del sistema IOC', 'error');
             return false;
         }
         
@@ -301,7 +301,7 @@ class EventManager {
         viewManager.renderCurrentView();
         panelsRenderer.renderCategories(); // Re-renderitzar per mostrar nova categoria si s'ha afegit
         modalRenderer.close('eventModal');
-        showMessage('Event guardat correctament', 'success');
+        uiHelper.showMessage('Event guardat correctament', 'success');
     }
 }
 
