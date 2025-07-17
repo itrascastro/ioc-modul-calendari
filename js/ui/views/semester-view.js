@@ -88,7 +88,7 @@ class SemesterViewRenderer extends CalendarRenderer {
             <div class="semester-section">
                 <div class="semester-header">
                     <h2>${semesterData.semesterName}</h2>
-                    <div class="semester-period">${this.formatDateRange(semesterData.startDate, semesterData.endDate)}</div>
+                    <div class="semester-period">${super.formatDateRange(semesterData.startDate, semesterData.endDate)}</div>
                 </div>
                 ${this.generateCalendarGridHTML(semesterData.days, calendar)}
             </div>
@@ -102,10 +102,6 @@ class SemesterViewRenderer extends CalendarRenderer {
         return this.generatePeriodName(calendar, 'semester');
     }
     
-    // Formatar rang de dates (ara usa el mètode del pare)
-    formatDateRange(startDate, endDate) {
-        return super.formatDateRange(startDate, endDate);
-    }
     
     // Obtenir primer dia del semestre
     getSemesterStart(calendar) {
@@ -122,15 +118,3 @@ class SemesterViewRenderer extends CalendarRenderer {
 
 // Renderitzador principal per a vista semestral
 const semesterRenderer = new SemesterViewRenderer();
-
-// === FUNCIONS AUXILIARS ===
-
-// Generar HTML de mes per vista semestral
-function generateSemesterMonthHTML(monthData, calendar) {
-    return semesterRenderer.generateCalendarGridHTML(monthData.days, calendar);
-}
-
-// Obtenir nom del semestre
-function getSemesterName(calendar) {
-    return semesterRenderer.generateSemesterName(calendar);
-}

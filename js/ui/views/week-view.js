@@ -12,8 +12,8 @@ class WeekViewRenderer extends CalendarRenderer {
     // === RENDERITZACIÓ PRINCIPAL ===
     render(calendar, currentDate, outputFormat = 'DOM') {
         // Calcular inici i final de la setmana
-        const weekStart = this.getWeekStart(currentDate);
-        const weekEnd = this.getWeekEnd(weekStart);
+        const weekStart = super.getWeekStart(currentDate);
+        const weekEnd = super.getWeekEnd(weekStart);
         
         // Generar dades de la setmana
         const weekData = this.generateWeekData(weekStart, weekEnd, calendar);
@@ -27,16 +27,6 @@ class WeekViewRenderer extends CalendarRenderer {
     }
     
     // === CÀLCULS DE SETMANA (ara usa mètodes del pare) ===
-    
-    // Obtenir inici de setmana (dilluns)
-    getWeekStart(date) {
-        return super.getWeekStart(date);
-    }
-    
-    // Obtenir final de setmana (diumenge)
-    getWeekEnd(weekStart) {
-        return super.getWeekEnd(weekStart);
-    }
     
     // Generar dades de la setmana
     generateWeekData(weekStart, weekEnd, calendar) {
@@ -111,20 +101,3 @@ class WeekViewRenderer extends CalendarRenderer {
 
 // Renderitzador principal per a vista setmanal
 const weekRenderer = new WeekViewRenderer();
-
-// === FUNCIONS AUXILIARS ===
-
-// Generar HTML d'esdeveniment per vista setmanal
-function generateWeekEventHTML(event, calendar) {
-    return weekRenderer.generateEventHTML(event, calendar, 'DOM');
-}
-
-// Obtenir inici de setmana per una data
-function getWeekStartDate(date) {
-    return weekRenderer.getWeekStart(date);
-}
-
-// Obtenir final de setmana per una data
-function getWeekEndDate(date) {
-    return weekRenderer.getWeekEnd(date);
-}
