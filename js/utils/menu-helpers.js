@@ -18,30 +18,38 @@
  * =================================================================
  */
 
-// === GESTIÓ DE MENÚS D'ACCIONS ===
-
-// Alternar menú d'accions (menú contextual kebab)
-function toggleActionsMenu(target) {
-    const dropdown = target.nextElementSibling;
-    const isOpen = dropdown.classList.contains('show');
+// Classe d'utilitats per menús contextuals
+class MenuHelper {
     
-    // Tancar tots els menús oberts
-    document.querySelectorAll('.actions-dropdown').forEach(menu => {
-        menu.classList.remove('show');
-    });
+    // === GESTIÓ DE MENÚS D'ACCIONS ===
     
-    // Obrir/tancar el menú clickeat
-    if (!isOpen) {
-        dropdown.classList.add('show');
+    // Alternar menú d'accions (menú contextual)
+    toggleActionsMenu(target) {
+        const dropdown = target.nextElementSibling;
+        const isOpen = dropdown.classList.contains('show');
         
-        // Tancar menú al fer clic fora
-        setTimeout(() => {
-            document.addEventListener('click', function closeMenu(e) {
-                if (!target.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('show');
-                    document.removeEventListener('click', closeMenu);
-                }
-            });
-        }, 0);
+        // Tancar tots els menús oberts
+        document.querySelectorAll('.actions-dropdown').forEach(menu => {
+            menu.classList.remove('show');
+        });
+        
+        // Obrir/tancar el menú clickeat
+        if (!isOpen) {
+            dropdown.classList.add('show');
+            
+            // Tancar menú al fer clic fora
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!target.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }, 0);
+        }
     }
+
 }
+
+// === INSTÀNCIA GLOBAL ===
+const menuHelper = new MenuHelper();

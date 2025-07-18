@@ -76,7 +76,7 @@ class Bootstrap {
             case 'show-unplaced-events': replicationManager.showUnplacedEventsPanel(); break;
             case 'place-unplaced-event': replicationManager.placeUnplacedEvent(target.dataset.eventIndex, target.dataset.date); break;
             case 'dismiss-unplaced-event': replicationManager.dismissUnplacedEvent(target.dataset.eventIndex); break;
-            case 'toggle-actions-menu': toggleActionsMenu(target); break;
+            case 'toggle-actions-menu': menuHelper.toggleActionsMenu(target); break;
             case 'open-calendar-actions-modal': modalRenderer.openCalendarActions(target.dataset.calendarId); break;
             case 'open-color-picker-modal': modalRenderer.openColorPicker(target.dataset.categoryId, target); break;
             case 'select-color': modalRenderer.selectCategoryColor(target.dataset.color); break;
