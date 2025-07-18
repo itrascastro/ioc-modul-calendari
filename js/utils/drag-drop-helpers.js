@@ -18,26 +18,34 @@
  * =================================================================
  */
 
-// === CONFIGURACIÓ DE DRAG & DROP ===
-
-// Configurar drag & drop per un contenidor de calendari
-function setupDragAndDrop(container, calendar) {
-    // Fer esdeveniments draggables
-    container.querySelectorAll('.event.is-user-event[draggable="true"]').forEach(eventEl => {
-        const eventData = JSON.parse((eventEl.dataset.event || '{}').replace(/&quot;/g, '"'));
-        const dayCell = eventEl.closest('.day-cell');
-        const dateStr = dayCell?.dataset.date;
-        
-        if (eventData.id && dateStr) {
-            eventManager.makeEventDraggable(eventEl, eventData, dateStr);
-        }
-    });
+// Classe d'utilitats per drag & drop
+class DragDropHelper {
     
-    // Fer dies droppables
-    container.querySelectorAll('.day-cell[data-date]').forEach(dayEl => {
-        const dateStr = dayEl.dataset.date;
-        if (dateStr) {
-            eventManager.makeDayDroppable(dayEl, dateStr);
-        }
-    });
+    // === CONFIGURACIÓ DE DRAG & DROP ===
+    
+    // Configurar drag & drop per un contenidor de calendari
+    setupDragAndDrop(container, calendar) {
+        // Fer esdeveniments draggables
+        container.querySelectorAll('.event.is-user-event[draggable="true"]').forEach(eventEl => {
+            const eventData = JSON.parse((eventEl.dataset.event || '{}').replace(/&quot;/g, '"'));
+            const dayCell = eventEl.closest('.day-cell');
+            const dateStr = dayCell?.dataset.date;
+            
+            if (eventData.id && dateStr) {
+                eventManager.makeEventDraggable(eventEl, eventData, dateStr);
+            }
+        });
+        
+        // Fer dies droppables
+        container.querySelectorAll('.day-cell[data-date]').forEach(dayEl => {
+            const dateStr = dayEl.dataset.date;
+            if (dateStr) {
+                eventManager.makeDayDroppable(dayEl, dateStr);
+            }
+        });
+    }
+
 }
+
+// === INSTÀNCIA GLOBAL ===
+const dragDropHelper = new DragDropHelper();

@@ -195,7 +195,7 @@ class ViewManager {
         periodDisplay.textContent = dateHelper.getMonthName(appStateManager.currentDate);
         gridWrapper.innerHTML = monthHTML;
         
-        setupDragAndDrop(gridWrapper, calendar);
+        dragDropHelper.setupDragAndDrop(gridWrapper, calendar);
     }
     
     // Renderitzar vista diària
@@ -244,7 +244,7 @@ class ViewManager {
         periodDisplay.textContent = weekTitle;
         
         // Configurar drag & drop (reutilitza la lògica de la vista mensual)
-        setupDragAndDrop(gridWrapper, calendar);
+        dragDropHelper.setupDragAndDrop(gridWrapper, calendar);
         
         // Actualitzar navegació
         this.updateNavigationButtons();
@@ -272,7 +272,7 @@ class ViewManager {
         this.setupSemesterScrollListener(gridWrapper, periodDisplay, calendar, semesterName);
         
         // Configurar drag & drop (reutilitza la lògica de la vista mensual)
-        setupDragAndDrop(gridWrapper, calendar);
+        dragDropHelper.setupDragAndDrop(gridWrapper, calendar);
         
         // Actualitzar navegació
         this.updateNavigationButtons();
