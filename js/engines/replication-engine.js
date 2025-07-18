@@ -129,7 +129,7 @@ class ReplicationEngine {
                 // Crear esdeveniment replicat
                 const replicatedEvent = {
                     ...event,
-                    id: generateNextEventId(appStateManager.currentCalendarId),
+                    id: idHelper.generateNextEventId(appStateManager.currentCalendarId),
                     date: newDate,
                     isReplicated: true,
                     originalDate: event.date,

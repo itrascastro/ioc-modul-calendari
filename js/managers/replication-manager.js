@@ -108,7 +108,7 @@ class ReplicationManager {
             result.placed.forEach(placedItem => {
                 const newEvent = {
                     ...placedItem.event,
-                    id: generateNextEventId(targetCalendarId),
+                    id: idHelper.generateNextEventId(targetCalendarId),
                     date: placedItem.newDate
                 };
                 targetCalendar.events.push(newEvent);
@@ -242,7 +242,7 @@ class ReplicationManager {
         // Crear nou esdeveniment al calendari
         const newEvent = {
             ...unplacedItem.event,
-            id: generateNextEventId(appStateManager.currentCalendarId),
+            id: idHelper.generateNextEventId(appStateManager.currentCalendarId),
             date: targetDate,
             isReplicated: true,
             replicatedFrom: unplacedItem.event.date

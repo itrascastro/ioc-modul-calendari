@@ -291,8 +291,11 @@ class EventManager {
     
     // Crear nou esdeveniment
     createNewEvent(calendar, eventData) {
-        eventData.id = generateNextEventId(appStateManager.currentCalendarId);
-        calendar.events.push(eventData);
+        const newEvent = {
+            id: idHelper.generateNextEventId(appStateManager.currentCalendarId),
+            ...eventData
+        };
+        calendar.events.push(newEvent);
     }
     
     // Completar desament d'esdeveniment

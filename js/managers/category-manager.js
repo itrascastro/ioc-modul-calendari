@@ -139,7 +139,7 @@ class CategoryManager {
     // Crear nova categoria
     createCategory(name) {
         return {
-            id: generateNextCategoryId(appStateManager.currentCalendarId),
+            id: idHelper.generateNextCategoryId(appStateManager.currentCalendarId),
             name: name,
             color: this.generateRandomColor(),
             isSystem: false,

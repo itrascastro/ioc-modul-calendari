@@ -18,22 +18,30 @@
  * =================================================================
  */
 
-// === GENERADORS D'IDS PER ESDEVENIMENTS ===
+// Classe d'utilitats per generar identificadors únics
+class IdHelper {
+    
+    // === GENERADORS D'IDS PER ESDEVENIMENTS ===
+    
+    // Generar següent ID d'esdeveniment per un calendari
+    generateNextEventId(calendarId) {
+        const calendar = appStateManager.calendars[calendarId];
+        if (!calendar) return null;
+        calendar.eventCounter = (calendar.eventCounter || 0) + 1;
+        return `${calendar.name}_E${calendar.eventCounter}`;
+    }
+    
+    // === GENERADORS D'IDS PER CATEGORIES ===
+    
+    // Generar següent ID de categoria per un calendari
+    generateNextCategoryId(calendarId) {
+        const calendar = appStateManager.calendars[calendarId];
+        if (!calendar) return null;
+        calendar.categoryCounter = (calendar.categoryCounter || 0) + 1;
+        return `${calendar.name}_C${calendar.categoryCounter}`;
+    }
 
-// Generar següent ID d'esdeveniment per un calendari
-function generateNextEventId(calendarId) {
-    const calendar = appStateManager.calendars[calendarId];
-    if (!calendar) return null;
-    calendar.eventCounter = (calendar.eventCounter || 0) + 1;
-    return `${calendar.name}_E${calendar.eventCounter}`;
 }
 
-// === GENERADORS D'IDS PER CATEGORIES ===
-
-// Generar següent ID de categoria per un calendari
-function generateNextCategoryId(calendarId) {
-    const calendar = appStateManager.calendars[calendarId];
-    if (!calendar) return null;
-    calendar.categoryCounter = (calendar.categoryCounter || 0) + 1;
-    return `${calendar.name}_C${calendar.categoryCounter}`;
-}
+// === INSTÀNCIA GLOBAL ===
+const idHelper = new IdHelper();
