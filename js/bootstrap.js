@@ -29,7 +29,7 @@ class Bootstrap {
             document.addEventListener('click', (e) => this.handleAction(e));
             document.addEventListener('dblclick', (e) => this.handleAction(e));
             storageManager.loadFromStorage();
-            loadSavedTheme();
+            themeHelper.loadSavedTheme();
             appStateManager.getCurrentCalendar();
             calendarManager.updateUI();
             
@@ -58,7 +58,7 @@ class Bootstrap {
         const action = target.dataset.action;
         
         switch (action) {
-            case 'toggle-theme': toggleTheme(); break;
+            case 'toggle-theme': themeHelper.toggleTheme(); break;
             case 'open-calendar-setup': modalRenderer.openCalendarSetup(); break;
             case 'close-modal': modalRenderer.close(target.dataset.modal); break;
             case 'save-calendar': calendarManager.saveCalendar(); break;
