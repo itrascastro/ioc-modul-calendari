@@ -18,7 +18,7 @@
  * =================================================================
  */
 
-// CLASSE DE SERVEI DE REPLICACIÓ: Implementa algoritme proporcional amb configuració simplificada
+// CLASSE DE SERVEI DE REPLICACIÓ: Implementa algoritme proporcional
 class ReplicaService {
     
     // Funció principal de replicació
@@ -124,8 +124,7 @@ class ReplicaService {
                     newDate: newDate,
                     sourceCalendar: sourceCalendar,
                     originalDate: event.date,
-                    confidence: replicatedEvent.replicationConfidence,
-                    reason: this.generateProportionalReason(indexOrigen, indexIdeal, indexFinal, factorProporcio)
+                    confidence: replicatedEvent.replicationConfidence
                 });
                 
                 console.log(`[REPLICA_SERVICE] "${event.title}": ${event.date} → ${newDate} (pos ${indexOrigen + 1}→${indexFinal + 1})`);
@@ -265,11 +264,6 @@ class ReplicaService {
     
     isPAF1Event(event) {
         return event && event.eventType === 'PAF1';
-    }
-    
-    // Generació de raons proporcionals (simplificada)
-    generateProportionalReason(indexOrigen, indexIdeal, indexFinal, factorProporcio) {
-        return '';
     }
     
     // Càlcul de confiança proporcional
