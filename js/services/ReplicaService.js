@@ -33,7 +33,7 @@ class ReplicaService {
             
             // Filtrar esdeveniments del professor
             const professorEvents = sourceCalendar.events
-                .filter(event => this.isProfessorEvent(event))
+                .filter(event => !event.isSystemEvent)
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
             
             console.log(`[REPLICA_SERVICE] Events del professor a replicar: ${professorEvents.length}`);
@@ -154,7 +154,7 @@ class ReplicaService {
         console.log(`[Espai Útil] Analitzant espai útil per: ${calendar.name}`);
         
         const espaiUtil = [];
-        const dataFiAvalucions = this.findEvaluationEndDate(calendar);
+        const dataFiAvalucions = this.findPAF1(calendar);
         
         // Esdeveniments que ocupen l'espai (sistema IOC, festius, etc.)
         const occupiedBySystem = new Set(
@@ -230,7 +230,7 @@ class ReplicaService {
     }
     
     // Detectar data de fi d'avaluacions (cercar PAF1)
-    findEvaluationEndDate(calendar) {
+    findPAF1(calendar) {
         console.log(`[PAF Detection] Buscant PAF1 al calendari: ${calendar.name}`);
         
         // Cercar PAF1 en esdeveniments del calendari
@@ -251,19 +251,6 @@ class ReplicaService {
         
         console.error('[PAF Detection] PAF1 no trobat! Usant final de calendari');
         return calendar.endDate;
-    }
-    
-    // Filtres d'esdeveniments
-    isProfessorEvent(event) {
-        return event && !this.isSystemEvent(event);
-    }
-    
-    isSystemEvent(event) {
-        return event && event.isSystemEvent === true;
-    }
-    
-    isPAF1Event(event) {
-        return event && event.eventType === 'PAF1';
     }
     
     // Càlcul de confiança proporcional
