@@ -44,7 +44,7 @@ class ReplicaManager {
             return;
         }
 
-        // Guardar ID del calendari origen per usar en executeReplication
+        // Desar ID del calendari origen per usar en executeReplication
         this.currentSourceCalendarId = sourceCalendarId;
 
         // Poblar modal estàtic amb contingut dinàmic
@@ -111,7 +111,7 @@ class ReplicaManager {
                 targetCalendar.events.push(newEvent);
             });
 
-            // Guardar esdeveniments no ubicats globalment
+            // Desar esdeveniments no ubicats globalment
             if (result.unplaced.length > 0) {
                 appStateManager.unplacedEvents = result.unplaced;
                 console.log(`[Replicació] ${result.unplaced.length} events no ubicats guardats per gestió manual`);
@@ -252,7 +252,7 @@ class ReplicaManager {
             uiHelper.showMessage('Tots els events han estat col·locats', 'success');
         }
         
-        uiHelper.showMessage(`Event "${newEvent.title}" col·locat correctament`, 'success');
+        uiHelper.showMessage(`Esdeveniment "${newEvent.title}" col·locat correctament`, 'success');
     }
     
     // Descartar esdeveniment no ubicat
@@ -278,7 +278,7 @@ class ReplicaManager {
                     uiHelper.showMessage('Tots els events han estat gestionats', 'success');
                 }
                 
-                uiHelper.showMessage('Event descartat', 'info');
+                uiHelper.showMessage('Esdeveniment descartat', 'info');
             }
         );
     }

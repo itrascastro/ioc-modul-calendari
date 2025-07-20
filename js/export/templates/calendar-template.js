@@ -26,7 +26,7 @@ const calendarHtmlTemplate = `<!DOCTYPE html>
 CALENDAR TEMPLATE - PLANTILLA HTML PER A EXPORTACIÓ
 =================================================================
 
-@file        calendar-template.js
+@file        Calendari-Modul-IOC.html
 @description Plantilla HTML per exportar calendaris com a pàgines web independents
 @author      Ismael Trascastro <itrascastro@ioc.cat>
 @version     1.0.0
