@@ -1,9 +1,9 @@
 /**
  * =================================================================
- * REPLICATION MANAGER - GESTIÓ DE REPLICACIÓ I ESDEVENIMENTS NO UBICATS
+ * REPLICA MANAGER - GESTIÓ DE REPLICACIÓ I ESDEVENIMENTS NO UBICATS
  * =================================================================
  * 
- * @file        ReplicationManager.js
+ * @file        ReplicaManager.js
  * @description Gestió de replicació de calendaris i esdeveniments no ubicats
  * @author      Ismael Trascastro <itrascastro@ioc.cat>
  * @version     1.0.0
@@ -18,13 +18,10 @@
  * =================================================================
  */
 
-// Variable global per emmagatzemar l'ID del calendari origen
-let currentSourceCalendarId = null;
-
 // Classe per gestionar la replicació de calendaris i esdeveniments no ubicats
-class ReplicationManager {
+class ReplicaManager {
     constructor() {
-        this.managerType = 'replication';
+        this.currentSourceCalendarId = null;
     }
     
     // === GESTIÓ DE REPLICACIÓ ===
@@ -48,7 +45,7 @@ class ReplicationManager {
         }
 
         // Guardar ID del calendari origen per usar en executeReplication
-        currentSourceCalendarId = sourceCalendarId;
+        this.currentSourceCalendarId = sourceCalendarId;
 
         // Poblar modal estàtic amb contingut dinàmic
         document.getElementById('sourceCalendarName').textContent = sourceCalendar.name;
@@ -77,7 +74,7 @@ class ReplicationManager {
     
     // Executar replicació
     executeReplication() {
-        const sourceCalendarId = currentSourceCalendarId;
+        const sourceCalendarId = this.currentSourceCalendarId;
         const targetCalendarId = document.getElementById('targetCalendarSelect').value;
         
         if (!sourceCalendarId) {
@@ -126,11 +123,10 @@ class ReplicationManager {
             
             // Persistir canvis
             storageManager.saveToStorage();
-            calendarManager.updateUI();
             modalRenderer.closeModal('replicationModal');
             
-            // Netejar variable global
-            currentSourceCalendarId = null;
+            // Netejar propietat de classe
+            this.currentSourceCalendarId = null;
             
             const message = `Replicació completada: ${result.placed.length} events ubicats` + 
                            (result.unplaced.length > 0 ? `, ${result.unplaced.length} pendents` : '');
@@ -179,14 +175,6 @@ class ReplicationManager {
             
             // Configurar drag & drop per esdeveniments no ubicats
             this.setupUnplacedEventsDragDrop();
-        }
-    }
-    
-    // Tancar panel d'esdeveniments no ubicats
-    closeUnplacedEventsPanel() {
-        const panel = document.getElementById('unplacedEventsSection');
-        if (panel) {
-            panel.remove();
         }
     }
     
@@ -295,8 +283,7 @@ class ReplicationManager {
         );
     }
     
-    // === GESTIÓ D'ARXIUS ===
 }
 
 // === INSTÀNCIA GLOBAL ===
-const replicationManager = new ReplicationManager();
+const replicaManager = new ReplicaManager();

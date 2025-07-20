@@ -267,7 +267,7 @@ class EventManager {
                     // Manejar esdeveniment no ubicat
                     const eventData = JSON.parse(e.dataTransfer.getData('text/plain'));
                     if (eventData.isUnplacedEvent) {
-                        replicationManager.placeUnplacedEvent(eventData.unplacedIndex, dateStr);
+                        replicaManager.placeUnplacedEvent(eventData.unplacedIndex, dateStr);
                     }
                 } else if (appStateManager.draggedFromDate !== dateStr) {
                     // Manejar esdeveniment normal
