@@ -109,12 +109,22 @@ una aplicació web per gestionar calendaris acadèmics.
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="cicleCode">Cicle Formatiu (ex: DAM, DAW, ASIX)</label>
-                    <input type="text" id="cicleCode" placeholder="DAM">
+                    <label for="studyType">Tipus:</label>
+                    <select id="studyType" name="studyType">
+                        <option value="">Selecciona tipus...</option>
+                        <option value="FP">Formació Professional (FP)</option>
+                        <option value="BTX">Batxillerat (BTX)</option>
+                        <option value="Altre">Altre</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="moduleCode">Codi del Mòdul (ex: M07B0)</label>
-                    <input type="text" id="moduleCode" placeholder="M07B0">
+                
+                <!-- Camps dinàmics segons tipus seleccionat -->
+                <div id="dynamicFields"></div>
+                
+                <!-- Preview del nom generat -->
+                <div id="namePreview" class="form-group" style="display: none;">
+                    <label>Nom del calendari:</label>
+                    <div class="name-preview" id="generatedName"></div>
                 </div>
             </div>
             <div class="modal-footer">

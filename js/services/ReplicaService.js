@@ -159,7 +159,7 @@ class ReplicaService {
         // Esdeveniments que ocupen l'espai (sistema IOC, festius, etc.)
         const occupiedBySystem = new Set(
             calendar.events
-                .filter(e => e.eventType === 'FESTIU' || e.isSystemEvent)
+                .filter(e => e.isSystemEvent)
                 .map(e => e.date)
         );
         
@@ -229,27 +229,17 @@ class ReplicaService {
         }
     }
     
-    // Detectar data de fi d'avaluacions (cercar PAF1)
+    // Detectar data de fi d'avaluacions (obtenir PAF1)
     findPAF1(calendar) {
-        console.log(`[PAF Detection] Buscant PAF1 al calendari: ${calendar.name}`);
+        console.log(`[PAF Detection] Obtenint PAF1 del calendari: ${calendar.name}`);
         
-        // Cercar PAF1 en esdeveniments del calendari
-        const paf1Event = calendar.events.find(event => event.eventType === 'PAF1');
-        
-        if (paf1Event) {
-            console.log(`[PAF Detection] PAF1 trobat: ${paf1Event.date}`);
-            return paf1Event.date;
+        // Accés directe a paf1Date
+        if (calendar.paf1Date) {
+            console.log(`[PAF Detection] PAF1 trobat: ${calendar.paf1Date}`);
+            return calendar.paf1Date;
         }
         
-        // Fallback: cercar en configuració IOC
-        const paf1Config = semesterConfig.getSystemEvents().find(event => event.eventType === 'PAF1');
-        
-        if (paf1Config && paf1Config.date >= calendar.startDate && paf1Config.date <= calendar.endDate) {
-            console.log(`[PAF Detection] PAF1 de configuració: ${paf1Config.date}`);
-            return paf1Config.date;
-        }
-        
-        console.error('[PAF Detection] PAF1 no trobat! Usant final de calendari');
+        console.error('[PAF Detection] PAF1 no definit! Usant final de calendari');
         return calendar.endDate;
     }
     
