@@ -165,6 +165,14 @@ class ModalRenderer {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) return;
         
+        // Mostrar botó "Importar ICS" només per calendaris tipus "Altre"
+        const importIcsBtn = document.getElementById('importIcsBtn');
+        if (calendar.type === 'Altre') {
+            importIcsBtn.style.display = 'block';
+        } else {
+            importIcsBtn.style.display = 'none';
+        }
+        
         const button = document.querySelector(`[data-calendar-id="${calendarId}"] .actions-menu`);
         const modal = document.getElementById('calendarActionsModal');
         const content = modal.querySelector('.calendar-actions-content');

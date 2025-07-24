@@ -283,6 +283,79 @@ class CalendarManager {
         nextBtn.disabled = nextMonthStart > calendarEnd;
     }
     
+    // === IMPORTACIÓ ICS ===
+    
+    // Importar esdeveniments ICS a calendari existent tipus "Altre"
+    importIcsToCalendar(calendarId) {
+        const calendar = appStateManager.calendars[calendarId];
+        if (!calendar) {
+            uiHelper.showMessage('Calendari no trobat', 'error');
+            return;
+        }
+        
+        if (calendar.type !== 'Altre') {
+            uiHelper.showMessage('La importació ICS només està disponible per calendaris tipus "Altre"', 'error');
+            return;
+        }
+        
+        icsImporter.importIcsFile((icsData) => {
+            try {
+                // Crear categoria "Importats" si no existeix
+                let importCategory = calendar.categories.find(cat => cat.name === 'Importats');
+                if (!importCategory) {
+                    calendar.categoryCounter = (calendar.categoryCounter || 0) + 1;
+                    importCategory = {
+                        id: `${calendar.id}_C${calendar.categoryCounter}`,
+                        name: 'Importats',
+                        color: categoryManager.generateRandomColor(),
+                        isSystem: false
+                    };
+                    calendar.categories.push(importCategory);
+                }
+                
+                // Afegir esdeveniments amb IDs únics i categoria correcta
+                icsData.events.forEach(icsEvent => {
+                    calendar.eventCounter = (calendar.eventCounter || 0) + 1;
+                    const eventId = `${calendar.id}_E${calendar.eventCounter}`;
+                    
+                    calendar.events.push({
+                        id: eventId,
+                        title: icsEvent.title,
+                        date: icsEvent.date,
+                        categoryId: importCategory.id,
+                        description: icsEvent.description,
+                        isSystemEvent: false
+                    });
+                });
+                
+                // Actualitzar dates del calendari si és necessari
+                const currentStart = new Date(calendar.startDate);
+                const currentEnd = new Date(calendar.endDate);
+                const icsStart = new Date(icsData.startDate);
+                const icsEnd = new Date(icsData.endDate);
+                
+                if (icsStart < currentStart) {
+                    calendar.startDate = icsData.startDate;
+                }
+                if (icsEnd > currentEnd) {
+                    calendar.endDate = icsData.endDate;
+                }
+                
+                // Tancar modal d'accions
+                modalRenderer.closeModal('calendarActionsModal');
+                
+                // Guardar i actualitzar interfície
+                storageManager.saveToStorage();
+                this.updateUI();
+                
+                uiHelper.showMessage(`${icsData.totalEvents} esdeveniments importats correctament`, 'success');
+                
+            } catch (error) {
+                uiHelper.showMessage('Error processant els esdeveniments: ' + error.message, 'error');
+            }
+        });
+    }
+    
     // === CÀRREGA DE CALENDARIS ===
     
     // Carregar fitxer de calendari
@@ -303,25 +376,35 @@ class CalendarManager {
                             throw new Error('Estructura del fitxer incorrecta');
                         }
 
-                        // Crear nou calendari amb ID basat en el nom
-                        const calendarId = calendarData.name;
+                        // Usar ID correcte del fitxer JSON
+                        const calendarId = calendarData.id || calendarData.name;
                         
-                        // Validar que el fitxer carregat tingui totes les dades necessàries
-                        if (!calendarData.code) {
-                            throw new Error('El fitxer carregat no conté codi de semestre');
+                        // Validar que no existeixi ja un calendari amb aquest ID
+                        if (appStateManager.calendars[calendarId]) {
+                            throw new Error(`Ja existeix un calendari amb ID "${calendarId}"`);
                         }
                         
-                        appStateManager.calendars[calendarId] = {
+                        // Validar tipus de calendari
+                        const calendarType = calendarData.type || 'FP'; // Per defecte FP per compatibilitat
+                        
+                        // Validar codi de semestre només per calendaris FP/BTX (no per "Altre")
+                        if ((calendarType === 'FP' || calendarType === 'BTX') && !calendarData.code) {
+                            throw new Error('Els calendaris FP/BTX requereixen codi de semestre');
+                        }
+                        // Calendaris "Altre" poden tenir code: null, és correcte
+                        
+                        // Usar el JSON sencer amb les seves propietats
+                        const calendarToLoad = {
+                            ...calendarData,
                             id: calendarId,
-                            name: calendarData.name,
-                            startDate: calendarData.startDate,
-                            endDate: calendarData.endDate,
-                            code: calendarData.code,
+                            type: calendarType,
                             eventCounter: calendarData.eventCounter || 0,
                             categoryCounter: calendarData.categoryCounter || 0,
                             categories: calendarData.categories || [],
                             events: calendarData.events || []
                         };
+                        
+                        appStateManager.calendars[calendarId] = calendarToLoad;
                         
                         // Migrar categories del fitxer carregat al catàleg
                         if (calendarData.categories) {

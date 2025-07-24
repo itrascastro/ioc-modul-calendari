@@ -33,7 +33,7 @@ class IcsExporter {
         }
         
         const icsContent = this.generateIcsContent(calendar);
-        this.downloadIcsFile(icsContent, calendar.name);
+        this.downloadIcsFile(icsContent, calendar.id);
         uiHelper.showMessage('Fitxer ICS exportat correctament', 'success');
     }
     
@@ -64,11 +64,18 @@ class IcsExporter {
     generateIcsEvent(event, calendar) {
         // Buscar categoria utilitzant el servei centralitzat
         const category = categoryService.findCategoryById(event.categoryId, calendar);
-        const date = event.date.replace(/-/g, '');
+        
+        // Validar i formatear data correctament
+        const eventDate = dateHelper.parseUTC(event.date);
+        const startDate = this.formatDateForIcs(eventDate);
+        const endDate = this.formatDateForIcs(this.getNextDay(eventDate));
+        const dtstamp = this.getCurrentTimestamp();
         
         let eventContent = 'BEGIN:VEVENT\r\n';
         eventContent += `UID:${event.id}@calendari-modul-ioc\r\n`;
-        eventContent += `DTSTART;VALUE=DATE:${date}\r\n`;
+        eventContent += `DTSTART;VALUE=DATE:${startDate}\r\n`;
+        eventContent += `DTEND;VALUE=DATE:${endDate}\r\n`;
+        eventContent += `DTSTAMP:${dtstamp}\r\n`;
         eventContent += `SUMMARY:${this.escapeIcsText(event.title)}\r\n`;
         eventContent += `CATEGORIES:${category ? category.name : 'General'}\r\n`;
         
@@ -85,6 +92,31 @@ class IcsExporter {
         return eventContent;
     }
     
+    // === UTILITATS PER DATES ===
+    formatDateForIcs(date) {
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        return `${year}${month}${day}`;
+    }
+    
+    getNextDay(date) {
+        const nextDay = new Date(date);
+        nextDay.setUTCDate(date.getUTCDate() + 1);
+        return nextDay;
+    }
+    
+    getCurrentTimestamp() {
+        const now = new Date();
+        const year = now.getUTCFullYear();
+        const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(now.getUTCDate()).padStart(2, '0');
+        const hour = String(now.getUTCHours()).padStart(2, '0');
+        const minute = String(now.getUTCMinutes()).padStart(2, '0');
+        const second = String(now.getUTCSeconds()).padStart(2, '0');
+        return `${year}${month}${day}T${hour}${minute}${second}Z`;
+    }
+    
     // === ESCAPAMENT DE TEXT PER ICS ===
     escapeIcsText(text) {
         return text
@@ -96,12 +128,12 @@ class IcsExporter {
     }
     
     // === DESCÀRREGA D'ARXIU ===
-    downloadIcsFile(content, calendarName) {
+    downloadIcsFile(content, calendarId) {
         const blob = new Blob([content], { type: 'text/calendar' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${calendarName.replace(/[^a-z0-9]/gi, '_')}_IOC.ics`;
+        link.download = `${calendarId.replace(/[^a-z0-9]/gi, '_')}_IOC.ics`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
