@@ -52,7 +52,7 @@ class IcsExporter {
     
     // === GENERACIÓ DE CAPÇALERA ICS ===
     generateIcsHeader() {
-        return 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:Calendari-Modul-IOC\r\nCALSCALE:GREGORIAN\r\n';
+        return 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:Calendari-IOC\r\nCALSCALE:GREGORIAN\r\n';
     }
     
     // === GENERACIÓ DE PEU ICS ===
