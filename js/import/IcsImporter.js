@@ -25,7 +25,7 @@ class IcsImporter {
     }
     
     // === IMPORTACIÓ PRINCIPAL ===
-    importIcsFile(callback) {
+    importIcsFile(callback, existingCalendar = null) {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.ics';
@@ -36,7 +36,7 @@ class IcsImporter {
                 reader.onload = (e) => {
                     try {
                         const icsContent = e.target.result;
-                        const calendarData = this.parseIcsContent(icsContent, file.name);
+                        const calendarData = this.parseIcsContent(icsContent, file.name, existingCalendar);
                         callback(calendarData);
                     } catch (error) {
                         uiHelper.showMessage('Error llegint el fitxer ICS: ' + error.message, 'error');
@@ -49,22 +49,40 @@ class IcsImporter {
     }
     
     // === PARSING DE CONTINGUT ICS ===
-    parseIcsContent(icsContent, fileName) {
+    parseIcsContent(icsContent, fileName, existingCalendar = null) {
         const lines = icsContent.split(/\r?\n/);
         const events = [];
         let currentEvent = null;
         let allDates = [];
         
+        // Límits del calendari origen si existeix
+        const calendarStart = existingCalendar ? new Date(existingCalendar.startDate) : null;
+        const calendarEnd = existingCalendar ? new Date(existingCalendar.endDate) : null;
+        
         for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
+            let line = lines[i].trim();
+            
+            // Manejar líneas continuation (comienzan con espacio o tab)
+            while (i + 1 < lines.length && /^[ \t]/.test(lines[i + 1])) {
+                i++;
+                line += lines[i].trim();
+            }
             
             if (line === 'BEGIN:VEVENT') {
                 currentEvent = {};
             } else if (line === 'END:VEVENT' && currentEvent) {
                 if (currentEvent.title && currentEvent.dtstart) {
                     const eventDays = this.generateEventDays(currentEvent);
-                    events.push(...eventDays);
-                    allDates.push(...eventDays.map(e => e.date));
+                    
+                    // Filtrar esdeveniments dins dels límits del calendari
+                    const filteredEvents = eventDays.filter(event => {
+                        if (!calendarStart || !calendarEnd) return true;
+                        const eventDate = new Date(event.date);
+                        return eventDate >= calendarStart && eventDate <= calendarEnd;
+                    });
+                    
+                    events.push(...filteredEvents);
+                    allDates.push(...filteredEvents.map(e => e.date));
                 }
                 currentEvent = null;
             } else if (currentEvent) {
@@ -177,10 +195,29 @@ class IcsImporter {
     extractTime(dateTimeValue) {
         // Format: YYYYMMDDTHHMMSSZ o YYYYMMDDTHHMMSS
         if (dateTimeValue.length >= 15 && dateTimeValue.charAt(8) === 'T') {
+            const dateStr = dateTimeValue.substring(0, 8);
             const timeStr = dateTimeValue.substring(9, 15); // HHMMSS
-            const hours = timeStr.substring(0, 2);
+            const isUTC = dateTimeValue.endsWith('Z');
+            
+            let hours = parseInt(timeStr.substring(0, 2));
             const minutes = timeStr.substring(2, 4);
-            return `${hours}:${minutes}`;
+            
+            if (isUTC) {
+                // Convertir UTC a hora local (assumint zona horària europea +1/+2)
+                // Crear data UTC i convertir a local
+                const year = parseInt(dateStr.substring(0, 4));
+                const month = parseInt(dateStr.substring(4, 6)) - 1;
+                const day = parseInt(dateStr.substring(6, 8));
+                const utcDate = new Date(Date.UTC(year, month, day, hours, parseInt(minutes.substring(0, 2))));
+                
+                // Obtenir hora local
+                const localHours = utcDate.getHours();
+                const localMinutes = utcDate.getMinutes();
+                
+                return `${String(localHours).padStart(2, '0')}:${String(localMinutes).padStart(2, '0')}`;
+            } else {
+                return `${String(hours).padStart(2, '0')}:${minutes}`;
+            }
         }
         return null;
     }

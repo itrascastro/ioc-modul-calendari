@@ -353,7 +353,7 @@ class CalendarManager {
             } catch (error) {
                 uiHelper.showMessage('Error processant els esdeveniments: ' + error.message, 'error');
             }
-        });
+        }, calendar);
     }
     
     // === CÀRREGA DE CALENDARIS ===

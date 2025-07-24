@@ -65,18 +65,35 @@ class IcsExporter {
         // Buscar categoria utilitzant el servei centralitzat
         const category = categoryService.findCategoryById(event.categoryId, calendar);
         
+        // Detectar si el títol té hora entre claudàtors [HH:MM]
+        const timeMatch = event.title.match(/^\[(\d{2}:\d{2})\]\s+(.+)$/);
+        const hasTime = !!timeMatch;
+        const eventTime = hasTime ? timeMatch[1] : null;
+        const cleanTitle = hasTime ? timeMatch[2] : event.title;
+        
         // Validar i formatear data correctament
         const eventDate = dateHelper.parseUTC(event.date);
-        const startDate = this.formatDateForIcs(eventDate);
-        const endDate = this.formatDateForIcs(this.getNextDay(eventDate));
         const dtstamp = this.getCurrentTimestamp();
         
         let eventContent = 'BEGIN:VEVENT\r\n';
         eventContent += `UID:${event.id}@calendari-modul-ioc\r\n`;
-        eventContent += `DTSTART;VALUE=DATE:${startDate}\r\n`;
-        eventContent += `DTEND;VALUE=DATE:${endDate}\r\n`;
+        
+        if (hasTime) {
+            // Esdeveniment amb hora específica (duració 1 hora)
+            const startDateTime = this.formatDateTimeForIcs(eventDate, eventTime);
+            const endDateTime = this.formatDateTimeForIcs(eventDate, eventTime, 1); // +1 hora
+            eventContent += `DTSTART:${startDateTime}\r\n`;
+            eventContent += `DTEND:${endDateTime}\r\n`;
+        } else {
+            // Esdeveniment de dia sencer
+            const startDate = this.formatDateForIcs(eventDate);
+            const endDate = this.formatDateForIcs(this.getNextDay(eventDate));
+            eventContent += `DTSTART;VALUE=DATE:${startDate}\r\n`;
+            eventContent += `DTEND;VALUE=DATE:${endDate}\r\n`;
+        }
+        
         eventContent += `DTSTAMP:${dtstamp}\r\n`;
-        eventContent += `SUMMARY:${this.escapeIcsText(event.title)}\r\n`;
+        eventContent += `SUMMARY:${this.escapeIcsText(cleanTitle)}\r\n`;
         eventContent += `CATEGORIES:${category ? category.name : 'General'}\r\n`;
         
         let description = event.description || '';
@@ -98,6 +115,21 @@ class IcsExporter {
         const month = String(date.getUTCMonth() + 1).padStart(2, '0');
         const day = String(date.getUTCDate()).padStart(2, '0');
         return `${year}${month}${day}`;
+    }
+    
+    formatDateTimeForIcs(date, timeStr, addHours = 0) {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const eventDateTime = new Date(date);
+        eventDateTime.setUTCHours(hours + addHours, minutes, 0, 0);
+        
+        const year = eventDateTime.getUTCFullYear();
+        const month = String(eventDateTime.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(eventDateTime.getUTCDate()).padStart(2, '0');
+        const hour = String(eventDateTime.getUTCHours()).padStart(2, '0');
+        const minute = String(eventDateTime.getUTCMinutes()).padStart(2, '0');
+        const second = String(eventDateTime.getUTCSeconds()).padStart(2, '0');
+        
+        return `${year}${month}${day}T${hour}${minute}${second}Z`;
     }
     
     getNextDay(date) {
