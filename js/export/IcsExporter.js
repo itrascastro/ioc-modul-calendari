@@ -119,9 +119,12 @@ class IcsExporter {
     
     formatDateTimeForIcs(date, timeStr, addHours = 0) {
         const [hours, minutes] = timeStr.split(':').map(Number);
-        const eventDateTime = new Date(date);
-        eventDateTime.setUTCHours(hours + addHours, minutes, 0, 0);
         
+        // Crear data amb hora local i deixar que JavaScript faci la conversió a UTC
+        const eventDateTime = new Date(date);
+        eventDateTime.setHours(hours + addHours, minutes, 0, 0); // Hora local
+        
+        // Obtenir components UTC (JavaScript fa la conversió automàtica)
         const year = eventDateTime.getUTCFullYear();
         const month = String(eventDateTime.getUTCMonth() + 1).padStart(2, '0');
         const day = String(eventDateTime.getUTCDate()).padStart(2, '0');

@@ -328,6 +328,31 @@ class CalendarManager {
                     });
                 });
                 
+                // Ordenar esdeveniments: primer amb hora específica, després dia complet
+                calendar.events.sort((a, b) => {
+                    // Detectar si tenen hora específica (format [HH:MM])
+                    const aHasTime = /^\[\d{2}:\d{2}\]/.test(a.title);
+                    const bHasTime = /^\[\d{2}:\d{2}\]/.test(b.title);
+                    
+                    // Si un té hora i l'altre no, el que té hora va primer
+                    if (aHasTime && !bHasTime) return -1;
+                    if (!aHasTime && bHasTime) return 1;
+                    
+                    // Si ambdós tenen hora o cap té hora, ordenar per data
+                    const dateComparison = new Date(a.date) - new Date(b.date);
+                    if (dateComparison !== 0) return dateComparison;
+                    
+                    // Si la data és la mateixa i ambdós tenen hora, ordenar per hora
+                    if (aHasTime && bHasTime) {
+                        const aTime = a.title.match(/^\[(\d{2}:\d{2})\]/)[1];
+                        const bTime = b.title.match(/^\[(\d{2}:\d{2})\]/)[1];
+                        return aTime.localeCompare(bTime);
+                    }
+                    
+                    // Sinó, ordenar per títol
+                    return a.title.localeCompare(b.title);
+                });
+                
                 // Actualitzar dates del calendari si és necessari
                 const currentStart = new Date(calendar.startDate);
                 const currentEnd = new Date(calendar.endDate);
