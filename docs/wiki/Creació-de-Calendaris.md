@@ -211,11 +211,5 @@ BTX_{ASSIGNATURA}_{CURS}-{SEMESTRE}
 - Crea calendaris separats per mòduls/assignatures diferents
 - Usa la replicació per compartir esdeveniments comuns
 
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
-
 ---
 [← Guia d'inici](Guia-d-Inici-Rapid) | [Gestió d'esdeveniments →](Gestió-d-Esdeveniments)

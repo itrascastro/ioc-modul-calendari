@@ -143,11 +143,5 @@ L'aplicació es divideix en tres àrees:
 - Descobreix el sistema de [Categories i Organització](Categories-i-Organització)
 - Explora les opcions d'[Importació i Exportació](Importació-i-Exportació)
 
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
-
 ---
 [← Tornar a l'inici](Home) | [Crear calendaris →](Creació-de-Calendaris)

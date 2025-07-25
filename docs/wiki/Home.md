@@ -50,10 +50,10 @@ El Calendari IOC és una eina completa per crear, gestionar i organitzar calenda
 - [**UI**](ui-Referència) - ModalRenderer, PanelsRenderer
 - [**Views**](views-Referència) - MonthView, WeekView, DayView, etc.
 - [**Helpers**](helpers-Referència) - DateHelper, UIHelper, ThemeHelper, etc.
-- [**Services**](services-Referència) - CategoryService, ReplicaService, etc.
-- [**Export**](export-Referència) - JsonExporter, IcsExporter, HtmlExporter
-- [**Import**](import-Referència) - IcsImporter
-- [**Config**](config-Referència) - SemesterConfig
+- [**Services**](Services-Referència) - CategoryService, ReplicaService, etc.
+- [**Export**](Export-Referència) - JsonExporter, IcsExporter, HtmlExporter
+- [**Import**](Import-Referència) - IcsImporter
+- [**Config**](Config-Referència) - SemesterConfig
 
 **Guies de desenvolupament:**
 - [**Guia d'Instal·lació per Desenvolupadors**](Guia-d-Instal·lació-Dev) - Setup desenvolupament
@@ -66,13 +66,5 @@ El Calendari IOC és una eina completa per crear, gestionar i organitzar calenda
 - **Si ets usuari**: Comença per la [Guia d'Inici Ràpid](Guia-d-Inici-Rapid)
 - **Si ets administrador**: Revisa la [Configuració Semestral](Configuració-Semestral)
 - **Si ets desenvolupador**: Llegeix l'[Arquitectura General](Arquitectura-General)
-
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io  
-**Repositori**: [https://github.com/itrascastro/ioc-modul-calendari](https://github.com/itrascastro/ioc-modul-calendari)  
-**Llicència**: MIT
 
 Per reportar errors o suggerir millores, utilitza el sistema d'issues del repositori GitHub.

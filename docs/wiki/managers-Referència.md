@@ -570,7 +570,7 @@ Configura els esdeveniments no ubicats per ser arrossegables.
 
 ---
 
-## 👁️ ViewManager
+## ViewManager
 
 **Responsabilitat**: Control de vistes i navegació del calendari
 
@@ -692,12 +692,6 @@ Tot canvi d'estat es persisteix automàticament via `StorageManager`.
 ---
 
 Aquesta referència proporciona la base per entendre i modificar qualsevol aspecte dels Managers. Per implementacions específiques, consulta el codi font de cada manager amb aquesta documentació com a guia.
-
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
 
 ---
 [← Arquitectura](Arquitectura-General) | [State Management →](state-Referència)

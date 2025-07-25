@@ -300,7 +300,7 @@ class NewCalendarTypeManager extends CalendarManager {
 }
 ```
 
-## 🎮 6. Command Pattern
+## 6. Command Pattern
 
 ### Descripció
 Encapsulació d'accions d'usuari com a objectes, facilitant l'extensió i el debugging.
@@ -407,7 +407,7 @@ class Bootstrap {
 - **Mantenibilitat**: Gestió centralitzada d'events
 - **Debugging**: Punt únic per interceptar events
 
-## ️ 8. Module Pattern
+## 8. Module Pattern
 
 ### Descripció
 Organització del codi en mòduls independents amb responsabilitats específiques.
@@ -475,12 +475,6 @@ DOM Update
 7. **Strategy execution** → Renderització segons vista actual
 
 Aquesta integració de patrons proporciona una arquitectura robusta, mantenible i extensible per l'aplicació Calendari IOC.
-
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
 
 ---
 [← Arquitectura General](Arquitectura-General) | [Flux de Dades →](Flux-de-Dades-i-Control)

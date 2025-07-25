@@ -24,7 +24,7 @@ config/
 1. **common-semestre.json**: Base compartida per tots els tipus
 2. **fp-semestre.json / btx-semestre.json**: Configuracions específiques que s'afegeixen a la base
 
-## 🛠️ Actualització Each Semestre
+## Actualització Each Semestre
 
 ### Tasques obligatòries cada semestre
 
@@ -34,7 +34,7 @@ config/
 ```json
 {
   "semester": {
-    "code": "2024-25_S2",
+    "code": "25S2",
     "name": "Segon Semestre 2024-25",
     "startDate": "2025-02-03",
     "endDate": "2025-06-13",
@@ -44,7 +44,7 @@ config/
 ```
 
 **Camps a actualitzar:**
-- **code**: Format `YYYY-YY_SN` (any acadèmic + semestre)
+- **code**: Format `YYSN` (any + semestre: 25S1, 25S2, 26S1, etc.)
 - **name**: Nom descriptiu del semestre
 - **startDate**: Data d'inici de les classes (format YYYY-MM-DD)
 - **endDate**: Data de fi del semestre
@@ -162,7 +162,7 @@ config/
 ```json
 {
   "semester": {
-    "code": "2025-26_S1",                    # ← ACTUALITZAR
+    "code": "26S1",                    # ← ACTUALITZAR
     "name": "Primer Semestre 2025-26",       # ← ACTUALITZAR  
     "startDate": "2025-09-15",               # ← ACTUALITZAR
     "endDate": "2026-01-23",                 # ← ACTUALITZAR
@@ -221,7 +221,7 @@ config/
 // ✅ CORRECTE  
 "startDate": "2025-09-15",        // Format ISO
 "endDate": "2025-12-20",          // Data vàlida
-"code": "2025-26_S1"              // Format complet
+"code": "26S1"              // Format correcte
 ```
 
 ## Backup i Recuperació
@@ -252,15 +252,9 @@ Si after l'actualització hi ha problemes:
 
 ### Documentació tècnica
 Per canvis més avançats, consulta:
-- [Referència de SemesterConfig](config-Referència)  
+- [Referència de SemesterConfig](Config-Referència)  
 - [Arquitectura del Sistema](Arquitectura-General)
 - [Guia de Desenvolupament](Guia-d-Instal·lació-Dev)
-
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
 
 ---
 [← Categories per defecte](Configuració-de-Categories-per-Defecte) | [Esdeveniments del sistema →](Gestió-d-Esdeveniments-del-Sistema)

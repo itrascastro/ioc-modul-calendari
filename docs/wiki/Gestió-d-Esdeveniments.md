@@ -229,11 +229,5 @@ Generats automàticament segons la configuració institucional.
 - **Colors no canvien**: Prova a refrescar la pàgina
 - **Sincronització**: Els canvis poden trigar uns segons
 
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
-
 ---
 [← Creació de calendaris](Creació-de-Calendaris) | [Categories i organització →](Categories-i-Organització)

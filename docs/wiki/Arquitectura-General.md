@@ -262,12 +262,6 @@ New event appears in calendar
 - Accions de usuari encapsulades
 - Fàcil extensió de noves accions
 
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
-
 ---
 **Següent**: [Patrons Arquitectònics Detallats](Patrons-Arquitectònics-Detallats) per aprofundir en cada patró implementat.
 

@@ -678,11 +678,5 @@ storageManager.importState(backup);
 
 Aquest sistema d'estat proporciona una base sòlida i extensible per a l'aplicació, amb persistència automàtica i recuperació d'errors robusta.
 
-## Autoria
-
-**Ismael Trascastro**  
-**Correu**: itrascastro@ioc.cat  
-**Web**: itrascastro.github.io
-
 ---
 [← Managers](managers-Referència) | [UI Components →](ui-Referència)
