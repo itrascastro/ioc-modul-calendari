@@ -444,7 +444,8 @@
     margin-bottom: 20px; 
 }
 
-.modal-body label { 
+.modal-body label,
+.modal-body .form-label { 
     display: block; 
     margin-bottom: 8px; 
     font-weight: 500; 
