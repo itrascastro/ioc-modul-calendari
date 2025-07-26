@@ -50,9 +50,10 @@ class CalendarManager {
 - **Interaccions**: AppStateManager per catàleg global
 
 **ReplicaManager**
-- **Responsabilitat**: Replicació d'esdeveniments entre calendaris
+- **Responsabilitat**: Orquestració de replicació d'esdeveniments entre calendaris
 - **Mètodes clau**: `executeReplication()`, `placeUnplacedEvent()`
-- **Interaccions**: ReplicaService, DateValidationService
+- **Interaccions**: ReplicaServiceFactory (per selecció automàtica), DateValidationService
+- **Arquitectura**: Utilitza Factory Pattern per algoritmes especialitzats
 
 ### Avantatges del Pattern
 - **Separació clara**: Cada manager té una responsabilitat específica
@@ -110,7 +111,7 @@ const appStateManager = new AppStateManager();
 ## 3. Factory Pattern
 
 ### Descripció
-Creació d'objectes segons paràmetres, especialment per diferents tipus de calendaris.
+Creació d'objectes segons paràmetres, especialment per diferents tipus de calendaris i algoritmes de replicació.
 
 ### Implementació
 
@@ -147,6 +148,60 @@ class IdHelper {
         return `${calendarId}_E${calendar.eventCounter}`;
     }
 }
+
+// Factory per Services de Replicació (Implementació avançada)
+class ReplicaServiceFactory {
+    static getService(sourceCalendar, targetCalendar) {
+        const sourceType = sourceCalendar.type || 'Altre';
+        const targetType = targetCalendar.type || 'Altre';
+        
+        console.log(`[REPLICA_FACTORY] Seleccionant servei per: ${sourceType} → ${targetType}`);
+        
+        // Factory logic per seleccionar algoritme adequat
+        if (sourceType === 'Altre' || targetType === 'Altre') {
+            console.log(`[REPLICA_FACTORY] Calendari "Altre" detectat: usant GenericReplicaService`);
+            return new GenericReplicaService();
+        } 
+        
+        // Si ambdós són calendaris d'estudi (FP, BTX), usar EstudiReplicaService
+        console.log(`[REPLICA_FACTORY] Calendaris d'estudi detectats: usant EstudiReplicaService`);
+        return new EstudiReplicaService();
+    }
+    
+    static getServiceInfo(sourceCalendar, targetCalendar) {
+        // Retorna informació sobre el servei que es seleccionaria
+        const sourceType = sourceCalendar?.type || 'Altre';
+        const targetType = targetCalendar?.type || 'Altre';
+        
+        if (sourceType === 'Altre' || targetType === 'Altre') {
+            return {
+                serviceType: 'GenericReplicaService',
+                description: 'Servei optimitzat per calendaris genèrics amb preservació d\'agrupacions',
+                features: ['Tots els dies de la setmana', 'Múltiples esdeveniments per dia']
+            };
+        } else {
+            return {
+                serviceType: 'EstudiReplicaService',
+                description: 'Servei per calendaris d\'estudi amb restriccions acadèmiques',
+                features: ['Només dies laborables', 'Un esdeveniment per dia màxim']
+            };
+        }
+    }
+    
+    static validateCompatibility(sourceCalendar, targetCalendar) {
+        // Validació de compatibilitat per tipus de calendaris
+        const validation = { isCompatible: true, warnings: [], recommendations: [] };
+        
+        const sourceType = sourceCalendar?.type || 'Altre';
+        const targetType = targetCalendar?.type || 'Altre';
+        
+        if (sourceType === 'Altre' && targetType !== 'Altre') {
+            validation.recommendations.push('Replicació d\'Altre a estudi pot generar esdeveniments no ubicats en caps de setmana');
+        }
+        
+        return validation;
+    }
+}
 ```
 
 ### Factories Implementats
@@ -166,10 +221,38 @@ class IdHelper {
 - Assignació automàtica de categoria si cal
 - Integració amb sistema de replicació
 
-### Avantatges
+**Replica Service Factory** (ReplicaServiceFactory) ⭐ **NOVA IMPLEMENTACIÓ**
+- **Selecció automàtica d'algoritmes**: Escull entre EstudiReplicaService i GenericReplicaService
+- **Lògica de compatibilitat**: Analitza tipus de calendaris per optimitzar replicació
+- **Arquitectura jeràrquica**: Utilitza herència de ReplicaService com a base
+- **Extensibilitat**: Facilita afegir nous algoritmes de replicació
+- **Patró Template Method**: Mètodes comuns a la classe base, especialització a subclasses
+
+#### Arquitectura de Services de Replicació
+
+```javascript
+// Jerarquia d'herència
+ReplicaService (classe base)
+    ├── EstudiReplicaService (per calendaris FP/BTX)
+    ├── GenericReplicaService (per calendaris "Altre")
+    └── [FutureCustomReplicaService] (extensible)
+
+// Factory per selecció
+ReplicaServiceFactory.getService(source, target) → ReplicaService instance
+```
+
+**Avantatges del Replica Service Factory:**
+- **Selecció intel·ligent**: Automàtica segons tipus de calendaris
+- **Compatibilitat 100%**: EstudiReplicaService manté comportament exacte per FP/BTX
+- **Optimització per "Altre"**: GenericReplicaService preserva agrupacions i redueix storage
+- **Transparència per ReplicaManager**: Interfície unificada regardless del servei seleccionat
+
+### Avantatges del Factory Pattern
 - **Consistència**: Objectes creats sempre segueixen les mateixes regles
 - **Configuració automàtica**: Menys errors d'usuari
-- **Extensibilitat**: Fàcil afegir nous tipus
+- **Extensibilitat**: Fàcil afegir nous tipus i algoritmes
+- **Encapsulació de lògica complexa**: Factory oculta detalls de selecció d'algoritmes
+- **Testabilitat**: Cada factory es pot testejar de manera aïllada
 
 ## 4. Observer Pattern
 
@@ -431,7 +514,12 @@ js/
 │   └── UIHelper.js
 └── services/          # Shared Logic Modules
     ├── CategoryService.js
-    └── ReplicaService.js
+    ├── DateValidationService.js
+    └── replica/           # Replica Services with Factory Pattern
+        ├── ReplicaService.js
+        ├── EstudiReplicaService.js
+        ├── GenericReplicaService.js
+        └── ReplicaServiceFactory.js
 ```
 
 ### Beneficis de Modularització
@@ -453,7 +541,7 @@ Command Pattern (Action Routing)
           ↓
 Manager Pattern (Business Logic)
           ↓
-Factory Pattern (Object Creation)
+Factory Pattern (Object/Algorithm Creation)
           ↓
 Singleton Pattern (State Update)
           ↓
@@ -474,7 +562,24 @@ DOM Update
 6. **Observer notification** → Re-renderització automàtica
 7. **Strategy execution** → Renderització segons vista actual
 
-Aquesta integració de patrons proporciona una arquitectura robusta, mantenible i extensible per l'aplicació Calendari IOC.
+### Exemple: Executar Replicació entre Calendaris ⭐ **NOU**
+
+1. **User click "Replicar"** → Event Delegation captura
+2. **Command dispatch** → ExecuteReplicationCommand
+3. **Manager execution** → ReplicaManager.executeReplication()
+4. **Factory selection** → ReplicaServiceFactory.getService(source, target)
+   - Analitza tipus de calendaris (FP/BTX vs "Altre")
+   - Retorna EstudiReplicaService o GenericReplicaService
+5. **Algorithm execution** → service.replicate(sourceCalendar, targetCalendar)
+   - EstudiReplicaService: Proporcional amb restriccions acadèmiques
+   - GenericReplicaService: Preservació d'agrupacions per calendaris flexibles
+6. **Singleton update** → AppStateManager.calendars[targetId].events += result.placed
+7. **Observer notification** → Re-renderització vista, panells i esdeveniments no ubicats
+8. **Strategy execution** → Actualització específica per vista activa
+
+Aquest flux demostra com el nou **Factory Pattern avançat** per services de replicació s'integra perfectament amb l'arquitectura existent, proporcionant selecció automàtica d'algoritmes optimitzats sense trencar la consistència del sistema.
+
+Aquesta integració de patrons proporciona una arquitectura robusta, mantenible i extensible per l'aplicació Calendari IOC, amb especial èmfasi en l'escalabilitat dels algoritmes de replicació.
 
 ---
 [← Arquitectura General](Arquitectura-General) | [Flux de Dades →](Flux-de-Dades-i-Control)

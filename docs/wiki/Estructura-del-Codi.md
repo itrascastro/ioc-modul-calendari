@@ -124,12 +124,17 @@ helpers/
 
 ```
 services/
-├── CategoryService.js     # Servei centralitzat per gestió de categories
-├── ReplicaService.js      # Algoritme de replicació proporcional
-└── DateValidationService.js # Validació de dates i rangs
+├── CategoryService.js         # Servei centralitzat per gestió de categories
+├── DateValidationService.js   # Validació de dates i rangs
+└── replica/                   # Services de replicació especialitzats
+    ├── ReplicaService.js           # Classe base amb mètodes comuns
+    ├── EstudiReplicaService.js     # Algoritme per calendaris FP/BTX
+    ├── GenericReplicaService.js    # Algoritme per calendaris "Altre"
+    └── ReplicaServiceFactory.js    # Factory per selecció automàtica
 ```
 
 **Separació de Concerns**: Algoritmes complexos separats dels managers per reutilització.
+**Arquitectura Jeràrquica**: Els services de replicació utilitzen herència i Factory Pattern per especialització per tipus de calendari.
 
 ### js/export/
 
@@ -224,38 +229,54 @@ L'ordre de càrrega dels scripts a `index.html` reflecteix les dependències:
 <script src="js/helpers/UIHelper.js"></script>
 <!-- ... altres helpers -->
 
-<!-- 2. Services (depenen de helpers) -->
-<script src="js/services/CategoryService.js"></script>
-<script src="js/services/ReplicaService.js"></script>
+<!-- 2. Config (depèn de helpers) -->
+<script src="js/config/SemesterConfig.js"></script>
 
-<!-- 3. State (depèn de helpers i services) -->
+<!-- 3. State (depèn de helpers i config) -->
 <script src="js/state/AppStateManager.js"></script>
 <script src="js/state/StorageManager.js"></script>
 
-<!-- 4. Config (depèn de state i helpers) -->
-<script src="js/config/SemesterConfig.js"></script>
+<!-- 4. Services (depenen de helpers i state) -->
+<script src="js/services/CategoryService.js"></script>
+<script src="js/services/DateValidationService.js"></script>
+<script src="js/services/replica/ReplicaService.js"></script>
+<script src="js/services/replica/EstudiReplicaService.js"></script>
+<script src="js/services/replica/GenericReplicaService.js"></script>
+<script src="js/services/replica/ReplicaServiceFactory.js"></script>
 
-<!-- 5. UI Components (depenen de tot l'anterior) -->
+<!-- 5. Managers (depenen de services i state) -->
+<script src="js/managers/EventManager.js"></script>
+<script src="js/managers/CalendarManager.js"></script>
+<script src="js/managers/CategoryManager.js"></script>
+<script src="js/managers/ReplicaManager.js"></script>
+<script src="js/managers/ViewManager.js"></script>
+
+<!-- 6. UI Components (depenen de tots els anteriors) -->
 <script src="js/ui/views/CalendarRenderer.js"></script>
+<script src="js/ui/ModalRenderer.js"></script>
 <!-- ... altres UI components -->
 
-<!-- 6. Managers (depenen de tot l'anterior) -->
-<script src="js/managers/CalendarManager.js"></script>
-<!-- ... altres managers -->
+<!-- 7. Export/Import (depenen de tot l'anterior) -->
+<script src="js/export/JsonExporter.js"></script>
+<script src="js/import/IcsImporter.js"></script>
 
-<!-- 7. Bootstrap (coordina tot) -->
+<!-- 8. Bootstrap (coordina tot) -->
 <script src="js/Bootstrap.js"></script>
 ```
 
 ### Regles de Dependències
 
 **Bottom-up**: Capes inferiors no depenen de les superiors
-**Helpers → Services → State → UI → Managers → Bootstrap**
+**Helpers → Config → State → Services → Managers → UI → Export/Import → Bootstrap**
+
+**Especialitat**: Services de replicació amb arquitectura jeràrquica interna:
+**ReplicaService (base) → EstudiReplicaService/GenericReplicaService → ReplicaServiceFactory**
 
 **Prohibit**: 
 - Helpers que depenen de Managers
 - Services que depenen de UI Components
 - Dependències circulars
+- Services de replicació que es cridin directament (usar sempre Factory)
 
 ## Patrons de Codi
 
@@ -336,9 +357,12 @@ class CalendarManager {
 
 #### Replicació
 **Fitxers implicats**:
-1. `ReplicaManager.js` - Orquestració UI
-2. `ReplicaService.js` - Algoritme de replicació
-3. `PanelsRenderer.js:renderUnplacedEvents()` - Events no ubicats
+1. `ReplicaManager.js` - Orquestració UI i workflow
+2. `replica/ReplicaServiceFactory.js` - Selecció automàtica d'algoritme
+3. `replica/EstudiReplicaService.js` - Algoritme per calendaris FP/BTX
+4. `replica/GenericReplicaService.js` - Algoritme per calendaris "Altre"
+5. `replica/ReplicaService.js` - Mètodes comuns (detectar PAF, calcular confiança)
+6. `PanelsRenderer.js:renderUnplacedEvents()` - Renderització d'events no ubicats
 
 ### Per Modificar Aspectes Específics
 
@@ -420,7 +444,46 @@ validateInput(input) {
 2. Implementar mètodes estàndard
 3. Integrar amb UI existent
 
-Aquesta estructura proporciona una base sòlida per al desenvolupament eficient i mantenible del Calendari IOC.
+**Nou Algoritme de Replicació**:
+1. Crear nou service heretant de `ReplicaService` a `js/services/replica/`
+2. Implementar mètode `replicate(sourceCalendar, targetCalendar)`
+3. Registrar al `ReplicaServiceFactory` amb lògica de selecció
+4. Seguir format de resultat estàndard: `{ placed: [], unplaced: [] }`
+
+### Patrons Específics per Services de Replicació
+
+**Herència de ReplicaService**:
+```javascript
+class CustomReplicaService extends ReplicaService {
+    replicate(sourceCalendar, targetCalendar) {
+        // Usar mètodes heretats:
+        // - this.analyzeWorkableSpace(calendar)
+        // - this.calculateProportionalConfidence(...)
+        // - this.findPAF1(calendar)
+        
+        // Implementar algoritme específic
+        return { placed: [...], unplaced: [...] };
+    }
+}
+```
+
+**Registre al Factory**:
+```javascript
+// A ReplicaServiceFactory.js, modificar getService():
+static getService(sourceCalendar, targetCalendar) {
+    const sourceType = sourceCalendar.type || 'Altre';
+    const targetType = targetCalendar.type || 'Altre';
+    
+    // Afegir nova condició per nou tipus
+    if (sourceType === 'CUSTOM' || targetType === 'CUSTOM') {
+        return new CustomReplicaService();
+    }
+    
+    // Lògica existent...
+}
+```
+
+Aquesta estructura proporciona una base sòlida per al desenvolupament eficient i mantenible del Calendari IOC, amb especial èmfasi en l'extensibilitat dels algoritmes de replicació.
 
 ---
 [← Guia d'Instal·lació Dev](Guia-d-Instal·lació-Dev) | [Punts d'Extensió Crítics →](Punts-d-Extensió-Crítics)

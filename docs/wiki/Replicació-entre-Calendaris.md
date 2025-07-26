@@ -19,27 +19,77 @@ La replicació és el procés de **copiar esdeveniments d'un calendari origen a 
 - **Reutilització**: Aprofitar planificacions d'anys anteriors
 - **Consistència**: Mantenir la mateixa estructura temporal entre calendaris similars
 
-## Com Funciona l'Algoritme de Replicació
+## Com Funciona la Nova Arquitectura de Replicació
 
-### Algoritme Proporcional Intel·ligent
+### Sistema Multi-Algoritme Intel·ligent
 
-L'aplicació utilitza un **algoritme proporcional** que:
+L'aplicació utilitza un **sistema avançat de replicació** amb múltiples algoritmes especialitzats que se seleccionen automàticament segons el tipus de calendaris:
 
-1. **Analitza l'espai útil** de cada calendari (dies lectius sense festius ni esdeveniments del sistema)
-2. **Calcula la proporció** entre els dos espais útils
-3. **Mapa els esdeveniments** del calendari origen al destí mantenint la proporció temporal
-4. **Evita col·lisions** amb esdeveniments existents en el destí
-5. **Gestiona conflictes** creant una llista d'esdeveniments no ubicats
+#### Arquitectura basada en Factory Pattern
 
-### Exemple Pràctic
+1. **Detecció automàtica de tipus**: El sistema identifica els tipus de calendari origen i destí (FP, BTX o Altre)
+2. **Selecció d'algoritme**: Utilitza el **ReplicaServiceFactory** per seleccionar el servei més adequat
+3. **Execució optimitzada**: Cada algoritme està especialitzat per màxima eficiència en el seu domini
+4. **Gestió unificada**: Tots els serveis retornen el mateix format de resultat per compatibilitat
 
-**Calendari Origen (Primer Semestre):**
-- Durada: 100 dies lectius
+#### Algoritmes Disponibles
+
+**EstudiReplicaService** (per calendaris FP/BTX):
+- Mantén 100% compatibilitat amb el comportament anterior
+- Només dies laborables (dilluns a divendres)
+- Un esdeveniment per dia màxim
+- Cerca radial de slots lliures
+- Detecció automàtica de PAF1
+
+**GenericReplicaService** (per calendaris "Altre"):
+- Optimitzat per calendaris genèrics sense restriccions acadèmiques
+- Suport per tots els dies de la setmana
+- Múltiples esdeveniments per dia
+- Preservació d'agrupacions d'esdeveniments
+- Estratègies adaptatives: còpia directa, expansió i compressió
+
+#### Procés de Selecció Automàtica
+
+```
+Si origen = "Altre" O destí = "Altre"
+    → Usar GenericReplicaService
+Sino
+    → Usar EstudiReplicaService (FP/BTX)
+```
+
+### Exemples Pràctics per Tipus de Replicació
+
+#### Replicació entre Calendaris d'Estudi (FP ↔ BTX)
+
+**Calendari Origen FP (Primer Semestre):**
+- Durada: 100 dies lectius (només laborables)
 - Esdeveniment a la posició 25 (25% del període)
 
-**Calendari Destí (Segon Semestre):**
-- Durada: 90 dies lectius
+**Calendari Destí BTX (Segon Semestre):**
+- Durada: 90 dies lectius (només laborables)
 - L'esdeveniment es col·locarà a la posició 22-23 (25% de 90 dies)
+- **Algoritme**: EstudiReplicaService amb cerca radial de slots
+
+#### Replicació amb Calendaris "Altre"
+
+**Calendari Origen "Altre":**
+- Durada: 200 dies (inclou caps de setmana)
+- 3 esdeveniments el mateix dia (agrupació)
+
+**Calendari Destí "Altre" (Espais Idèntics):**
+- Durada: 200 dies (mateix espai útil)
+- **Estratègia**: Còpia directa dia a dia
+- **Resultat**: Agrupació d'esdeveniments preservada al 100%
+
+**Calendari Destí "Altre" (Espai Major):**
+- Durada: 250 dies (més espai disponible)
+- **Estratègia**: Expansió proporcional
+- **Resultat**: Events distribuïts amb més espai entre ells
+
+**Calendari Destí "Altre" (Espai Menor):**
+- Durada: 150 dies (menys espai disponible)
+- **Estratègia**: Compressió amb gestió de col·lisions
+- **Resultat**: Alguns esdeveniments poden quedar no ubicats
 
 ## Procediment de Replicació
 
@@ -141,15 +191,28 @@ Quan repliques esdeveniments, l'aplicació gestiona automàticament les categori
 
 ### Cas 3: Adaptació entre Tipus de Calendaris
 
-**Escenari**: Adaptar planificació d'un mòdul FP a un calendari BTX
+#### Escenari A: FP/BTX → "Altre"
 
-**Procediment:**
-1. Crea un calendari "Altre" amb les dates del BTX
-2. Replica des del calendari FP
-3. Revisa intensament els esdeveniments no ubicats
-4. Adapta continguts a la metodologia BTX
+**Situació**: Adaptar planificació d'estudi a calendari genèric
+**Avantatge**: Els esdeveniments de dies laborables es col·locaran en el calendari "Altre" que inclou caps de setmana
+**Algoritme**: GenericReplicaService
+**Resultat**: Millor taxa d'èxit, menys esdeveniments no ubicats
 
-**Nota**: Aquesta adaptació requereix més supervisió manual per les diferències estructurals
+#### Escenari B: "Altre" → FP/BTX
+
+**Situació**: Adaptar calendari genèric a calendari d'estudi
+**Limitació**: Els esdeveniments de caps de setmana del calendari origen quedaran no ubicats
+**Algoritme**: GenericReplicaService (seleccionat per presència de calendari "Altre")
+**Resultat**: Requereix més revisió manual per esdeveniments de caps de setmana
+
+#### Escenari C: Entre Calendaris "Altre"
+
+**Situació**: Òptima per preservació d'agrupacions i flexibilitat
+**Avantatges**:
+- Màxima preservació d'esdeveniments per dia
+- Estratègies adaptatives segons relació d'espais
+- Reducció de problemàtiques de storage
+**Algoritme**: GenericReplicaService amb preservació d'agrupacions
 
 ## Optimització de la Replicació
 
@@ -171,10 +234,24 @@ Quan repliques esdeveniments, l'aplicació gestiona automàticament les categori
 
 ### Consells per Minimitzar Esdeveniments No Ubicats
 
-**Estratègies:**
-- **Calendaris similars**: Replica entre calendaris amb durades similars
-- **Espai suficient**: Assegura't que el destí tingui prou dies lectius
-- **Evita sobrecàrrega**: No repliquis a calendaris ja molt carregats d'esdeveniments
+**Estratègies per tipus de calendari:**
+
+**Per calendaris FP/BTX:**
+- **Calendaris similars**: Replica entre calendaris d'estudi amb durades similars
+- **Espai suficient**: Assegura't que el destí tingui prou dies lectius (laborables)
+- **Evita sobrecàrrega**: No repliquis a calendaris ja molt carregats (màxim 1 event/dia)
+
+**Per calendaris "Altre":**
+- **Optimització per agrupacions**: Els calendaris "Altre" són òptims per preservar múltiples esdeveniments per dia
+- **Flexibilitat temporal**: Aprofita que inclouen caps de setmana per més espai disponible
+- **Selecció d'estratègia**: 
+  - Espais idèntics → Còpia directa (0 events no ubicats)
+  - Espai major → Expansió (0 events no ubicats)
+  - Espai menor → Compressió (alguns events poden quedar no ubicats)
+
+**Per replicacions mixtes:**
+- **FP/BTX → "Altre"**: Replicació segura, perfecta compatibilitat
+- **"Altre" → FP/BTX**: Revisa esdeveniments de caps de setmana que quedaran no ubicats
 
 ## Limitacions i Consideracions
 
@@ -183,12 +260,25 @@ Quan repliques esdeveniments, l'aplicació gestiona automàticament les categori
 - **Només esdeveniments del professor**: Els esdeveniments del sistema no es repliquen
 - **Sense recursivitat**: Els esdeveniments no mantenen relacions temporals complexes
 - **Màxim un nivell**: No es poden fer replicacions en cadena automàtiques
+- **Selecció automàtica d'algoritme**: No es pot forçar manualment l'ús d'un algoritme específic
 
-### Consideracions de Disseny
+### Consideracions de Disseny per Algoritme
 
-- **Algoritme proporcionat**: Mantindre la proporció temporal, no les dates exactes
+**EstudiReplicaService:**
+- **Comportament preservat**: 100% compatible amb versions anteriors
+- **Restriccions acadèmiques**: Només dies laborables, un event per dia
+- **Algoritme proporcionat**: Manté la proporció temporal en dies lectius
+
+**GenericReplicaService:**
+- **Optimització per agrupacions**: Preserva múltiples esdeveniments per dia
+- **Estratègies adaptatives**: Selecciona automàticament còpia, expansió o compressió
+- **Eficiència de storage**: Redueix problemàtiques de memòria i emmagatzematge
+- **Flexibilitat temporal**: Utilitza tots els dies disponibles, inclosos caps de setmana
+
+**Gestió Comuna:**
 - **Preservació de categories**: Les categories es mantenen o es creen automàticament
-- **Gestió d'errors robust**: El sistema gestiona conflictes de manera intel·ligent
+- **Gestió d'errors robust**: Tots els algoritmes gestionen conflictes de manera intel·ligent
+- **Format de resultat unificat**: Compatibilitat garantida amb ReplicaManager
 
 ### Reversibilitat
 
@@ -208,15 +298,27 @@ Quan repliques esdeveniments, l'aplicació gestiona automàticament les categori
 **Causa**: El calendari destí no té dies lectius disponibles
 **Solució**: 
 - Verifica les dates d'inici i fi del calendari destí
-- Elimina esdeveniments del sistema incorrectes si n'hi ha
+- Per calendaris FP/BTX: assegura't que hi ha dies laborables
+- Per calendaris "Altre": verifica que no tots els dies estan ocupats pel sistema
 
 ### Tots els esdeveniments queden no ubicats
 
-**Causa**: Diferències estructurals grans entre calendaris
+**Causa**: Diferències estructurals grans entre calendaris o incompatibilitat d'algoritme
 **Solució**:
-- Utilitza calendaris amb durades més similars
+- **Per calendaris FP/BTX**: Utilitza calendaris amb durades similars en dies laborables
+- **Per calendaris "Altre"**: Aprovecita la flexibilitat dels caps de setmana
+- **Replicació mixta**: Si repliques "Altre" → FP/BTX, molts esdeveniments de caps de setmana quedaran no ubicats (comportament esperat)
 - Col·loca manualment els esdeveniments més importants
-- Considera crear un calendari de destí amb dates més adequades
+- Considera crear un calendari de destí del tipus adequat
+
+### "Molts esdeveniments no ubicats en replicació Altre → FP/BTX"
+
+**Causa**: Comportament esperat quan es replica des d'un calendari que inclou caps de setmana a un de només dies laborables
+**Solució**:
+- Comportament normal del GenericReplicaService
+- Els esdeveniments de caps de setmana del calendari "Altre" no tenen lloc en calendaris FP/BTX
+- Revisa i col·loca manualment els esdeveniments de caps de setmana en dies laborables
+- Considera usar un calendari destí tipus "Altre" si necessites conservar tots els esdeveniments
 
 ---
 [← Importació i Exportació](Importació-i-Exportació) | [Personalització i Temes →](Personalització-i-Temes)

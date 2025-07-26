@@ -304,31 +304,224 @@ getSyncStrategy() {
 }
 ```
 
-### ReplicaService Extensions
+### Services de Replicació Extensions
 
-#### Punt d'Extensió: Algoritmes de Distribució
+#### Punt d'Extensió: Nous Algoritmes de Replicació
 
-**Ubicació**: `js/services/ReplicaService.js:distributeEvents()`
+**Ubicació**: `js/services/replica/` (nou fitxer)
 
 ```javascript
-// PUNT D'EXTENSIÓ: Nous algoritmes de distribució
-distributeEvents(events, targetCalendars) {
-    const algorithm = this.getDistributionAlgorithm();
-    return algorithm.distribute(events, targetCalendars);
+// PUNT D'EXTENSIÓ: Crear nou algoritme heretant de ReplicaService
+class CustomReplicaService extends ReplicaService {
+    constructor() {
+        super();
+        this.algorithmName = 'custom';
+        this.supportedCalendarTypes = ['CUSTOM_TYPE'];
+    }
+    
+    // Implementar mètode abstracte de replicació
+    replicate(sourceCalendar, targetCalendar) {
+        // Usar mètodes heretats de la classe base
+        const espaiUtilOrigen = this.analyzeWorkableSpace(sourceCalendar);
+        const espaiUtilDesti = this.analyzeWorkableSpace(targetCalendar);
+        
+        // Implementar lògica personalitzada
+        const result = this.executeCustomAlgorithm(
+            sourceCalendar.events,
+            espaiUtilOrigen,
+            espaiUtilDesti
+        );
+        
+        return {
+            placed: result.placedEvents.map(item => ({
+                event: {
+                    ...item.event,
+                    replicationConfidence: this.calculateProportionalConfidence(
+                        item.originalIndex,
+                        item.idealIndex, 
+                        item.finalIndex,
+                        item.factor
+                    )
+                },
+                newDate: item.newDate,
+                sourceCalendar: sourceCalendar
+            })),
+            unplaced: result.unplacedEvents.map(event => ({
+                event: { ...event, replicationConfidence: 0 },
+                sourceCalendar,
+                reason: "Algoritme personalitzat no pot ubicar esdeveniment"
+            }))
+        };
+    }
+    
+    executeCustomAlgorithm(events, espaiOrigen, espaiDesti) {
+        // Implementació de l'algoritme personalitzat
+        const placedEvents = [];
+        const unplacedEvents = [];
+        
+        // Lògica específica del nou algoritme
+        events.forEach((event, index) => {
+            if (this.customPlacementLogic(event, espaiDesti)) {
+                placedEvents.push({
+                    event: event,
+                    newDate: this.calculateCustomPosition(event, espaiDesti),
+                    originalIndex: index,
+                    idealIndex: index,
+                    finalIndex: index,
+                    factor: 1.0
+                });
+            } else {
+                unplacedEvents.push(event);
+            }
+        });
+        
+        return { placedEvents, unplacedEvents };
+    }
+    
+    customPlacementLogic(event, espaiDesti) {
+        // Lògica personalitzada per decidir si es pot col·locar l'esdeveniment
+        return true; // Exemple simplificat
+    }
+    
+    calculateCustomPosition(event, espaiDesti) {
+        // Lògica personalitzada per calcular nova posició
+        return espaiDesti[0]; // Exemple simplificat
+    }
+}
+```
+
+#### Punt d'Extensió: Registre al Factory Pattern
+
+**Ubicació**: `js/services/replica/ReplicaServiceFactory.js:getService()`
+
+```javascript
+// PUNT D'EXTENSIÓ: Modificar factory per suportar nous serveis
+static getService(sourceCalendar, targetCalendar) {
+    const sourceType = sourceCalendar.type || 'Altre';
+    const targetType = targetCalendar.type || 'Altre';
+    
+    // Afegir nova condició per nou tipus de servei
+    if (sourceType === 'CUSTOM_TYPE' || targetType === 'CUSTOM_TYPE') {
+        console.log(`[REPLICA_FACTORY] Calendari personalitzat detectat: usant CustomReplicaService`);
+        return new CustomReplicaService();
+    }
+    
+    // Si qualsevol dels calendaris és "Altre", usar GenericReplicaService
+    if (sourceType === 'Altre' || targetType === 'Altre') {
+        console.log(`[REPLICA_FACTORY] Calendari "Altre" detectat: usant GenericReplicaService`);
+        return new GenericReplicaService();
+    } 
+    
+    // Si ambdós són calendaris d'estudi (FP, BTX), usar EstudiReplicaService
+    console.log(`[REPLICA_FACTORY] Calendaris d'estudi detectats: usant EstudiReplicaService`);
+    return new EstudiReplicaService();
+}
+```
+
+#### Punt d'Extensió: Extensió de Funcionalitats Base
+
+**Ubicació**: `js/services/replica/ReplicaService.js` (classe base)
+
+```javascript
+// PUNT D'EXTENSIÓ: Afegir nous mètodes comuns a la classe base
+class ReplicaService {
+    // Mètodes existents...
+    
+    // Nou mètode comú per anàlisi avançat d'espai
+    analyzeAdvancedWorkableSpace(calendar, options = {}) {
+        const basicSpace = this.analyzeWorkableSpace(calendar);
+        
+        if (options.includeHolidays) {
+            return this.includeHolidaysInSpace(basicSpace, calendar);
+        }
+        
+        if (options.customFilter) {
+            return basicSpace.filter(date => options.customFilter(date, calendar));
+        }
+        
+        return basicSpace;
+    }
+    
+    // Nou mètode per validació avançada de compatibilitat
+    validateAdvancedCompatibility(sourceCalendar, targetCalendar) {
+        const basicValidation = this.validateBasicCompatibility(sourceCalendar, targetCalendar);
+        
+        // Validacions adicionals
+        const hasConflictingCategories = this.checkCategoryConflicts(sourceCalendar, targetCalendar);
+        const hasTemporalOverlap = this.checkTemporalOverlap(sourceCalendar, targetCalendar);
+        
+        return {
+            isCompatible: basicValidation && !hasConflictingCategories && hasTemporalOverlap,
+            warnings: [
+                ...(hasConflictingCategories ? ['Categories conflictives detectades'] : []),
+                ...(hasTemporalOverlap ? [] : ['Sense superposició temporal'])
+            ]
+        };
+    }
+    
+    // Nou mètode per mètriques de replicació
+    calculateReplicationMetrics(result) {
+        const totalEvents = result.placed.length + result.unplaced.length;
+        const successRate = totalEvents > 0 ? (result.placed.length / totalEvents) * 100 : 0;
+        const averageConfidence = result.placed.length > 0 
+            ? result.placed.reduce((sum, item) => sum + item.event.replicationConfidence, 0) / result.placed.length
+            : 0;
+            
+        return {
+            totalEvents,
+            placedEvents: result.placed.length,
+            unplacedEvents: result.unplaced.length,
+            successRate: Math.round(successRate * 100) / 100,
+            averageConfidence: Math.round(averageConfidence * 100) / 100,
+            qualityScore: (successRate * 0.7) + (averageConfidence * 0.3)
+        };
+    }
+}
+```
+
+#### Punt d'Extensió: Configuració Personalitzada per Algoritmes
+
+**Ubicació**: `js/services/replica/` (nou fitxer ConfigurableReplicaService.js)
+
+```javascript
+// PUNT D'EXTENSIÓ: Servei configurable per algoritmes personalitzats
+class ConfigurableReplicaService extends ReplicaService {
+    constructor(config = {}) {
+        super();
+        this.config = {
+            preserveGroupings: true,
+            allowWeekends: false,
+            maxEventsPerDay: 1,
+            confidenceThreshold: 70,
+            distributionStrategy: 'proportional',
+            ...config
+        };
+    }
+    
+    replicate(sourceCalendar, targetCalendar) {
+        // Aplicar configuració a l'algoritme
+        if (this.config.preserveGroupings) {
+            return this.replicateWithGroupings(sourceCalendar, targetCalendar);
+        } else {
+            return this.replicateIndividually(sourceCalendar, targetCalendar);
+        }
+    }
+    
+    replicateWithGroupings(sourceCalendar, targetCalendar) {
+        // Implementació que preserva agrupacions com GenericReplicaService
+        const genericService = new GenericReplicaService();
+        return genericService.replicate(sourceCalendar, targetCalendar);
+    }
+    
+    replicateIndividually(sourceCalendar, targetCalendar) {
+        // Implementació individual com EstudiReplicaService
+        const estudiService = new EstudiReplicaService();
+        return estudiService.replicate(sourceCalendar, targetCalendar);
+    }
 }
 
-getDistributionAlgorithm() {
-    const algorithms = {
-        'proportional': new ProportionalDistribution(),
-        'random': new RandomDistribution(),
-        'weighted': new WeightedDistribution(),
-        // Afegir nous algoritmes
-        'intelligent': new IntelligentDistribution(),
-        'pattern-based': new PatternBasedDistribution()
-    };
-    
-    return algorithms[this.config.algorithm] || algorithms['proportional'];
-}
+// Registre al Factory amb configuració personalitzada
+// ReplicaServiceFactory.registerCustomService('configurable', ConfigurableReplicaService);
 ```
 
 ## Extensions d'Export/Import
