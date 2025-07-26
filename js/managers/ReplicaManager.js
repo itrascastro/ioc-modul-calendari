@@ -98,7 +98,10 @@ class ReplicaManager {
         try {
             console.log(`[Replicació] Iniciant replicació: ${sourceCalendar.name} → ${targetCalendar.name}`);
             
-            // Executar replicació usant el servei
+            // Seleccionar servei de replicació adequat mitjançant Factory
+            const replicaService = ReplicaServiceFactory.getService(sourceCalendar, targetCalendar);
+            
+            // Executar replicació usant el servei seleccionat
             const result = replicaService.replicate(sourceCalendar, targetCalendar);
             
             // Aplicar esdeveniments replicats al calendari destí
