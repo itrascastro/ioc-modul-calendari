@@ -128,14 +128,41 @@ Elimina un calendari amb confirmació de l'usuari.
 - Gestió del calendari actiu si s'elimina
 
 #### `switchCalendar(calendarId)`
-Canvia el calendari actiu.
+Canvia el calendari actiu amb persistència de navegació.
 
-**Accions:**
-1. Valida que el calendari existeix
-2. Actualitza `currentCalendarId`
-3. Ajusta `currentDate` al rang del nou calendari
-4. Torna a vista mensual
-5. Persisteix i actualitza UI
+**Accions amb persistència:**
+1. **Guarda mes actual**: Desa l'últim mes visitat del calendari actual a `lastVisitedMonths`
+2. **Valida calendari destí**: Comprova que el calendari existeix
+3. **Actualitza calendari actiu**: Canvia `currentCalendarId`
+4. **Restaura navegació**: Recupera l'últim mes visitat del nou calendari
+5. **Validació de rang**: Verifica que el mes estigui dins startDate-endDate del calendari
+6. **Fallback segur**: Si el mes és invàlid, usa el primer mes del calendari
+7. **Canvi de vista**: Torna a vista mensual
+8. **Persisteix**: Guarda l'estat i actualitza UI
+
+**Sistema de persistència:**
+```javascript
+// Guardar mes actual abans de canviar
+if (currentCalendar && appStateManager.currentDate) {
+    appStateManager.lastVisitedMonths[currentCalendar.id] = 
+        dateHelper.toUTCString(appStateManager.currentDate);
+}
+
+// Recuperar últim mes visitat del nou calendari
+if (appStateManager.lastVisitedMonths[calendarId]) {
+    targetDate = dateHelper.parseUTC(appStateManager.lastVisitedMonths[calendarId]);
+    
+    // Validació de rang del calendari
+    if (targetDate < calendarStart || targetDate > calendarEnd) {
+        targetDate = dateHelper.createUTC(calendarStart.getUTCFullYear(), 
+                                         calendarStart.getUTCMonth(), 1);
+    }
+} else {
+    // Primera visita: usar primer mes
+    targetDate = dateHelper.createUTC(calendarStart.getUTCFullYear(), 
+                                     calendarStart.getUTCMonth(), 1);
+}
+```
 
 #### `updateNavigationControls(calendar)`
 Actualitza els botons de navegació segons el rang del calendari.
@@ -496,16 +523,47 @@ Obre el modal de replicació per un calendari origen.
 3. Configura el modal amb el calendari origen
 
 #### `executeReplication()`
-Executa la replicació entre calendaris seleccionats.
+Executa la replicació entre calendaris seleccionats amb gestió de persistència de navegació.
 
 **Flux complet:**
-1. Obté calendaris origen i destí
-2. Filtra esdeveniments a replicar (només d'usuari)
-3. Processa cada esdeveniment:
+1. **Obté calendaris**: origen i destí
+2. **Filtra esdeveniments**: a replicar (només d'usuari)
+3. **Processa cada esdeveniment**:
    - Crea nova instància amb ID únic
    - Busca data laborable equivalent al destí
    - Afegeix a esdeveniments no ubicats si no troba data vàlida
-4. Actualitza estat i UI
+4. **Canvia al calendari destí** amb gestió de persistència:
+   - Aplica la mateixa lògica que `CalendarManager.switchCalendar()`
+   - Recupera l'últim mes visitat del calendari destí
+   - Valida que estigui dins del rang del calendari
+   - Usa fallback segur al primer mes si cal
+5. **Actualitza estat i UI**
+
+**Gestió de persistència després de replicació:**
+```javascript
+// Canviar al calendari destí amb gestió de lastVisitedMonths
+appStateManager.currentCalendarId = targetCalendarId;
+
+if (appStateManager.lastVisitedMonths[targetCalendarId]) {
+    // Recuperar últim mes visitat del calendari destí
+    targetDate = dateHelper.parseUTC(appStateManager.lastVisitedMonths[targetCalendarId]);
+    
+    // Validació de rang: verificar que estigui dins del calendari destí
+    const calendarStart = dateHelper.parseUTC(targetCalendar.startDate);
+    const calendarEnd = dateHelper.parseUTC(targetCalendar.endDate);
+    
+    if (targetDate < calendarStart || targetDate > calendarEnd) {
+        // Fallback: usar primer mes del calendari destí
+        targetDate = dateHelper.createUTC(calendarStart.getUTCFullYear(), 
+                                         calendarStart.getUTCMonth(), 1);
+    }
+} else {
+    // Primera vegada: usar primer mes del calendari destí
+    const calendarStart = dateHelper.parseUTC(targetCalendar.startDate);
+    targetDate = dateHelper.createUTC(calendarStart.getUTCFullYear(), 
+                                     calendarStart.getUTCMonth(), 1);
+}
+```
 
 **Lògica de dates:**
 ```javascript
@@ -577,7 +635,7 @@ Configura els esdeveniments no ubicats per ser arrossegables.
 ### Gestió de Vistes
 
 #### `changeView(viewType)`
-Canvia la vista actual del calendari.
+Canvia la vista actual del calendari amb persistència de navegació i neteja de listeners.
 
 **Vistes disponibles:**
 - `'month'`: Vista mensual (per defecte)
@@ -586,12 +644,29 @@ Canvia la vista actual del calendari.
 - `'semester'`: Vista de tot el semestre
 - `'global'`: Vista de tots els calendaris
 
-**Actualització d'estat:**
+**Gestió de persistència i neteja:**
 ```javascript
+// Persistència: si estem sortint de vista mensual, guardar la data actual
+if (this.currentView === 'month' && viewType !== 'month') {
+    const calendar = appStateManager.getCurrentCalendar();
+    if (calendar && appStateManager.currentDate) {
+        appStateManager.lastVisitedMonths[calendar.id] = 
+            dateHelper.toUTCString(appStateManager.currentDate);
+    }
+}
+
+// Neteja automàtica de listeners específics de la vista anterior
+this.removeScrollListeners();
+
+// Actualització d'estat
 appStateManager.currentView = viewType;
 this.updateViewButtons();      // Actualitza botons UI
 this.renderCurrentView();      // Re-renderitza contingut
 ```
+
+**Funcionalitats de neteja:**
+- **removeScrollListeners()**: Elimina listeners de scroll de vista semestral per evitar interferències
+- **Persistència automàtica**: Guarda l'últim mes visitat quan es surt de vista mensual
 
 #### `renderCurrentView()`
 Renderitza la vista actual segons `appStateManager.currentView`.
@@ -608,30 +683,90 @@ switch (appStateManager.currentView) {
 ```
 
 #### `navigatePeriod(direction)`
-Navega entre períodes segons la vista actual.
+Navega entre períodes segons la vista actual amb persistència automàtica.
 
 **Lògica per vista:**
-- **Month**: Navega per mesos
+- **Month**: Navega per mesos amb actualització automàtica de `lastVisitedMonths`
 - **Week**: Navega per setmanes  
 - **Day**: Navega per dies
 - **Semester/Global**: Navegació limitada o deshabilitada
 
+**Persistència en navegació mensual:**
+```javascript
+// navigateMonth() - Persistència automàtica en navegació
+if (newDate <= calendarEnd && newDateEnd >= calendarStart) {
+    // Guardar el nou mes com a últim visitat
+    appStateManager.lastVisitedMonths[calendar.id] = dateHelper.toUTCString(newDate);
+    return newDate;
+}
+```
+
 **Validació de rang:**
 - No permet navegar fora del rang del calendari actiu
 - Actualitza controls de navegació automàticament
+- Persisteix el nou mes visitat automàticament en vista mensual
+
+### Sistema de Scroll Listeners (Vista Semestral)
+
+#### `setupSemesterScrollListener(gridWrapper, periodDisplay, calendar, semesterName)`
+Configura listener de scroll específic per vista semestral.
+
+**Funcionalitat:**
+- Detecta quin mes és més visible durant el scroll
+- Actualitza dinàmicament el títol del període
+- Inclou neteja automàtica de listeners anteriors
+
+```javascript
+// Neteja de listeners anteriors per evitar conflictes
+this.removeScrollListeners();
+
+// Crear nou listener amb funcionalitat de detecció de mes visible
+this.semesterScrollListener = () => {
+    const currentMonth = this.getCurrentVisibleMonth(gridWrapper, calendar);
+    if (currentMonth) {
+        periodDisplay.textContent = `${semesterName} - ${currentMonth}`;
+    } else {
+        periodDisplay.textContent = semesterName;
+    }
+};
+
+// Registrar listener al contenidor
+gridWrapper.addEventListener('scroll', this.semesterScrollListener);
+```
+
+#### `removeScrollListeners()`
+Neteja automàtica de scroll listeners per evitar interferències entre vistes.
+
+**Moment d'execució:**
+- Cridat automàticament en `changeView()`
+- Cridat abans de configurar nous listeners en vista semestral
+- Evita que listeners de vista semestral interfereixin amb altres vistes
+
+**Implementació:**
+```javascript
+removeScrollListeners() {
+    if (this.semesterScrollListener) {
+        const gridWrapper = document.getElementById('calendar-grid-wrapper');
+        if (gridWrapper) {
+            gridWrapper.removeEventListener('scroll', this.semesterScrollListener);
+        }
+        this.semesterScrollListener = null;
+    }
+}
+```
 
 ### Coordinació amb Altres Components
 
 **Dependencies:**
-- **AppStateManager**: Estat de vista i data actuals
+- **AppStateManager**: Estat de vista, data actuals i persistència de navegació
 - **CalendarManager**: Rang de dates del calendari actiu
 - **Specific ViewRenderers**: Renderització especialitzada per vista
 - **UIHelper**: Actualització de controls UI
 
 **Triggers:**
-- Canvi de calendari → Vista mensual per defecte
-- Navegació → Actualització de data i re-renderització
-- Canvi de vista → Actualització de botons i contingut
+- Canvi de calendari → Vista mensual per defecte + recuperació d'últim mes visitat
+- Navegació → Actualització de data, persistència i re-renderització
+- Canvi de vista → Neteja de listeners + actualització de botons i contingut
 
 ---
 

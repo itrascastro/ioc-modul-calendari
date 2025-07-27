@@ -40,6 +40,9 @@ this.appState = {
     // === SISTEMA DE REPLICACIÓ ===
     unplacedEvents: [],              // Esdeveniments no ubicats de replicació
     
+    // === SISTEMA DE PERSISTÈNCIA DE NAVEGACIÓ ===
+    lastVisitedMonths: {},           // Últim mes visitat per cada calendari (sessió)
+    
     // === ESTATS D'EDICIÓ ===
     editingCalendarId: null,         // ID del calendari en edició (si n'hi ha)
     editingEventId: null             // ID de l'esdeveniment en edició (si n'hi ha)
@@ -54,7 +57,24 @@ this.draggedEvent = null;            // Esdeveniment actualment arrossegat (drag
 this.draggedFromDate = null;         // Data d'origen del drag
 this.selectedCalendarId = null;     // Calendari seleccionat per replicació
 this.selectedCategoryId = null;     // Categoria seleccionada per operacions
+
+// Variables específiques de ViewManager per gestió de listeners
+this.semesterScrollListener = null;  // Listener actiu de scroll per vista semestral
 ```
+
+**Gestió de Listeners Específics per Vista:**
+
+Les variables auxiliars també inclouen el tracking de listeners específics per vista per evitar interferències:
+
+```javascript
+// En ViewManager
+semesterScrollListener: null         // Referència al listener de scroll actiu
+```
+
+**Principis de neteja:**
+- **Neteja automàtica**: Els listeners es netegen en canvis de vista
+- **Un sol listener actiu**: Només un scroll listener pot estar actiu alhora
+- **Prevenció d'interferències**: Evita que listeners de vista semestral afectin altres vistes
 
 ## Gestió d'Estat Detallada
 
@@ -144,6 +164,50 @@ categoryTemplates: [
 - **Només usuari**: Les categories del sistema no s'hi inclouen
 - **Auto-sync**: S'actualitza automàticament quan es carreguen calendaris
 - **Reutilització**: Facilita la reutilització de categories entre calendaris
+
+### Sistema de Persistència de Navegació
+
+```javascript
+lastVisitedMonths: {
+    "FP_DAM_M07B0_25S1": "2024-11-01T00:00:00.000Z",     // Calendari FP
+    "BTX_MAT_25S2": "2025-03-01T00:00:00.000Z",           // Calendari BTX  
+    "ALTRE_PROJECTE_123": "2024-12-01T00:00:00.000Z"     // Calendari personalitzat
+}
+```
+
+**Arquitectura del sistema:**
+
+#### Propòsit i Funcionament
+- **Objectiu**: Cada calendari recorda l'últim mes visitat en vista mensual
+- **Persistència**: Durant la sessió (es reseteja amb F5)
+- **Àmbit**: Només vista mensual (altres vistes no afecten aquest sistema)
+
+#### Cicle de Vida
+1. **Creació**: S'inicialitza com a objecte buit `{}`
+2. **Primer accés**: Primera visita usa el primer mes del calendari
+3. **Navegació**: S'actualitza automàticament en navegar per mesos
+4. **Canvi de calendari**: Es guarda l'actual i es recupera el del nou calendari
+5. **Canvi de vista**: Es guarda quan es surt de vista mensual
+6. **Validació**: Sempre es verifica que la data estigui dins del rang del calendari
+
+#### Gestió d'Errors i Fallbacks
+```javascript
+// Validació automàtica de rang
+if (targetDate < calendarStart || targetDate > calendarEnd) {
+    // Fallback segur: usar primer mes del calendari
+    targetDate = dateHelper.createUTC(
+        calendarStart.getUTCFullYear(), 
+        calendarStart.getUTCMonth(), 
+        1
+    );
+}
+```
+
+#### Integració amb Components
+- **CalendarManager**: Gestiona persistència en `switchCalendar()`
+- **ViewManager**: Gestiona persistència en `changeView()` i `navigateMonth()`
+- **ReplicaManager**: Aplica mateixa lògica després de replicació
+- **StorageManager**: No es persisteix a localStorage (només sessió)
 
 ### Esdeveniments No Ubicats
 

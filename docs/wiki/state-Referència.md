@@ -45,6 +45,9 @@ this.appState = {
     // Sistema de replicació
     unplacedEvents: [],              // Esdeveniments no ubicats de replicació
     
+    // Sistema de persistència de navegació
+    lastVisitedMonths: {},           // Últim mes visitat per cada calendari
+    
     // Estats d'edició
     editingCalendarId: null,         // Calendari en edició (si n'hi ha)
     editingEventId: null             // Esdeveniment en edició (si n'hi ha)
@@ -141,6 +144,30 @@ unplacedEvents: [
 ]
 ```
 
+#### Sistema de Persistència de Navegació (`lastVisitedMonths`)
+**Estructura**: Objecte que mapeja cada calendari amb l'últim mes visitat en vista mensual.
+
+```javascript
+lastVisitedMonths: {
+    "FP_DAM_M07B0_2024-25_S1": "2024-11-01T00:00:00.000Z",
+    "BTX_MAT_2024-25_S2": "2025-03-01T00:00:00.000Z",
+    "ALTRE_PROJECTE_123": "2024-12-01T00:00:00.000Z"
+}
+```
+
+**Característiques del sistema:**
+- **Per calendari**: Cada calendari manté el seu propi últim mes visitat
+- **Persistència de sessió**: Es manté durant la sessió però es reseteja amb F5
+- **Validació automàtica**: Les dates es validen contra el rang del calendari
+- **Fallback segur**: Si una data és invàlida, usa el primer mes del calendari
+- **Format ISO**: Les dates es guarden en format UTC string per consistència
+
+**Funcionament:**
+1. **Navegació mensual**: Quan l'usuari navega amb les fletxes, s'actualitza automàticament
+2. **Canvi de calendaris**: Es guarda el mes actual abans de canviar i es restaura el mes del nou calendari
+3. **Canvi de vistes**: Es guarda el mes actual quan es surt de vista mensual
+4. **Validació**: Sempre verifica que el mes estigui dins del rang startDate-endDate del calendari
+
 ### Mètodes Principals
 
 #### `getCurrentCalendar()`
@@ -198,6 +225,12 @@ validateAppState() {
     if (!Array.isArray(this.appState.categoryTemplates)) return false;
     if (!Array.isArray(this.appState.unplacedEvents)) return false;
     
+    // Validació específica del sistema de navegació per calendari
+    if (!this.appState.lastVisitedMonths || typeof this.appState.lastVisitedMonths !== 'object') {
+        console.error('[AppState] Sistema lastVisitedMonths no vàlid');
+        return false;
+    }
+    
     return true;
 }
 ```
@@ -245,6 +278,10 @@ set categoryTemplates(value) { this.appState.categoryTemplates = value; }
 // Esdeveniments no ubicats
 get unplacedEvents() { return this.appState.unplacedEvents; }
 set unplacedEvents(value) { this.appState.unplacedEvents = value; }
+
+// Sistema de persistència de navegació
+get lastVisitedMonths() { return this.appState.lastVisitedMonths; }
+set lastVisitedMonths(value) { this.appState.lastVisitedMonths = value; }
 
 // Estats d'edició
 get editingCalendarId() { return this.appState.editingCalendarId; }

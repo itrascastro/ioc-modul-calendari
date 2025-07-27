@@ -235,14 +235,155 @@ targetCalendar.events.push(...placedEvents)
 appStateManager.unplacedEvents.push(...unplacedEvents)
 ```
 
-#### Fase 6: Actualització UI
+#### Fase 6: Actualització UI amb Persistència
 ```
 replicaManager.completeReplication()
 ↓
+GESTIÓ DE PERSISTÈNCIA:
+- Canvi al calendari destí amb gestió de lastVisitedMonths
+- Recuperació de l'últim mes visitat del calendari destí
+- Validació de rang i aplicació de fallback si cal
+↓
+UI UPDATE:
 - modalRenderer.closeModal('replicationModal')
 - panelsRenderer.renderUnplacedEvents()
-- viewManager.renderCurrentView()
+- viewManager.renderCurrentView() (mostra mes correcte)
 - uiHelper.showMessage() amb resum
+```
+
+### 4. Canvi de Calendari amb Persistència de Navegació
+
+#### Fase 1: Iniciació de l'Usuari
+```
+User clica calendari al sidebar
+↓
+Bootstrap.handleClick() captura event
+↓
+data-calendar-id="X" detectat
+↓
+calendarManager.switchCalendar(calendarId) executat
+```
+
+#### Fase 2: Persistència de l'Estat Actual
+```
+calendarManager.switchCalendar(calendarId)
+↓
+GUARDAR ESTAT ACTUAL:
+- currentCalendar = appStateManager.getCurrentCalendar()
+- if (currentCalendar && currentDate) {
+    appStateManager.lastVisitedMonths[currentCalendar.id] = currentDate
+  }
+```
+
+#### Fase 3: Canvi de Calendari i Recuperació
+```
+CANVIAR CALENDARI:
+- appStateManager.currentCalendarId = calendarId
+↓
+RECUPERAR NAVEGACIÓ:
+- if (lastVisitedMonths[calendarId] exists) {
+    targetDate = parseUTC(lastVisitedMonths[calendarId])
+    // Validar rang del calendari
+    if (targetDate fora de rang) {
+      targetDate = primer mes del calendari
+    }
+  } else {
+    targetDate = primer mes del calendari
+  }
+↓
+APLICAR NOVA DATA:
+- appStateManager.currentDate = targetDate
+```
+
+#### Fase 4: Actualització UI
+```
+UI UPDATE:
+- viewManager.changeView('month') (sempre vista mensual)
+- storageManager.saveToStorage()
+- panelsRenderer.renderSavedCalendars() (actualitzar actiu)
+- viewManager.renderCurrentView() (mostra mes recordat)
+```
+
+### 5. Canvi de Vista amb Neteja de Listeners
+
+#### Fase 1: Iniciació de l'Usuari
+```
+User clica botó de vista (day/week/month/semester)
+↓
+Bootstrap.handleClick() captura event
+↓
+data-view="X" detectat
+↓
+viewManager.changeView(viewType) executat
+```
+
+#### Fase 2: Persistència i Neteja
+```
+viewManager.changeView(viewType)
+↓
+PERSISTÈNCIA CONDICIONAL:
+- if (currentView === 'month' && viewType !== 'month') {
+    // Guardar últim mes visitat abans de sortir
+    calendar = getCurrentCalendar()
+    lastVisitedMonths[calendar.id] = currentDate
+  }
+↓
+NETEJA DE LISTENERS:
+- this.removeScrollListeners()
+- // Elimina scroll listeners de vista semestral per evitar interferències
+```
+
+#### Fase 3: Actualització Vista
+```
+CANVI DE VISTA:
+- this.currentView = viewType
+- appStateManager.currentView = viewType
+- document.body.setAttribute('data-current-view', viewType)
+↓
+UI UPDATE:
+- this.updateViewButtons(viewType) (marcar botó actiu)
+- this.renderCurrentView() (renderitzar nova vista)
+```
+
+### 6. Navegació Mensual amb Persistència Automàtica
+
+#### Fase 1: Iniciació de l'Usuari
+```
+User clica fletxes de navegació mensual
+↓
+Bootstrap.handleClick() captura event
+↓
+data-direction="-1" o "1" detectat
+↓
+viewManager.navigatePeriod(direction) executat
+```
+
+#### Fase 2: Càlcul i Validació
+```
+viewManager.navigateMonth(direction)
+↓
+CÀLCUL NOVA DATA:
+- newDate = currentDate + direction mesos
+- newDateEnd = últim dia del nou mes
+↓
+VALIDACIÓ RANG:
+- if (newDate dins rang calendari) {
+    // Data vàlida, continuar
+  } else {
+    return null // Navegació no permesa
+  }
+```
+
+#### Fase 3: Persistència Automàtica i Actualització
+```
+PERSISTÈNCIA AUTOMÀTICA:
+- calendar = getCurrentCalendar()
+- lastVisitedMonths[calendar.id] = toUTCString(newDate)
+↓
+ACTUALITZACIÓ:
+- appStateManager.currentDate = newDate
+- this.renderCurrentView() (mostra nou mes)
+- updateNavigationControls() (actualitzar estat fletxes)
 ```
 
 ## Flux de Dades per Components
