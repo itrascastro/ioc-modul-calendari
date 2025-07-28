@@ -54,10 +54,11 @@ calendarData = await this.processBTXCalendar();
 calendarData = this.processAltreCalendar();
 ```
 
-**Errors comuns:**
-- Camps obligatoris buits
-- Calendari amb ID duplicat
-- Error carregant configuració de semestre
+**Gestió d'errors:**
+- **Interna**: Tots els errors es gestionen dins del mètode amb try/catch
+- **Validacions**: Camps obligatoris, IDs duplicats, configuració semestral
+- **Missatges**: Mostra errors específics amb `uiHelper.showMessage()`
+- **Bootstrap**: No requereix gestió d'errors externa (.catch no necessari)
 
 #### `async processFPCalendar()`
 Processa la creació de calendaris de Formació Professional.

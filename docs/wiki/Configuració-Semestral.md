@@ -57,24 +57,22 @@ config/
 {
   "systemEvents": [
     {
-      "id": "festiu_2024_01",
       "title": "Dia de Reis",
       "date": "2025-01-06",
-      "categoryId": "FESTIU",
-      "description": "Festiu oficial",
-      "isSystemEvent": true
+      "categoryId": "SYS_CAT_2",
+      "description": "Festiu oficial"
     },
     {
-      "id": "paf1_2025_s2",
-      "title": "PAF1 - Primera sessió",
+      "title": "PAF1 - Primera sessió", 
       "date": "2025-05-15",
-      "categoryId": "PAF",
-      "description": "Prova d'Avaluació Final - Primera convocatòria",
-      "isSystemEvent": true
+      "categoryId": "SYS_CAT_3",
+      "description": "Prova d'Avaluació Final - Primera convocatòria"
     }
   ]
 }
 ```
+
+**Nota important**: Les propietats `"id"` i `"isSystemEvent": true` **no cal incloure-les** als fitxers JSON ja que s'afegeixen automàticament durant el processament.
 
 **Tipus d'esdeveniments comuns:**
 - **Festius**: Dies festius oficials
@@ -85,29 +83,23 @@ config/
 **Fitxers**: `config/fp-semestre.json` i `config/btx-semestre.json`
 
 ```json
-{
-  "defaultCategories": [
-    {
-      "id": "IOC_GENERIC",
-      "name": "IOC",
-      "color": "#3182ce",
-      "isSystem": true
-    },
-    {
-      "id": "FESTIU", 
-      "name": "Festius",
-      "color": "#e53e3e",
-      "isSystem": true
-    },
-    {
-      "id": "PAF",
-      "name": "PAF",
-      "color": "#805ad5",
-      "isSystem": true
-    }
-  ]
-}
+[
+  {
+    "id": "SYS_CAT_1",
+    "name": "IOC_GENERIC"
+  },
+  {
+    "id": "SYS_CAT_2", 
+    "name": "FESTIU"
+  },
+  {
+    "id": "SYS_CAT_3",
+    "name": "PAF"
+  }
+]
 ```
+
+**Nota important**: La propietat `"isSystem": true` **no cal incloure-la** al fitxer `sys-categories.json` ja que s'afegeix automàticament durant el processament. Els colors es gestionen automàticament pel sistema.
 
 ## Calendari Acadèmic IOC
 
