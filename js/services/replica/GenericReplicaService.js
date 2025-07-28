@@ -26,11 +26,6 @@ class GenericReplicaService extends ReplicaService {
         console.log(`[GENERIC_REPLICA_SERVICE] Iniciant replicació per calendaris tipus "Altre"...`);
         
         try {
-            // Validació bàsica
-            if (!sourceCalendar?.events || !targetCalendar?.startDate || !targetCalendar?.endDate) {
-                throw new Error('Calendaris invàlids: manca estructura bàsica');
-            }
-            
             // Filtrar esdeveniments del professor
             const professorEvents = sourceCalendar.events
                 .filter(event => !event.isSystemEvent)
@@ -51,7 +46,7 @@ class GenericReplicaService extends ReplicaService {
             console.log(`[GENERIC_REPLICA_SERVICE] Espai Destí: ${espaiUtilDesti.length} dies útils`);
             
             if (espaiUtilDesti.length === 0) {
-                console.warn(`[GENERIC_REPLICA_SERVICE] Calendari destí sense espai útil disponible`);
+                console.log(`[GENERIC_REPLICA_SERVICE] Calendari destí sense espai útil disponible`);
                 return { 
                     placed: [], 
                     unplaced: professorEvents.map(event => ({ 
@@ -72,8 +67,7 @@ class GenericReplicaService extends ReplicaService {
             }
             
         } catch (error) {
-            console.error(`[GENERIC_REPLICA_SERVICE] Error en replicació:`, error);
-            throw error;
+            throw new CalendariIOCException('207', 'GenericReplicaService.replicate');
         }
     }
     
@@ -132,7 +126,7 @@ class GenericReplicaService extends ReplicaService {
             const indexOrigen = espaiOrigen.indexOf(originalDate);
             
             if (indexOrigen === -1) {
-                console.warn(`[GENERIC_REPLICA_SERVICE] Dia ${originalDate} no està en espai útil d'origen`);
+                console.log(`[GENERIC_REPLICA_SERVICE] Dia ${originalDate} no està en espai útil d'origen`);
                 continue;
             }
             
@@ -181,7 +175,7 @@ class GenericReplicaService extends ReplicaService {
             const indexOrigen = espaiOrigen.indexOf(originalDate);
             
             if (indexOrigen === -1) {
-                console.warn(`[GENERIC_REPLICA_SERVICE] Dia ${originalDate} no està en espai útil d'origen`);
+                console.log(`[GENERIC_REPLICA_SERVICE] Dia ${originalDate} no està en espai útil d'origen`);
                 continue;
             }
             
@@ -231,7 +225,7 @@ class GenericReplicaService extends ReplicaService {
             const indexOrigen = espaiOrigen.indexOf(originalDate);
             
             if (indexOrigen === -1) {
-                console.warn(`[GENERIC_REPLICA_SERVICE] Dia ${originalDate} no està en espai útil d'origen`);
+                console.log(`[GENERIC_REPLICA_SERVICE] Dia ${originalDate} no està en espai útil d'origen`);
                 dayEvents.forEach(event => {
                     unplacedEvents.push({
                         event: { ...event, replicationConfidence: 0 },
@@ -252,7 +246,7 @@ class GenericReplicaService extends ReplicaService {
             }
             
             if (indexFinal >= espaiDesti.length) {
-                console.warn(`[GENERIC_REPLICA_SERVICE] No hi ha espai per grup ${originalDate}`);
+                console.log(`[GENERIC_REPLICA_SERVICE] No hi ha espai per grup ${originalDate}`);
                 dayEvents.forEach(event => {
                     unplacedEvents.push({
                         event: { ...event, replicationConfidence: 0 },

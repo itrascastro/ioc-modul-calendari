@@ -51,6 +51,10 @@ class CalendariIOCException extends Error {
      */
     getMissatgePerCodi(codi) {
         const missatges = {
+            // === ERRORS DE REPLICACIÓ (2xx) ===
+            // Problemes tècnics durant la replicació
+            "207": "Error durant la replicació",
+            
             // === ERRORS DE SISTEMA (3xx) ===
             // localStorage, quota, inicialització
             "301": "localStorage no disponible",
