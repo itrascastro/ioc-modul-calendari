@@ -26,11 +26,6 @@ class EstudiReplicaService extends ReplicaService {
         console.log(`[ESTUDI_REPLICA_SERVICE] Iniciant replicació...`);
         
         try {
-            // Validació bàsica
-            if (!sourceCalendar?.events || !targetCalendar?.startDate || !targetCalendar?.endDate) {
-                throw new Error('Calendaris invàlids: manca estructura bàsica');
-            }
-            
             // Filtrar esdeveniments del professor
             const professorEvents = sourceCalendar.events
                 .filter(event => !event.isSystemEvent)
@@ -51,7 +46,7 @@ class EstudiReplicaService extends ReplicaService {
             console.log(`[ESTUDI_REPLICA_SERVICE] Espai Destí: ${espaiUtilDesti.length} dies útils`);
             
             if (espaiUtilDesti.length === 0) {
-                console.warn(`[ESTUDI_REPLICA_SERVICE] Calendari destí sense espai útil disponible`);
+                console.log(`[ESTUDI_REPLICA_SERVICE] Calendari destí sense espai útil disponible`);
                 return { 
                     placed: [], 
                     unplaced: professorEvents.map(event => ({ 
@@ -80,7 +75,7 @@ class EstudiReplicaService extends ReplicaService {
                 const indexOrigen = espaiUtilOrigen.indexOf(event.date);
                 
                 if (indexOrigen === -1) {
-                    console.warn(`[ESTUDI_REPLICA_SERVICE] Esdeveniment "${event.title}" no troba posició en espai origen`);
+                    console.log(`[ESTUDI_REPLICA_SERVICE] Esdeveniment "${event.title}" no troba posició en espai origen`);
                     unplacedEvents.push({ 
                         event: { ...event, replicationConfidence: 0 }, 
                         sourceCalendar,
@@ -96,7 +91,7 @@ class EstudiReplicaService extends ReplicaService {
                 const indexFinal = this.findNearestFreeSlot(ocupacioEspaiDesti, indexIdeal);
                 
                 if (indexFinal === -1) {
-                    console.warn(`[ESTUDI_REPLICA_SERVICE] No es troba slot lliure per "${event.title}"`);
+                    console.log(`[ESTUDI_REPLICA_SERVICE] No es troba slot lliure per "${event.title}"`);
                     unplacedEvents.push({ 
                         event: { ...event, replicationConfidence: 0 }, 
                         sourceCalendar,
@@ -131,21 +126,12 @@ class EstudiReplicaService extends ReplicaService {
             });
             
             console.log(`[ESTUDI_REPLICA_SERVICE] Resultat: ${placedEvents.length} ubicats, ${unplacedEvents.length} no ubicats`);
-            
-            // Validació final de seguretat per calendaris d'estudi
-            const weekendEvents = placedEvents.filter(item => !dateHelper.isWeekday(item.newDate));
-            if (weekendEvents.length > 0) {
-                console.error(`[ESTUDI_REPLICA_SERVICE] ERROR CRÍTIC: ${weekendEvents.length} events en caps de setmana!`);
-                throw new Error(`Error de disseny: ${weekendEvents.length} events generats en caps de setmana`);
-            }
-            
             console.log(`[ESTUDI_REPLICA_SERVICE] Replicació completada amb èxit`);
             
             return { placed: placedEvents, unplaced: unplacedEvents };
             
         } catch (error) {
-            console.error(`[ESTUDI_REPLICA_SERVICE] Error en replicació:`, error);
-            throw error;
+            throw new CalendariIOCException('207', 'EstudiReplicaService.replicate');
         }
     }
     
