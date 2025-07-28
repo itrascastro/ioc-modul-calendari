@@ -128,55 +128,7 @@ class AppStateManager {
         this._editingEventId = null;
     }
 
-    // Obtenir informació de l'estat actual
-    getStateInfo() {
-        return {
-            calendarsCount: Object.keys(this.appState.calendars).length,
-            currentCalendarId: this.appState.currentCalendarId,
-            currentDate: this.appState.currentDate,
-            categoryTemplatesCount: this.appState.categoryTemplates.length,
-            unplacedEventsCount: this.appState.unplacedEvents.length,
-            hasDraggedEvent: !!this.draggedEvent,
-            selectedCalendarId: this.selectedCalendarId,
-            selectedCategoryId: this.selectedCategoryId
-        };
-    }
 
-    /**
-     * Validar l'integritat de l'estat de l'aplicació
-     * @returns {boolean} True si l'estat és vàlid, false altrament
-     * @description Verifica que totes les propietats de l'estat tinguin els tipus correctes
-     *              i que el sistema lastVisitedMonths estigui inicialitzat correctament
-     */
-    validateAppState() {
-        if (!this.appState || typeof this.appState !== 'object') {
-            console.error('[AppState] Estat principal no vàlid');
-            return false;
-        }
-        
-        if (!this.appState.calendars || typeof this.appState.calendars !== 'object') {
-            console.error('[AppState] Calendaris no vàlids');
-            return false;
-        }
-        
-        if (!Array.isArray(this.appState.categoryTemplates)) {
-            console.error('[AppState] Plantilles de categories no vàlides');
-            return false;
-        }
-        
-        if (!Array.isArray(this.appState.unplacedEvents)) {
-            console.error('[AppState] Events no ubicats no vàlids');
-            return false;
-        }
-        
-        // Validació específica del sistema de navegació per calendari
-        if (!this.appState.lastVisitedMonths || typeof this.appState.lastVisitedMonths !== 'object') {
-            console.error('[AppState] Sistema lastVisitedMonths no vàlid');
-            return false;
-        }
-        
-        return true;
-    }
 
     // === GETTERS I SETTERS PER A ACCÉS DIRECTE A PROPIETATS ===
     
@@ -223,6 +175,15 @@ class AppStateManager {
     
     set unplacedEvents(value) {
         this.appState.unplacedEvents = value;
+    }
+    
+    // Colors de categories del sistema
+    get systemCategoryColors() {
+        return this.appState.systemCategoryColors;
+    }
+    
+    set systemCategoryColors(value) {
+        this.appState.systemCategoryColors = value;
     }
     
     // ID de l'esdeveniment en edició
