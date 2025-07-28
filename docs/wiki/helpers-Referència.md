@@ -13,7 +13,8 @@ js/helpers/
 ├── IdHelper.js              # Generació d'identificadors únics
 ├── ThemeHelper.js           # Gestió de temes clar/fosc
 ├── DragDropHelper.js        # Funcionalitat de drag & drop
-└── MenuHelper.js            # Gestió de menús contextuals
+├── MenuHelper.js            # Gestió de menús contextuals
+└── ColorCategoryHelper.js   # Gestió intel·ligent de colors per categories
 ```
 
 ---
@@ -429,6 +430,105 @@ Crea elements de menú estandarditzats.
 
 ---
 
+## ColorCategoryHelper
+
+**Responsabilitat**: Gestió intel·ligent de colors per categories evitant duplicats
+
+### Sistema de Gestió de Colors
+
+#### `getUsedColors()`
+Escaneja tots els colors actualment en ús a l'aplicació.
+
+```javascript
+getUsedColors() {
+    const usedColors = new Set();
+    
+    // Colors de categories d'usuari en tots els calendaris
+    Object.values(appStateManager.calendars).forEach(calendar => {
+        if (calendar.categories) {
+            Object.values(calendar.categories).forEach(category => {
+                if (category.color) {
+                    usedColors.add(category.color.toLowerCase());
+                }
+            });
+        }
+    });
+    
+    // Colors de categories de sistema
+    Object.values(appStateManager.systemCategoryColors).forEach(color => {
+        if (color) {
+            usedColors.add(color.toLowerCase());
+        }
+    });
+    
+    return Array.from(usedColors);
+}
+```
+
+#### `generateRandomColor()`
+Genera un color aleatori evitant duplicats intel·ligentment.
+
+```javascript
+generateRandomColor() {
+    const usedColors = this.getUsedColors();
+    const availableColors = this.colorPalette.filter(color => 
+        !usedColors.includes(color.toLowerCase())
+    );
+    
+    if (availableColors.length > 0) {
+        // Seleccionar d'entre colors no utilitzats
+        const randomIndex = Math.floor(Math.random() * availableColors.length);
+        return availableColors[randomIndex];
+    } else {
+        // Si tots els colors estan en ús, seleccionar aleatòriament de la paleta completa
+        const randomIndex = Math.floor(Math.random() * this.colorPalette.length);
+        return this.colorPalette[randomIndex];
+    }
+}
+```
+
+### Paleta de Colors Predefinida
+
+**Paleta de 20 colors** optimitzada per accessibilitat i diversitat visual:
+
+```javascript
+colorPalette: [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57',
+    '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3', '#FF9F43',
+    '#FF3838', '#2ED573', '#3742FA', '#A55EEA', '#26D0CE',
+    '#FF5E57', '#1DD1A1', '#5352ED', '#FD79A8', '#FDCB6E'
+]
+```
+
+### Avantatges del Sistema
+
+1. **Evita duplicats**: Escaneja tots els colors existents abans d'assignar
+2. **Intel·ligent**: Prioritza colors no utilitzats de la paleta
+3. **Robust**: Funciona encara que tots els colors estiguin en ús
+4. **Accessible**: Paleta optimitzada per contrast i diversitat
+5. **Centralitzat**: Una sola font de veritat per gestió de colors
+
+### Integració amb Categories del Sistema
+
+Les categories del sistema utilitzen aquest helper per assignar colors automàticament:
+
+```javascript
+// CategoryService.js
+getCategoryColor(categoryId, calendar) {
+    if (this.isSystemCategory(categoryId)) {
+        // Colors assignats automàticament per categories de sistema
+        if (!appStateManager.systemCategoryColors[categoryId]) {
+            appStateManager.systemCategoryColors[categoryId] = 
+                colorCategoryHelper.generateRandomColor();
+        }
+        return appStateManager.systemCategoryColors[categoryId];
+    }
+    // ... lògica per categories d'usuari
+}
+```
+
+---
+
 ## Integració i Ús dels Helpers
 
 ### Instanciació Global
@@ -444,6 +544,7 @@ const textHelper = new TextHelper();
 const themeHelper = new ThemeHelper();
 const dragDropHelper = new DragDropHelper();
 const menuHelper = new MenuHelper();
+const colorCategoryHelper = new ColorCategoryHelper();
 ```
 
 ### Patrons d'Ús Comuns
@@ -472,6 +573,9 @@ uiHelper.showMessage('Esdeveniment creat correctament', 'success');
 uiHelper.confirmAction('Eliminar aquest esdeveniments?', () => {
     this.deleteEvent(eventId);
 });
+
+// Gestió intel·ligent de colors
+const newColor = colorCategoryHelper.generateRandomColor();
 ```
 
 ### Principis de Disseny dels Helpers

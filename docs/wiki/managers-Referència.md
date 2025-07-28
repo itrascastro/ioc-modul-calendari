@@ -683,19 +683,37 @@ switch (appStateManager.currentView) {
 ```
 
 #### `navigatePeriod(direction)`
-Navega entre períodes segons la vista actual amb persistència automàtica.
+Navega entre períodes segons la vista actual amb persistència automàtica de `currentDate`.
 
 **Lògica per vista:**
-- **Month**: Navega per mesos amb actualització automàtica de `lastVisitedMonths`
+- **Month**: Navega per mesos amb detecció del primer mes per usar `startDate`
 - **Week**: Navega per setmanes  
 - **Day**: Navega per dies
 - **Semester/Global**: Navegació limitada o deshabilitada
 
-**Persistència en navegació mensual:**
+**Persistència automàtica:**
 ```javascript
-// navigateMonth() - Persistència automàtica en navegació
+if (newDate) {
+    appStateManager.currentDate = newDate;
+    this.renderCurrentView();
+    storageManager.saveToStorage(); // ← Persistir canvis de navegació
+    return true;
+}
+```
+
+**Navegació per mesos amb detecció del primer mes:**
+```javascript
+// navigateMonth() - Correcció per primer mes del calendari
 if (newDate <= calendarEnd && newDateEnd >= calendarStart) {
-    // Guardar el nou mes com a últim visitat
+    // Si és el primer mes del calendari, usar data d'inici real
+    const isFirstMonth = newDate.getUTCFullYear() === calendarStart.getUTCFullYear() && 
+                        newDate.getUTCMonth() === calendarStart.getUTCMonth();
+    
+    if (isFirstMonth) {
+        newDate = calendarStart; // Usar startDate en lloc del dia 1
+    }
+    
+    // Persistència automàtica: guardar el nou mes com a últim visitat
     appStateManager.lastVisitedMonths[calendar.id] = dateHelper.toUTCString(newDate);
     return newDate;
 }
@@ -704,7 +722,33 @@ if (newDate <= calendarEnd && newDateEnd >= calendarStart) {
 **Validació de rang:**
 - No permet navegar fora del rang del calendari actiu
 - Actualitza controls de navegació automàticament
-- Persisteix el nou mes visitat automàticament en vista mensual
+- Persisteix `currentDate` i `lastVisitedMonths` automàticament
+
+### Navegació des de Vista Global
+
+#### `handleGlobalMonthClick(dateStr)`
+Gestiona clicks en noms de mes des de la vista global per navegar a vista mensual.
+
+**Funcionalitat:**
+- Detecció del primer mes per usar `startDate` en lloc del dia 1
+- Actualització de `lastVisitedMonths` per consistència
+- Persistència automàtica abans del canvi de vista
+
+```javascript
+// Si és el primer mes del calendari, usar data d'inici real
+const isFirstMonth = monthDate.getUTCFullYear() === calendarStart.getUTCFullYear() && 
+                    monthDate.getUTCMonth() === calendarStart.getUTCMonth();
+
+appStateManager.currentDate = isFirstMonth ? calendarStart : monthDate;
+
+// Actualitzar lastVisitedMonths per consistència
+appStateManager.lastVisitedMonths[calendar.id] = dateHelper.toUTCString(appStateManager.currentDate);
+
+// Persistir canvis al storage
+storageManager.saveToStorage();
+
+this.changeView('month');
+```
 
 ### Sistema de Scroll Listeners (Vista Semestral)
 

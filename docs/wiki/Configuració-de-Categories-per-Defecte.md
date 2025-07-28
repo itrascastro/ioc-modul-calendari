@@ -12,46 +12,67 @@ Les **categories per defecte** són categories del sistema que es creen automàt
 - No es poden eliminar ni modificar pels usuaris
 - Colors i noms predefinits
 - Específiques per tipus de calendari
+- **Nova ubicació**: Externalitzades a fitxers JSON independents
 
 **Categories d'Usuari:**
 - Creades pels professors segons necessitats
 - Es poden modificar i eliminar
 - S'afegeixen al catàleg global automàticament
+- **Gestió de colors**: Sistema intel·ligent evita duplicats automàticament
 
-## Categories del Sistema per FP
+## Nova Arquitectura de Categories del Sistema
 
-### Configuració Actual
+### Externalització de Configuració
 
-**Ubicació**: `config/fp-semestre.json`
+**Ubicació actual**: `config/sys-categories.json` (centralitzat)
+
+Anteriorment les categories estaven dins dels fitxers de configuració semestral. Ara s'han externalitzat per millorar la mantenibilitat i separar responsabilitats.
+
+### Configuració Centralitzada
+
+**Fitxer**: `config/sys-categories.json`
 
 ```json
-{
-  "systemCategories": [
-    {
-      "id": "IOC_GENERIC",
-      "name": "IOC",
-      "color": "#3182ce",
-      "isSystem": true
-    },
-    {
-      "id": "FESTIU_GENERIC", 
-      "name": "FESTIU",
-      "color": "#e53e3e",
-      "isSystem": true
-    },
-    {
-      "id": "PAF_GENERIC",
-      "name": "PAF", 
-      "color": "#fd7f28",
-      "isSystem": true
-    }
-  ]
-}
+[
+  {
+    "id": "SYS_CAT_1",
+    "name": "IOC_GENERIC",
+    "isSystem": true
+  },
+  {
+    "id": "SYS_CAT_2",
+    "name": "FESTIU",
+    "isSystem": true
+  },
+  {
+    "id": "SYS_CAT_3",
+    "name": "PAF",
+    "isSystem": true
+  }
+]
 ```
 
-### Descripció de Categories FP
+### Gestió Automàtica de Colors
 
-#### IOC (Blau - #3182ce)
+Les categories del sistema **no especifiquen colors** al fitxer de configuració. Els colors s'assignen automàticament mitjançant el `ColorCategoryHelper` que:
+
+- Evita duplicats intel·ligentment
+- Escaneig tots els colors existents en ús
+- Selecciona colors òptims de la paleta predefinida
+- Garanteix diversitat visual entre categories
+
+### Avantatges de la Nova Arquitectura
+
+1. **Mantenibilitat**: Categories independents de la configuració semestral
+2. **Escalabilitat**: Fàcil afegir noves categories sense modificar múltiples fitxers
+3. **Consistència**: Colors assignats automàticament sense conflictes
+4. **Flexibilitat**: Sistema adaptatiu que evita duplicats automàticament
+
+## Categories del Sistema Unificades
+
+### Descripció de Categories del Sistema
+
+#### IOC_GENERIC (Color assignat automàticament)
 **Ús**: Esdeveniments institucionals de l'IOC
 - Comunicats oficials
 - Reunions de claustre
@@ -63,7 +84,7 @@ Les **categories per defecte** són categories del sistema que es creen automàt
 - "Formació plataforma Moodle"
 - "Claustre de professorat"
 
-#### FESTIU (Vermell - #e53e3e)
+#### FESTIU (Color assignat automàticament)
 **Ús**: Dies festius i no lectius
 - Festius oficials
 - Ponts
@@ -74,7 +95,7 @@ Les **categories per defecte** són categories del sistema que es creen automàt
 - "Setmana Santa" 
 - "Festa del Treball"
 
-#### PAF (Taronja - #fd7f28)
+#### PAF (Color assignat automàticament)
 **Ús**: Proves d'Avaluació Final específiques de FP
 - PAF1 (primera convocatòria)
 - PAF2 (segona convocatòria)
@@ -85,7 +106,11 @@ Les **categories per defecte** són categories del sistema que es creen automàt
 - "PAF2 - Segona convocatòria"
 - "PAF extraordinària"
 
-## Categories del Sistema per BTX
+## Sistema de Gestió de Colors
+
+### ColorCategoryHelper
+
+Les categories del sistema utilitzen el nou `ColorCategoryHelper` que proporciona:
 
 ### Configuració Actual
 

@@ -37,10 +37,10 @@ this.appState = {
     calendars: {},                    // Objecte amb tots els calendaris
     currentCalendarId: null,          // ID del calendari actiu
     currentDate: new Date(),          // Data actualment visualitzada
-    currentView: 'month',             // Vista actual del calendari
     
     // Sistema de categories
     categoryTemplates: [],            // Catàleg global de categories
+    systemCategoryColors: {},         // Colors assignats a categories del sistema
     
     // Sistema de replicació
     unplacedEvents: [],              // Esdeveniments no ubicats de replicació
@@ -48,9 +48,9 @@ this.appState = {
     // Sistema de persistència de navegació
     lastVisitedMonths: {},           // Últim mes visitat per cada calendari
     
-    // Estats d'edició
-    editingCalendarId: null,         // Calendari en edició (si n'hi ha)
-    editingEventId: null             // Esdeveniment en edició (si n'hi ha)
+    // Estats d'edició (NO persistits)
+    editingCalendarId: null,         // Calendari en edició (auxiliar)
+    editingEventId: null             // Esdeveniment en edició (auxiliar)
 };
 
 // Variables auxiliars (no persistides)
@@ -120,6 +120,23 @@ categoryTemplates: [
 - **Només categories d'usuari**: Les categories del sistema no s'afegeixen
 - **Auto-sincronització**: S'actualitza quan es carreguen calendaris
 - **Comptador d'ús**: Opcional, per estadístiques
+
+#### Colors de Categories del Sistema (`systemCategoryColors`)
+**Estructura**: Objecte que mapeja IDs de categories del sistema amb colors assignats automàticament.
+
+```javascript
+systemCategoryColors: {
+    "SYS_CAT_1": "#FF6B6B",  // IOC_GENERIC
+    "SYS_CAT_2": "#4ECDC4",  // FESTIU
+    "SYS_CAT_3": "#45B7D1"   // PAF
+}
+```
+
+**Característiques:**
+- **Assignació automàtica**: Colors assignats per `ColorCategoryHelper`
+- **Persistits**: Es desen entre sessions
+- **Evita duplicats**: Sistema intel·ligent que evita conflictes de colors
+- **Centralitzat**: Una sola font de veritat per colors de sistema
 
 #### Esdeveniments No Ubicats (`unplacedEvents`)
 **Estructura**: Array d'esdeveniments que no es van poder col·locar durant la replicació.
