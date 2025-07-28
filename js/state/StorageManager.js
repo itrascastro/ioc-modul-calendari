@@ -28,38 +28,22 @@ class StorageManager {
     // Desar estat a localStorage
     saveToStorage() {
         try {
-            // Preparar estat per desar (convertir dates a strings)
             const stateToSave = { 
                 ...appStateManager.appState, 
                 currentDate: dateHelper.toUTCString(appStateManager.currentDate) 
             };
             
-            // Desar a localStorage
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stateToSave));
+            const jsonData = JSON.stringify(stateToSave);
+            localStorage.setItem(this.STORAGE_KEY, jsonData);
             
             console.log('[Storage] Estat guardat correctament');
             return true;
             
         } catch (error) {
-            console.error('[Storage] Error guardant estat:', error);
-            
-            // Intentar alliberar espai si és problema de quota
             if (error.name === 'QuotaExceededError') {
-                console.warn('[Storage] Quota exhaurida, intentant netejar...');
-                this.clearOldData();
-                
-                // Tornar a intentar
-                try {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stateToSave));
-                    console.log('[Storage] Estat guardat després de netejar');
-                    return true;
-                } catch (retryError) {
-                    console.error('[Storage] Error persistent després de netejar:', retryError);
-                    return false;
-                }
+                throw new CalendariIOCException('302', 'StorageManager.saveToStorage');
             }
-            
-            return false;
+            throw new CalendariIOCException('999', 'StorageManager.saveToStorage');
         }
     }
 
@@ -75,32 +59,26 @@ class StorageManager {
         
             const loadedState = JSON.parse(data);
         
-            // Restaurar estat (convertir strings a dates)
             appStateManager.appState = { 
                 ...loadedState, 
                 currentDate: dateHelper.parseUTC(loadedState.currentDate.split('T')[0]) 
             };
         
-            // Migració automàtica: inicialitzar catàleg si no existeix
             if (!appStateManager.categoryTemplates) {
                 appStateManager.categoryTemplates = [];
             }
         
-            // Migració automàtica: inicialitzar events no ubicats si no existeixen
             if (!appStateManager.unplacedEvents) {
                 appStateManager.unplacedEvents = [];
             }
         
-            // Migració automàtica: inicialitzar sistema de persistència de navegació
             if (!appStateManager.lastVisitedMonths) {
                 appStateManager.lastVisitedMonths = {};
             }
         
-            // Migració automàtica: inicialitzar colors de categories de sistema
             if (!appStateManager.appState.systemCategoryColors) {
                 appStateManager.appState.systemCategoryColors = {};
                 
-                // Migrar colors existents de categories de sistema
                 Object.values(appStateManager.calendars).forEach(calendar => {
                     calendar.categories.forEach(category => {
                         if (category.isSystem && category.color) {
@@ -112,7 +90,6 @@ class StorageManager {
                 console.log('[Migration] systemCategoryColors inicialitzat amb colors existents');
             }
         
-            // Migrar plantilles de categories
             appStateManager.migrateCategoryTemplates();
         
             console.log('[Storage] Estat carregat correctament');
@@ -123,15 +100,10 @@ class StorageManager {
             return true;
         
         } catch (error) {
-            console.error('[Storage] Error carregant estat:', error);
-            
-            // Si hi ha error de parsing, netejar dades corruptes
             if (error instanceof SyntaxError) {
-                console.warn('[Storage] Dades corruptes, netejant localStorage...');
-                this.clearStorage();
+                throw new CalendariIOCException('303', 'StorageManager.loadFromStorage');
             }
-            
-            return false;
+            throw new CalendariIOCException('999', 'StorageManager.loadFromStorage');
         }
     }
 
@@ -142,34 +114,13 @@ class StorageManager {
             console.log('[Storage] localStorage netejat');
             return true;
         } catch (error) {
-            console.error('[Storage] Error netejant localStorage:', error);
-            return false;
+            if (error instanceof DOMException) {
+                throw new CalendariIOCException('301', 'StorageManager.clearStorage');
+            }
+            throw new CalendariIOCException('999', 'StorageManager.clearStorage');
         }
     }
 
-    // Netejar dades antigues per alliberar espai
-    clearOldData() {
-        try {
-            // Netejar altres claus relacionades que poden existir
-            const keysToCheck = [
-                'calendarioIOC',  // Clau antiga
-                'calendari-ioc-backup',
-                'calendari-ioc-temp'
-            ];
-            
-            keysToCheck.forEach(key => {
-                if (localStorage.getItem(key)) {
-                    localStorage.removeItem(key);
-                    console.log(`[Storage] 🧹 Netejat clau antiga: ${key}`);
-                }
-            });
-            
-            return true;
-        } catch (error) {
-            console.error('[Storage] Error netejant dades antigues:', error);
-            return false;
-        }
-    }
 
     // Obtenir informació de l'emmagatzematge
     getStorageInfo() {
@@ -193,15 +144,11 @@ class StorageManager {
                 sizeFormatted: sizeFormatted,
                 lastModified: new Date().toISOString()
             };
-        
         } catch (error) {
-            console.error('[Storage] Error obtenint informació:', error);
-            return {
-                exists: false,
-                size: 0,
-                sizeFormatted: '0 B',
-                error: error.message
-            };
+            if (error instanceof DOMException) {
+                throw new CalendariIOCException('301', 'StorageManager.getStorageInfo');
+            }
+            throw new CalendariIOCException('999', 'StorageManager.getStorageInfo');
         }
     }
 
@@ -217,39 +164,47 @@ class StorageManager {
                 }
             };
         
-            return JSON.stringify(exportData, null, 2);
-        
+            return JSON.stringify(exportData);
         } catch (error) {
-            console.error('[Storage] Error exportant estat:', error);
-            return null;
+            throw new CalendariIOCException('304', 'StorageManager.exportState');
         }
     }
 
     // Importar estat des de JSON
     importState(jsonData) {
+        // Parsing JSON - pot generar SyntaxError
+        let importData;
         try {
-            const importData = JSON.parse(jsonData);
-        
-            if (!importData.data || !importData.version) {
-                throw new Error('Format de dades no vàlid');
+            importData = JSON.parse(jsonData);
+        } catch (error) {
+            if (error instanceof SyntaxError) {
+                throw new CalendariIOCException('303', 'StorageManager.importState');
             }
+            throw new CalendariIOCException('999', 'StorageManager.importState');
+        }
         
+        // Validació de negocio - estructura requerida
+        if (!importData.data || !importData.version) {
+            throw new CalendariIOCException('609', 'StorageManager.importState');
+        }
+        
+        // Operacions tècniques que poden fallar
+        try {
             // Restaurar estat
             appStateManager.appState = {
                 ...importData.data,
                 currentDate: dateHelper.parseUTC(importData.data.currentDate.split('T')[0])
             };
-        
+            
             // Desar estat importat
             this.saveToStorage();
-        
-            console.log('[Storage] Estat importat correctament');
-            return true;
-        
+            
         } catch (error) {
-            console.error('[Storage] Error important estat:', error);
-            return false;
+            throw new CalendariIOCException('999', 'StorageManager.importState');
         }
+        
+        console.log('[Storage] Estat importat correctament');
+        return true;
     }
 
     // Verificar si localStorage està disponible
@@ -260,17 +215,19 @@ class StorageManager {
             localStorage.removeItem(test);
             return true;
         } catch (error) {
-            console.warn('[Storage] localStorage no disponible:', error);
-            return false;
+            if (error instanceof DOMException) {
+                throw new CalendariIOCException('301', 'StorageManager.isStorageAvailable');
+            } else if (error.name === 'QuotaExceededError') {
+                throw new CalendariIOCException('302', 'StorageManager.isStorageAvailable');
+            }
+            throw new CalendariIOCException('999', 'StorageManager.isStorageAvailable');
         }
     }
 
     // Inicialitzar sistema de persistència
     initializeStorage() {
-        if (!this.isStorageAvailable()) {
-            console.error('[Storage] localStorage no disponible');
-            return false;
-        }
+        // isStorageAvailable() llançarà CalendariIOCException si localStorage no està disponible
+        this.isStorageAvailable();
         
         console.log('[Storage] Sistema de persistència inicialitzat');
         return true;
