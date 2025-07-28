@@ -76,11 +76,6 @@ class ViewManager {
      *              i neteja de listeners específics per evitar interferències
      */
     changeView(viewType) {
-        if (!viewType || !this.availableViews.includes(viewType)) {
-            console.warn(`[ViewManager] Vista no vàlida: ${viewType}`);
-            return false;
-        }
-        
         // Persistència de navegació: si estem sortint de vista mensual, guardar la data actual
         if (this.currentView === 'month' && viewType !== 'month') {
             const calendar = appStateManager.getCurrentCalendar();
@@ -120,24 +115,11 @@ class ViewManager {
     
     // Canviar a vista dia d'una data específica
     changeToDateView(dateStr) {
-        if (!dateStr) {
-            console.warn('[ViewManager] Data no vàlida per canviar a vista dia');
-            return false;
-        }
-        
         // Parsejar la data i actualitzar data actual
         const targetDate = dateHelper.parseUTC(dateStr);
-        if (!targetDate) {
-            console.warn('[ViewManager] No es pot parsejar la data:', dateStr);
-            return false;
-        }
         
         // Verificar que la data està dins del rang del calendari
         const calendar = appStateManager.getCurrentCalendar();
-        if (!calendar) {
-            console.warn('[ViewManager] No hi ha calendari actiu');
-            return false;
-        }
         
         if (!dateValidationService.validateDateWithMessage(dateStr, calendar, 'Vista dia')) {
             return false;
@@ -155,24 +137,11 @@ class ViewManager {
     
     // Canviar a vista setmanal d'una data específica
     changeToWeekView(dateStr) {
-        if (!dateStr) {
-            console.warn('[ViewManager] Data no vàlida per canviar a vista setmanal');
-            return false;
-        }
-        
         // Parsejar la data i actualitzar data actual
         const targetDate = dateHelper.parseUTC(dateStr);
-        if (!targetDate) {
-            console.warn('[ViewManager] No es pot parsejar la data:', dateStr);
-            return false;
-        }
         
         // Verificar que la data està dins del rang del calendari
         const calendar = appStateManager.getCurrentCalendar();
-        if (!calendar) {
-            console.warn('[ViewManager] No hi ha calendari actiu');
-            return false;
-        }
         
         if (!dateValidationService.validateDateWithMessage(dateStr, calendar, 'Vista setmanal')) {
             return false;
@@ -227,12 +196,6 @@ class ViewManager {
     
     // Renderitzar vista global
     renderGlobalView(calendar) {
-        if (!this.renderers.global) {
-            console.error('[ViewManager] Renderitzador de vista global no disponible');
-            this.renderMonthView(calendar); // Fallback
-            return;
-        }
-        
         const gridWrapper = document.getElementById('calendar-grid-wrapper');
         const periodDisplay = document.getElementById('current-period-display');
         
@@ -271,12 +234,6 @@ class ViewManager {
     
     // Renderitzar vista diària
     renderDayView(calendar) {
-        if (!this.renderers.day) {
-            console.error('[ViewManager] Renderitzador de vista diària no disponible');
-            this.renderMonthView(calendar); // Fallback
-            return;
-        }
-        
         const gridWrapper = document.getElementById('calendar-grid-wrapper');
         const periodDisplay = document.getElementById('current-period-display');
         
@@ -296,12 +253,6 @@ class ViewManager {
     
     // Renderitzar vista setmanal
     renderWeekView(calendar) {
-        if (!this.renderers.week) {
-            console.error('[ViewManager] Renderitzador de vista setmanal no disponible');
-            this.renderMonthView(calendar); // Fallback
-            return;
-        }
-        
         const gridWrapper = document.getElementById('calendar-grid-wrapper');
         const periodDisplay = document.getElementById('current-period-display');
         
@@ -323,12 +274,6 @@ class ViewManager {
     
     // Renderitzar vista semestral
     renderSemesterView(calendar) {
-        if (!this.renderers.semester) {
-            console.error('[ViewManager] Renderitzador de vista semestral no disponible');
-            this.renderMonthView(calendar); // Fallback
-            return;
-        }
-        
         const gridWrapper = document.getElementById('calendar-grid-wrapper');
         const periodDisplay = document.getElementById('current-period-display');
         
@@ -404,11 +349,6 @@ class ViewManager {
     
     // Navegació específica per setmanes
     navigateWeek(direction, calendarStart, calendarEnd) {
-        if (!this.renderers.week) {
-            console.warn('[ViewManager] Renderitzador setmanal no disponible');
-            return null;
-        }
-        
         // Obtenir inici de la setmana actual
         const currentWeekStart = this.renderers.week.getWeekStart(appStateManager.currentDate);
         
