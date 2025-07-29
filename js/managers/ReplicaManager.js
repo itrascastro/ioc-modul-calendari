@@ -30,8 +30,7 @@ class ReplicaManager {
     openReplicationModal(sourceCalendarId) {
         const sourceCalendar = appStateManager.calendars[sourceCalendarId];
         if (!sourceCalendar) {
-            uiHelper.showMessage('Calendari origen no trobat', 'error');
-            return;
+            throw new CalendariIOCException('701', 'ReplicaManager.openReplicationModal');
         }
 
         // Obtenir llista de calendaris objectiu (tots excepte l'origen)
@@ -78,21 +77,18 @@ class ReplicaManager {
         const targetCalendarId = document.getElementById('targetCalendarSelect').value;
         
         if (!sourceCalendarId) {
-            uiHelper.showMessage('Error: No s\'ha seleccionat calendari origen', 'error');
-            return;
+            throw new CalendariIOCException('702', 'ReplicaManager.executeReplication');
         }
         
         if (!targetCalendarId) {
-            uiHelper.showMessage('Selecciona un calendari destí', 'error');
-            return;
+            throw new CalendariIOCException('703', 'ReplicaManager.executeReplication', false);
         }
 
         const sourceCalendar = appStateManager.calendars[sourceCalendarId];
         const targetCalendar = appStateManager.calendars[targetCalendarId];
 
         if (!sourceCalendar || !targetCalendar) {
-            uiHelper.showMessage('Error accedint als calendaris', 'error');
-            return;
+            throw new CalendariIOCException('704', 'ReplicaManager.executeReplication');
         }
 
         try {
@@ -165,8 +161,11 @@ class ReplicaManager {
             calendarManager.updateUI();
 
         } catch (error) {
-            console.error('[Replicació] Error:', error);
-            uiHelper.showMessage('Error durant la replicació: ' + error.message, 'error');
+            if (error instanceof CalendariIOCException) {
+                throw error;
+            } else {
+                throw new CalendariIOCException('705', 'ReplicaManager.executeReplication');
+            }
         }
     }
     

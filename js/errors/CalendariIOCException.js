@@ -105,6 +105,15 @@ class CalendariIOCException extends Error {
             "606": "No hi ha categories disponibles",
             "609": "Format de dades no vàlid",
             
+            // === ERRORS DE REPLICACIÓ I GESTIÓ (7xx) ===
+            // Errors específics de replicació de calendaris
+            "701": "Calendari origen no trobat",
+            "702": "No s'ha seleccionat calendari origen",
+            "703": "Selecciona un calendari destí",
+            "704": "Error accedint als calendaris",
+            "705": "Error durant la replicació",
+            "706": "Error tècnic en el procés de replicació",
+            
             // === 999: ERRORS NO CONTROLATS ===
             "999": "Error no controlat del sistema"
         };
