@@ -28,8 +28,7 @@ class HtmlExporter {
     exportCalendar(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) {
-            uiHelper.showMessage('Calendari no trobat', 'error');
-            return;
+            throw new CalendariIOCException('1101', 'HtmlExporter.exportCalendar');
         }
         
         const htmlContent = this.generateHTMLVisualCalendar(calendar);

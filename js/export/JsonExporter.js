@@ -28,8 +28,7 @@ class JsonExporter {
     exportCalendar(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) {
-            uiHelper.showMessage('Calendari no trobat', 'error');
-            return;
+            throw new CalendariIOCException('1102', 'JsonExporter.exportCalendar');
         }
         
         const jsonContent = this.generateJsonContent(calendar);

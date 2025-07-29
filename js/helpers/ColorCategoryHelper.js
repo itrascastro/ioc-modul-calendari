@@ -69,7 +69,6 @@ class ColorCategoryHelper {
             return availableColors[Math.floor(Math.random() * availableColors.length)];
         } else {
             // Fallback: si tots els colors estan usats, retornar aleatori de la paleta
-            console.warn('[ColorCategoryHelper] Tots els colors de la paleta estan usats, usant fallback');
             return this.colors[Math.floor(Math.random() * this.colors.length)];
         }
     }

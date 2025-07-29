@@ -130,6 +130,11 @@ class CalendariIOCException extends Error {
             "1001": "SemesterConfig requereix un calendarType",
             "1002": "SemesterConfig no està inicialitzat",
             
+            // === ERRORS D'EXPORTACIÓ (11xx) ===
+            // Errors específics d'exportació de calendaris
+            "1101": "Calendari no trobat per exportació HTML",
+            "1102": "Calendari no trobat per exportació JSON",
+            
             // === 999: ERRORS NO CONTROLATS ===
             "999": "Error no controlat del sistema"
         };
