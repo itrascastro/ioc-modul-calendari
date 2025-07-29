@@ -97,6 +97,12 @@ class CalendariIOCException extends Error {
             
             // === ERRORS DE VALIDACIÓ DE DADES (6xx) ===
             // Format i validació de dades d'entrada
+            "601": "El títol de l'event és obligatori",
+            "602": "Has de seleccionar una data per a l'event",
+            "603": "Has de seleccionar una categoria de la llista",
+            "604": "La data de l'event ha d'estar dins del període del calendari actiu",
+            "605": "No es poden moure els events del sistema IOC",
+            "606": "No hi ha categories disponibles",
             "609": "Format de dades no vàlid",
             
             // === 999: ERRORS NO CONTROLATS ===

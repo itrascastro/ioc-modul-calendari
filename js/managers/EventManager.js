@@ -32,9 +32,7 @@ class EventManager {
         const categoryId = document.getElementById('eventCategory').value;
         const description = document.getElementById('eventDescription').value.trim();
 
-        if (!this.validateEventData(title, date, categoryId, calendar)) {
-            return;
-        }
+        this.validateEventData(title, date, categoryId, calendar);
 
         // Auto-afegir categoria del catàleg al calendari si no existeix
         this.ensureCategoryExists(calendar, categoryId);
@@ -86,9 +84,7 @@ class EventManager {
         if (oldDate === newDate) return; // Cap canvi
         
         // Validacions de negoci
-        if (!this.isValidEventMove(event, newDate, calendar)) {
-            return;
-        }
+        this.isValidEventMove(event, newDate, calendar);
         
         // IMMUTABILITAT: Crear nou estat sense mutar l'original
         const newEvents = calendar.events.map(e => 
@@ -110,21 +106,17 @@ class EventManager {
     // Validar dades d'esdeveniment
     validateEventData(title, date, categoryId, calendar) {
         if (!title) {
-            uiHelper.showMessage("El títol de l'event és obligatori.", 'error');
-            return false;
+            throw new CalendariIOCException('601', 'EventManager.validateEventData', false);
         }
         if (!date) {
-            uiHelper.showMessage("Has de seleccionar una data per a l'event.", 'error');
-            return false;
+            throw new CalendariIOCException('602', 'EventManager.validateEventData', false);
         }
         if (!categoryId) {
-            uiHelper.showMessage("Has de seleccionar una categoria de la llista.", 'error');
-            return false;
+            throw new CalendariIOCException('603', 'EventManager.validateEventData', false);
         }
 
         if (date < calendar.startDate || date > calendar.endDate) {
-            uiHelper.showMessage("La data de l'event ha d'estar dins del període del calendari actiu.", 'error');
-            return false;
+            throw new CalendariIOCException('604', 'EventManager.validateEventData', false);
         }
         
         return true;
@@ -134,8 +126,7 @@ class EventManager {
     isValidEventMove(event, targetDate, calendar) {
         // Només esdeveniments d'usuari es poden moure
         if (event.isSystemEvent) {
-            uiHelper.showMessage('No es poden moure els events del sistema IOC', 'error');
-            return false;
+            throw new CalendariIOCException('605', 'EventManager.isValidEventMove', false);
         }
         
         // Validar data utilitzant el servei centralitzat
@@ -173,7 +164,7 @@ class EventManager {
         const allCategories = categoryService.getAvailableCategories(calendar);
         
         if (allCategories.length === 0) {
-            console.warn('[EventManager] No hi ha categories disponibles!');
+            throw new CalendariIOCException('606', 'EventManager.populateCategorySelect');
         }
         
         allCategories.forEach((cat, index) => {
@@ -225,7 +216,12 @@ class EventManager {
                 isValid = dateValidationService.isValidReplicationDate(dateStr, calendar);
             } else {
                 // Esdeveniment normal: usar validació estàndard
-                isValid = this.isValidEventMove(appStateManager.draggedEvent, dateStr, calendar);
+                try {
+                    this.isValidEventMove(appStateManager.draggedEvent, dateStr, calendar);
+                    isValid = true;
+                } catch (error) {
+                    isValid = false;
+                }
             }
             
             if (isValid) {
