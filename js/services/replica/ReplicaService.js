@@ -96,8 +96,14 @@ class ReplicaService {
         return espaiUtil;
     }
     
-    // Mètode abstracte que han d'implementar les subclasses
+    /**
+     * @abstract
+     * Mètode de replicació que ha de ser implementat per les subclasses
+     * @param {Object} sourceCalendar - Calendari origen
+     * @param {Object} targetCalendar - Calendari destí
+     * @returns {Object} Resultat de la replicació amb events ubicats i no ubicats
+     */
     replicate(sourceCalendar, targetCalendar) {
-        throw new Error('El mètode replicate() ha de ser implementat per la subclasse');
+        // Mètode virtual - implementar a la subclasse
     }
 }

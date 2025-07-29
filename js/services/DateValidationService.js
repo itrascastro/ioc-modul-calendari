@@ -150,11 +150,6 @@ class DateValidationService {
             this.validateViewDate(dateStr, calendar);
             return true;
         } catch (error) {
-            if (error instanceof CalendariIOCException) {
-                console.warn(`[DateValidation] ${context}: ${error.missatge}`);
-            } else {
-                console.warn(`[DateValidation] ${context}: ${error.message}`);
-            }
             return false;
         }
     }

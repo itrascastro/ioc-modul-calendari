@@ -135,6 +135,10 @@ class CalendariIOCException extends Error {
             "1101": "Calendari no trobat per exportació HTML",
             "1102": "Calendari no trobat per exportació JSON",
             
+            // === ERRORS DE FACTORY I SERVEIS (12xx) ===
+            // Errors específics de factories i serveis
+            "1201": "Calendaris no proporcionats al factory de replicació",
+            
             // === 999: ERRORS NO CONTROLATS ===
             "999": "Error no controlat del sistema"
         };

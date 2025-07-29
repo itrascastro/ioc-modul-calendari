@@ -30,7 +30,7 @@ class ReplicaServiceFactory {
     static getService(sourceCalendar, targetCalendar) {
         // Validació bàsica
         if (!sourceCalendar || !targetCalendar) {
-            throw new Error('Calendaris no proporcionats al factory');
+            throw new CalendariIOCException('1201', 'ReplicaServiceFactory.getService');
         }
         
         // Determinar tipus de replicació necessària
