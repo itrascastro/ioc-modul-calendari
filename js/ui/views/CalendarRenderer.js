@@ -281,15 +281,37 @@ class CalendarRenderer {
     // === MÈTODES VIRTUALS ===
     // Aquests mètodes han de ser implementats per les classes filles
     
+    /**
+     * @abstract
+     * Renderitza el calendari per la vista específica
+     * Aquest mètode ha de ser implementat per la classe filla
+     * @param {Object} calendar - Calendari a renderitzar
+     * @param {Date} currentDate - Data actual
+     * @param {string} outputFormat - Format de sortida ('DOM' o 'HTML')
+     */
     render(calendar, currentDate, outputFormat = 'DOM') {
-        throw new Error('El mètode render() ha de ser implementat per la classe filla');
+        // Mètode virtual - implementar a la classe filla
     }
     
+    /**
+     * @abstract
+     * Genera sortida DOM per la vista
+     * Aquest mètode ha de ser implementat per la classe filla
+     * @param {Object} data - Dades processades per renderitzar
+     * @param {Object} calendar - Calendari origen
+     */
     generateDOMOutput(data, calendar) {
-        throw new Error('El mètode generateDOMOutput() ha de ser implementat per la classe filla');
+        // Mètode virtual - implementar a la classe filla
     }
     
+    /**
+     * @abstract
+     * Genera sortida HTML per exportació
+     * Aquest mètode ha de ser implementat per la classe filla
+     * @param {Object} data - Dades processades per renderitzar
+     * @param {Object} calendar - Calendari origen
+     */
     generateHTMLOutput(data, calendar) {
-        throw new Error('El mètode generateHTMLOutput() ha de ser implementat per la classe filla');
+        // Mètode virtual - implementar a la classe filla
     }
 }
