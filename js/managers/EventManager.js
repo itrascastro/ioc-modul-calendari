@@ -164,7 +164,7 @@ class EventManager {
         const allCategories = categoryService.getAvailableCategories(calendar);
         
         if (allCategories.length === 0) {
-            throw new CalendariIOCException('606', 'EventManager.populateCategorySelect');
+            throw new CalendariIOCException('606', 'EventManager.populateCategorySelect', false);
         }
         
         allCategories.forEach((cat, index) => {

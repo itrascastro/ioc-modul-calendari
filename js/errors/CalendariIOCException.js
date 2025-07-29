@@ -102,7 +102,7 @@ class CalendariIOCException extends Error {
             "603": "Has de seleccionar una categoria de la llista",
             "604": "La data de l'event ha d'estar dins del període del calendari actiu",
             "605": "No es poden moure els events del sistema IOC",
-            "606": "No hi ha categories disponibles",
+            "606": "Per crear un esdeveniment és necessari que existeixi almenys una categoria que no sigui de sistema",
             "609": "Format de dades no vàlid",
             
             // === ERRORS DE REPLICACIÓ I GESTIÓ (7xx) ===
@@ -113,6 +113,11 @@ class CalendariIOCException extends Error {
             "704": "Error accedint als calendaris",
             "705": "Error durant la replicació",
             "706": "Error tècnic en el procés de replicació",
+            
+            // === ERRORS DE GESTIÓ DE CATEGORIES (8xx) ===
+            // Errors específics de categories d'esdeveniments
+            "801": "Ja existeix una categoria amb aquest nom al catàleg",
+            "802": "El nom de la categoria no pot estar buit",
             
             // === 999: ERRORS NO CONTROLATS ===
             "999": "Error no controlat del sistema"

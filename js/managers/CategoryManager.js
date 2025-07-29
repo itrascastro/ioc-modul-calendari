@@ -34,14 +34,11 @@ class CategoryManager {
         const nameInput = document.getElementById('new-category-name');
         const name = nameInput.value.trim();
 
-        if (!this.validateCategoryName(name)) {
-            return;
-        }
+        this.validateCategoryName(name);
 
         // Verificar si ja existeix al catàleg
         if (this.categoryExistsInCatalog(name)) {
-            uiHelper.showMessage("Ja existeix una categoria amb aquest nom al catàleg.", 'error');
-            return;
+            throw new CalendariIOCException('801', 'CategoryManager.addCategory', false);
         }
 
         const newCategory = this.createCategory(name);
@@ -88,7 +85,9 @@ class CategoryManager {
         const categoryId = categoryItem.dataset.categoryId;
         const newName = inputElement.value.trim();
 
-        if (!this.validateCategoryEdit(newName, categoryItem, categoryId)) {
+        // Si el nom està buit, restaurar i no fer res
+        if (!newName) {
+            this.restoreOriginalCategoryName(categoryItem, categoryId);
             return;
         }
         
@@ -102,8 +101,7 @@ class CategoryManager {
     // Validar nom de categoria
     validateCategoryName(name) {
         if (!name) {
-            uiHelper.showMessage("El nom de la categoria no pot estar buit.", 'error');
-            return false;
+            throw new CalendariIOCException('802', 'CategoryManager.validateCategoryName', false);
         }
         return true;
     }
@@ -115,15 +113,6 @@ class CategoryManager {
         );
     }
     
-    // Validar edició de categoria
-    validateCategoryEdit(newName, categoryItem, categoryId) {
-        if (!newName) {
-            uiHelper.showMessage("El nom de la categoria no pot estar buit.", 'error');
-            this.restoreOriginalCategoryName(categoryItem, categoryId);
-            return false;
-        }
-        return true;
-    }
     
     // === CREACIÓ I MANIPULACIÓ ===
     

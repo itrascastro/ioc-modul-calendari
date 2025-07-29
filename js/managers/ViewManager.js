@@ -568,7 +568,12 @@ class ViewManager {
             if (appStateManager.draggedFromDate === 'unplaced') {
                 isValid = dateValidationService.isValidEventDate(dateStr, calendar);
             } else {
-                isValid = eventManager.isValidEventMove(appStateManager.draggedEvent, dateStr, calendar);
+                try {
+                    eventManager.isValidEventMove(appStateManager.draggedEvent, dateStr, calendar);
+                    isValid = true;
+                } catch (error) {
+                    isValid = false;
+                }
             }
             
             if (isValid) {
