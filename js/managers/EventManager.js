@@ -139,7 +139,8 @@ class EventManager {
         }
         
         // Validar data utilitzant el servei centralitzat
-        return dateValidationService.validateEventWithMessage(targetDate, calendar);
+        dateValidationService.validateEventDate(targetDate, calendar);
+        return true;
     }
     
     // === CATEGORIES ===

@@ -252,9 +252,7 @@ class ReplicaManager {
         if (!unplacedItem || !calendar) return;
         
         // Validar data objectiu per replicació (només dies laborables)
-        if (!dateValidationService.validateReplicationWithMessage(targetDate, calendar)) {
-            return;
-        }
+        dateValidationService.validateReplicationDate(targetDate, calendar);
         
         // Crear nou esdeveniment al calendari
         const newEvent = {

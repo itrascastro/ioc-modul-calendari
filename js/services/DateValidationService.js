@@ -63,15 +63,15 @@ class DateValidationService {
     // Validar data per canvi de vista (llança excepció si no és vàlida)
     validateViewDate(dateStr, calendar) {
         if (!dateStr) {
-            throw new Error('Data no vàlida');
+            throw new CalendariIOCException('501', 'DateValidationService.validateViewDate');
         }
         
         if (!calendar) {
-            throw new Error('No hi ha calendari actiu');
+            throw new CalendariIOCException('502', 'DateValidationService.validateViewDate');
         }
         
         if (!this.isDateInCalendarRange(dateStr, calendar)) {
-            throw new Error('Data fora del rang del calendari');
+            throw new CalendariIOCException('503', 'DateValidationService.validateViewDate');
         }
         
         return true;
@@ -80,15 +80,15 @@ class DateValidationService {
     // Validar data per esdeveniment (llança excepció si no és vàlida)
     validateEventDate(dateStr, calendar) {
         if (!dateStr) {
-            throw new Error('Data no vàlida');
+            throw new CalendariIOCException('501', 'DateValidationService.validateEventDate', false);
         }
         
         if (!calendar) {
-            throw new Error('No hi ha calendari actiu');
+            throw new CalendariIOCException('502', 'DateValidationService.validateEventDate');
         }
         
         if (!this.isDateInCalendarRange(dateStr, calendar)) {
-            throw new Error('La data ha d\'estar dins del període del calendari');
+            throw new CalendariIOCException('504', 'DateValidationService.validateEventDate', false);
         }
         
         return true;
@@ -97,19 +97,19 @@ class DateValidationService {
     // Validar data per replicació (llança excepció si no és vàlida)
     validateReplicationDate(dateStr, calendar) {
         if (!dateStr) {
-            throw new Error('Data no vàlida');
+            throw new CalendariIOCException('501', 'DateValidationService.validateReplicationDate');
         }
         
         if (!calendar) {
-            throw new Error('No hi ha calendari actiu');
+            throw new CalendariIOCException('502', 'DateValidationService.validateReplicationDate');
         }
         
         if (!this.isDateInCalendarRange(dateStr, calendar)) {
-            throw new Error('La data ha d\'estar dins del període del calendari');
+            throw new CalendariIOCException('504', 'DateValidationService.validateReplicationDate');
         }
         
         if (calendar.type !== 'Altre' && !this.isWeekday(dateStr)) {
-            throw new Error('La data ha de ser un dia laborable');
+            throw new CalendariIOCException('505', 'DateValidationService.validateReplicationDate');
         }
         
         return true;
@@ -150,32 +150,15 @@ class DateValidationService {
             this.validateViewDate(dateStr, calendar);
             return true;
         } catch (error) {
-            console.warn(`[DateValidation] ${context}: ${error.message}`);
+            if (error instanceof CalendariIOCException) {
+                console.warn(`[DateValidation] ${context}: ${error.missatge}`);
+            } else {
+                console.warn(`[DateValidation] ${context}: ${error.message}`);
+            }
             return false;
         }
     }
     
-    // Validar esdeveniment i mostrar missatge d'error si cal
-    validateEventWithMessage(dateStr, calendar) {
-        try {
-            this.validateEventDate(dateStr, calendar);
-            return true;
-        } catch (error) {
-            uiHelper.showMessage(error.message, 'error');
-            return false;
-        }
-    }
-    
-    // Validar replicació i mostrar missatge d'error si cal
-    validateReplicationWithMessage(dateStr, calendar) {
-        try {
-            this.validateReplicationDate(dateStr, calendar);
-            return true;
-        } catch (error) {
-            uiHelper.showMessage(error.message, 'error');
-            return false;
-        }
-    }
     
     // === UTILITATS DE MOVIMENT D'EVENTS ===
     

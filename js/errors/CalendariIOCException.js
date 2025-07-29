@@ -87,6 +87,14 @@ class CalendariIOCException extends Error {
             "413": "Els calendaris FP/BTX requereixen codi de semestre",
             "414": "Error carregant el fitxer de calendari",
             
+            // === ERRORS DE VALIDACIÓ DE DATES (5xx) ===
+            // Validació de dates i rangs temporals
+            "501": "Data no vàlida",
+            "502": "No hi ha calendari actiu",
+            "503": "Data fora del rang del calendari",
+            "504": "La data ha d'estar dins del període del calendari",
+            "505": "La data ha de ser un dia laborable",
+            
             // === ERRORS DE VALIDACIÓ DE DADES (6xx) ===
             // Format i validació de dades d'entrada
             "609": "Format de dades no vàlid",
