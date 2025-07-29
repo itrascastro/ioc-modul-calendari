@@ -41,7 +41,9 @@ class IcsImporter {
                         const calendarData = this.parseIcsContent(icsContent, file.name, existingCalendar);
                         callback(calendarData);
                     } catch (error) {
-                        uiHelper.showMessage('Error llegint el fitxer ICS: ' + error.message, 'error');
+                        const icsError = new CalendariIOCException('901', 'IcsImporter.importIcs');
+                        errorManager.handleError(icsError);
+                        return; // No continuar processant
                     }
                 };
                 reader.readAsText(file);
@@ -117,7 +119,7 @@ class IcsImporter {
         }
         
         if (events.length === 0) {
-            throw new Error('No s\'han trobat esdeveniments vàlids al fitxer ICS');
+            throw new CalendariIOCException('902', 'IcsImporter.parseIcsContent', false);
         }
         
         // Calcular dates d'inici i fi del calendari
@@ -191,7 +193,7 @@ class IcsImporter {
         if (dateStr.length === 8) {
             return `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
         }
-        throw new Error(`Format de data invàlid: ${dateValue}`);
+        throw new CalendariIOCException('903', 'IcsImporter.parseDate');
     }
     
     extractTime(dateTimeValue) {

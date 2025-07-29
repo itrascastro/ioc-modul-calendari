@@ -119,6 +119,12 @@ class CalendariIOCException extends Error {
             "801": "Ja existeix una categoria amb aquest nom al catàleg",
             "802": "El nom de la categoria no pot estar buit",
             
+            // === ERRORS D'IMPORTACIÓ ICS (9xx) ===
+            // Errors específics d'importació de fitxers ICS
+            "901": "Error llegint el fitxer ICS",
+            "902": "No s'han trobat esdeveniments vàlids al fitxer ICS",
+            "903": "Format de data invàlid al fitxer ICS",
+            
             // === 999: ERRORS NO CONTROLATS ===
             "999": "Error no controlat del sistema"
         };
