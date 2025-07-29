@@ -52,17 +52,13 @@ class SemesterConfig {
                 specificConfig = await this.loadJSON('config/fp-semestre.json');
             } else if (type === 'BTX') {
                 specificConfig = await this.loadJSON('config/btx-semestre.json');
-            } else if (type === 'Altre') {
-                // Tipus "Altre" no carrega configuració específica
-                return this.getEmptyConfiguration(systemCategories);
             }
             
             // Fusionar configuracions
             return this.mergeConfigurations(commonConfig, specificConfig, systemCategories);
             
         } catch (error) {
-            console.error(`[SemesterConfig] Error carregant configuració per tipus ${type}:`, error);
-            throw new Error(`No es pot carregar la configuració per tipus ${type}: ${error.message}`);
+            throw new CalendariIOCException('108', 'SemesterConfig.loadConfiguration');
         }
     }
     
@@ -76,23 +72,16 @@ class SemesterConfig {
                 console.log(`[SemesterConfig] Carregat ${filePath} correctament`);
                 return data;
             } else {
-                console.error(`[SemesterConfig] Error carregant ${filePath}: ${response.status}`);
-                return { systemEvents: [] };
+                throw new CalendariIOCException('109', 'SemesterConfig.loadJSON');
             }
         } catch (error) {
-            console.error(`[SemesterConfig] Error parsejant ${filePath}:`, error);
-            return { systemEvents: [] };
+            if (error instanceof CalendariIOCException) {
+                throw error;
+            }
+            throw new CalendariIOCException('110', 'SemesterConfig.loadJSON');
         }
     }
     
-    // Configuració buida per tipus "Altre"
-    getEmptyConfiguration(systemCategories) {
-        return {
-            semester: null, // Es definirà dinàmicament
-            defaultCategories: systemCategories || [], // Categories carregades del JSON
-            systemEvents: [] // Sense esdeveniments del sistema
-        };
-    }
     
     // Fusionar configuració comuna amb específica
     mergeConfigurations(commonConfig, specificConfig, systemCategories) {
@@ -174,15 +163,4 @@ class SemesterConfig {
         const semester = this.getSemester();
         return semester ? semester.code : null;
     }
-    
-    // Mostrar informació de la configuració carregada
-    logConfigInfo() {
-        
-        const semester = this.getSemester();
-        console.log(`[SemesterConfig] Semestre: ${semester.code}`);
-        console.log(`[SemesterConfig] Període: ${semester.startDate} → ${semester.endDate}`);
-        console.log(`[SemesterConfig] Events sistema: ${this.getSystemEvents().length}`);
-        console.log(`[SemesterConfig] Categories per defecte: ${this.getDefaultCategories().length}`);
-    }
-    
 }

@@ -47,7 +47,6 @@ class AppStateManager {
              * @description Mapeja cada ID de calendari amb l'últim mes visitat (format ISO)
              * @example { "FP_24S2_001": "2025-03-01T00:00:00.000Z" }
              * Permet que cada calendari recordi el seu últim mes visitat en vista mensual
-             * Es reseteja amb F5 (no és persistent) però es manté durant la sessió
              */
             lastVisitedMonths: {}
         };
@@ -127,8 +126,6 @@ class AppStateManager {
         this.selectedCategoryId = null;
         this._editingEventId = null;
     }
-
-
 
     // === GETTERS I SETTERS PER A ACCÉS DIRECTE A PROPIETATS ===
     

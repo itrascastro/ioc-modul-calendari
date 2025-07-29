@@ -51,6 +51,12 @@ class CalendariIOCException extends Error {
      */
     getMissatgePerCodi(codi) {
         const missatges = {
+            // === ERRORS DE CONFIGURACIÓ (1xx) ===
+            // Problemes de càrrega inicial de configuració
+            "108": "Error carregant configuració de semestre",
+            "109": "Error carregant fitxer de configuració",
+            "110": "Error parsejant fitxer de configuració",
+            
             // === ERRORS DE REPLICACIÓ (2xx) ===
             // Problemes tècnics durant la replicació
             "207": "Error durant la replicació",

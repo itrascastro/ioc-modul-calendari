@@ -307,7 +307,7 @@ class CalendarManager {
         storageManager.saveToStorage();
         this.updateUI();
         modalRenderer.closeModal('calendarSetupModal');
-        uiHelper.showMessage('Calendari guardat correctament', 'success');
+        uiHelper.showMessage('Calendari creat correctament', 'success');
     }
     
     // === NAVEGACIÓ ===
