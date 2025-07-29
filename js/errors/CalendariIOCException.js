@@ -31,12 +31,14 @@ class CalendariIOCException extends Error {
      * 
      * @param {string} codiCausa - Codi numèric de l'error (1xx, 2xx, 3xx, etc.)
      * @param {string} context - Context d'on prové l'error per debugging
+     * @param {boolean} logToConsole - Si l'error s'ha de mostrar a la consola (defecte: true)
      */
-    constructor(codiCausa, context = '') {
+    constructor(codiCausa, context = '', logToConsole = true) {
         super();
         this.name = 'CalendariIOCException';
         this.codiCausa = codiCausa;
         this.context = context;
+        this.logToConsole = logToConsole;
         this.timestamp = new Date();
         this.missatge = this.getMissatgePerCodi(codiCausa);
     }
@@ -68,8 +70,25 @@ class CalendariIOCException extends Error {
             "303": "Dades corruptes al localStorage",
             "304": "Error exportant estat",
             
-            // === ERRORS DE DESENVOLUPAMENT (6xx) ===
-            // Format i validació de dades
+            // === ERRORS DE GESTIÓ DE CALENDARIS (4xx) ===
+            // Problemes de validació i operacions amb calendaris
+            "401": "Selecciona un tipus de calendari",
+            "402": "Ja existeix un calendari amb aquest nom",
+            "403": "Error creant el calendari",
+            "404": "Error tècnic durant la creació del calendari",
+            "405": "Els camps Cicle i Mòdul són obligatoris",
+            "406": "Tots els camps són obligatoris per tipus Altre",
+            "407": "La data de fi ha de ser posterior a la data d'inici",
+            "408": "Calendari destí per importació ICS no trobat",
+            "409": "La importació ICS només està disponible per calendaris tipus \"Altre\"",
+            "410": "Error processant els esdeveniments ICS importats",
+            "411": "Estructura del fitxer de calendari incorrecta",
+            "412": "Ja existeix un calendari amb aquest identificador",
+            "413": "Els calendaris FP/BTX requereixen codi de semestre",
+            "414": "Error carregant el fitxer de calendari",
+            
+            // === ERRORS DE VALIDACIÓ DE DADES (6xx) ===
+            // Format i validació de dades d'entrada
             "609": "Format de dades no vàlid",
             
             // === 999: ERRORS NO CONTROLATS ===

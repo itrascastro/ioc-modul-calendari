@@ -51,7 +51,7 @@ class Bootstrap {
     }
 
     // === GESTOR D'ACCIONS CENTRALITZAT ===
-    handleAction(e) {
+    async handleAction(e) {
         try {
             const target = e.target.closest('[data-action]');
             if (!target) return;
@@ -62,7 +62,7 @@ class Bootstrap {
                 case 'toggle-theme': themeHelper.toggleTheme(); break;
                 case 'new-calendar': modalRenderer.openNewCalendarModal(); break;
                 case 'close-modal': modalRenderer.closeModal(target.dataset.modal); break;
-                case 'add-calendar': calendarManager.addCalendar(); break;
+                case 'add-calendar': await calendarManager.addCalendar(); break;
                 case 'navigate-period': viewManager.navigatePeriod(parseInt(target.dataset.direction)); break;
                 case 'switch-calendar': calendarManager.switchCalendar(target.closest('.calendar-list-item').dataset.calendarId); break;
                 case 'add-event': modalRenderer.openEventModal(null, target.dataset.date || target.closest('.day-cell')?.dataset.date); break;

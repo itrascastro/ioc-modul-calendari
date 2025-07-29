@@ -2,7 +2,9 @@ class ErrorManager {
     
     handleError(error) {
         if (error instanceof CalendariIOCException) {
-            console.error(`[${error.context}] ${error.missatge}`);
+            if (error.logToConsole) {
+                console.error(`[${error.context}] ${error.missatge}`);
+            }
             uiHelper.showMessage(error.missatge, 'error');
         } else {
             console.error('[UNHANDLED ERROR]', error);

@@ -28,8 +28,7 @@ class CalendarManager {
             const selectedType = document.getElementById('studyType').value;
             
             if (!selectedType) {
-                uiHelper.showMessage("Selecciona un tipus de calendari.", 'error');
-                return;
+                throw new CalendariIOCException('401', 'CalendarManager.addCalendar', false);
             }
             
             let calendarData;
@@ -47,16 +46,24 @@ class CalendarManager {
             }
             
             if (this.calendarExists(calendarData.id)) {
-                uiHelper.showMessage("Ja existeix un calendari amb aquest nom.", 'error');
-                return;
+                throw new CalendariIOCException('402', 'CalendarManager.addCalendar', false);
             }
             
             this.createCalendarData(calendarData.id, calendarData.name, calendarData.startDate, calendarData.endDate, calendarData.type, calendarData.paf1Date, calendarData.config);
-            this.completeCalendarSave();
+            
+            // Sempre tornar a vista mensual quan es crea un calendari
+            viewManager.changeView('month');
+            
+            storageManager.saveToStorage();
+            this.updateUI();
+            modalRenderer.closeModal('calendarSetupModal');
+            uiHelper.showMessage('Calendari creat correctament', 'success');
             
         } catch (error) {
-            console.error('[CalendarManager] Error afegint calendari:', error);
-            uiHelper.showMessage('Error creant el calendari.', 'error');
+            if (error instanceof CalendariIOCException) {
+                throw error;
+            }
+            throw new CalendariIOCException('404', 'CalendarManager.addCalendar');
         }
     }
     
@@ -66,8 +73,7 @@ class CalendarManager {
         const module = document.getElementById('moduleCode').value.trim().toUpperCase();
         
         if (!cicle || !module) {
-            uiHelper.showMessage("Els camps Cicle i Mòdul són obligatoris.", 'error');
-            return null;
+            throw new CalendariIOCException('405', 'CalendarManager.processFPCalendar', false);
         }
         
         // Crear configuració específica per FP
@@ -79,10 +85,9 @@ class CalendarManager {
         const code = fpConfig.getSemesterCode();
         
         const calendarName = `FP_${cicle}_${module}_${code}`;
-        const calendarId = calendarName;
         
         return {
-            id: calendarId,
+            id: calendarName,
             name: calendarName,
             startDate,
             endDate,
@@ -97,8 +102,7 @@ class CalendarManager {
         const subject = document.getElementById('subjectCode').value.trim().toUpperCase();
         
         if (!subject) {
-            uiHelper.showMessage("El camp Assignatura és obligatori.", 'error');
-            return null;
+            throw new CalendariIOCException('405', 'CalendarManager.processBTXCalendar', false);
         }
         
         // Crear configuració específica per BTX
@@ -110,10 +114,9 @@ class CalendarManager {
         const code = btxConfig.getSemesterCode();
         
         const calendarName = `BTX_${subject}_${code}`;
-        const calendarId = calendarName;
         
         return {
-            id: calendarId,
+            id: calendarName,
             name: calendarName,
             startDate,
             endDate,
@@ -130,13 +133,11 @@ class CalendarManager {
         const endDate = document.getElementById('endDate').value;
         
         if (!name || !startDate || !endDate) {
-            uiHelper.showMessage("Tots els camps són obligatoris per tipus Altre.", 'error');
-            return null;
+            throw new CalendariIOCException('406', 'CalendarManager.processAltreCalendar', false);
         }
         
         if (startDate >= endDate) {
-            uiHelper.showMessage("La data de fi ha de ser posterior a la data d'inici.", 'error');
-            return null;
+            throw new CalendariIOCException('407', 'CalendarManager.processAltreCalendar', false);
         }
         
         const timestamp = Date.now();
@@ -299,16 +300,6 @@ class CalendarManager {
         return systemEvents;
     }
     
-    // Completar desament del calendari
-    completeCalendarSave() {
-        // Sempre tornar a vista mensual quan es crea un calendari
-        viewManager.changeView('month');
-        
-        storageManager.saveToStorage();
-        this.updateUI();
-        modalRenderer.closeModal('calendarSetupModal');
-        uiHelper.showMessage('Calendari creat correctament', 'success');
-    }
     
     // === NAVEGACIÓ ===
     
@@ -343,13 +334,11 @@ class CalendarManager {
     importIcsToCalendar(calendarId) {
         const calendar = appStateManager.calendars[calendarId];
         if (!calendar) {
-            uiHelper.showMessage('Calendari no trobat', 'error');
-            return;
+            throw new CalendariIOCException('408', 'CalendarManager.importIcsToCalendar', false);
         }
         
         if (calendar.type !== 'Altre') {
-            uiHelper.showMessage('La importació ICS només està disponible per calendaris tipus "Altre"', 'error');
-            return;
+            throw new CalendariIOCException('409', 'CalendarManager.importIcsToCalendar', false);
         }
         
         icsImporter.importIcsFile((icsData) => {
@@ -430,7 +419,7 @@ class CalendarManager {
                 uiHelper.showMessage(`${icsData.totalEvents} esdeveniments importats correctament`, 'success');
                 
             } catch (error) {
-                uiHelper.showMessage('Error processant els esdeveniments: ' + error.message, 'error');
+                errorManager.handleError(new CalendariIOCException('410', 'CalendarManager.importIcsToCalendar'));
             }
         }, calendar);
     }
@@ -454,7 +443,7 @@ class CalendarManager {
                         
                         // Validar estructura bàsica
                         if (!calendarData.name || !calendarData.startDate || !calendarData.endDate) {
-                            throw new Error('Estructura del fitxer incorrecta');
+                            throw new CalendariIOCException('411', 'CalendarManager.loadCalendarFile', false);
                         }
 
                         // Usar ID correcte del fitxer JSON
@@ -462,7 +451,7 @@ class CalendarManager {
                         
                         // Validar que no existeixi ja un calendari amb aquest ID
                         if (appStateManager.calendars[calendarId]) {
-                            throw new Error(`Ja existeix un calendari amb ID "${calendarId}"`);
+                            throw new CalendariIOCException('412', 'CalendarManager.loadCalendarFile', false);
                         }
                         
                         // Validar tipus de calendari
@@ -470,7 +459,7 @@ class CalendarManager {
                         
                         // Validar codi de semestre només per calendaris FP/BTX (no per "Altre")
                         if ((calendarType === 'FP' || calendarType === 'BTX') && !calendarData.code) {
-                            throw new Error('Els calendaris FP/BTX requereixen codi de semestre');
+                            throw new CalendariIOCException('413', 'CalendarManager.loadCalendarFile', false);
                         }
                         // Calendaris "Altre" poden tenir code: null, és correcte
                         
@@ -523,7 +512,11 @@ class CalendarManager {
                         uiHelper.showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
                         
                     } catch (error) {
-                        uiHelper.showMessage('Error carregant el fitxer: ' + error.message, 'error');
+                        if (error instanceof CalendariIOCException) {
+                            errorManager.handleError(error);
+                        } else {
+                            errorManager.handleError(new CalendariIOCException('414', 'CalendarManager.loadCalendarFile', false));
+                        }
                     }
                 };
                 reader.readAsText(file);
