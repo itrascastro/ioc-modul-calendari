@@ -24,7 +24,7 @@ class SemesterConfig {
         this.data = null; // S'inicialitzarà amb initialize()
         
         if (!calendarType) {
-            throw new Error('SemesterConfig requereix un calendarType. No es pot usar sense especificar tipus.');
+            throw new CalendariIOCException('1001', 'SemesterConfig.constructor');
         }
     }
     
@@ -122,7 +122,7 @@ class SemesterConfig {
     // Validar que la configuració està carregada
     _ensureInitialized() {
         if (!this.data) {
-            throw new Error('SemesterConfig no està inicialitzat. Crideu initialize() primer.');
+            throw new CalendariIOCException('1002', 'SemesterConfig._ensureInitialized');
         }
     }
     

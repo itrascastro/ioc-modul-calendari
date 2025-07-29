@@ -125,6 +125,11 @@ class CalendariIOCException extends Error {
             "902": "No s'han trobat esdeveniments vàlids al fitxer ICS",
             "903": "Format de data invàlid al fitxer ICS",
             
+            // === ERRORS DE CONFIGURACIÓ DE SISTEMA (10xx) ===
+            // Errors específics de configuració i inicialització
+            "1001": "SemesterConfig requereix un calendarType",
+            "1002": "SemesterConfig no està inicialitzat",
+            
             // === 999: ERRORS NO CONTROLATS ===
             "999": "Error no controlat del sistema"
         };
