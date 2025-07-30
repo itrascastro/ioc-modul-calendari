@@ -113,7 +113,7 @@ class ReplicaManager {
             // Desar esdeveniments no ubicats globalment
             if (result.unplaced.length > 0) {
                 appStateManager.unplacedEvents = result.unplaced;
-                console.log(`[Replicació] ${result.unplaced.length} events no ubicats guardats per gestió manual`);
+                console.log(`[Replicació] ${result.unplaced.length} esdeveniments no ubicats desats per gestió manual`);
             }
 
             // Canviar al calendari destí amb gestió de persistència de navegació

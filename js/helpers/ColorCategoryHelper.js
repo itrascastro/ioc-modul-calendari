@@ -81,7 +81,7 @@ class ColorCategoryHelper {
         const savedColor = appStateManager.appState.systemCategoryColors[categoryId];
         
         if (savedColor) {
-            // Retornar color guardat
+            // Retornar color desat
             return savedColor;
         }
         

@@ -213,13 +213,13 @@ class CalendarManager {
             const calendarEnd = dateHelper.parseUTC(newCalendar.endDate);
             
             if (targetDate < calendarStart || targetDate > calendarEnd) {
-                // Fallback segur: usar primer mes del calendari
-                targetDate = dateHelper.createUTC(calendarStart.getUTCFullYear(), calendarStart.getUTCMonth(), 1);
+                // Fallback segur: usar data d'inici real del calendari
+                targetDate = calendarStart;
             }
         } else {
-            // Primera visita: usar primer mes del calendari
+            // Primera visita: usar data d'inici real del calendari
             const calendarStart = dateHelper.parseUTC(newCalendar.startDate);
-            targetDate = dateHelper.createUTC(calendarStart.getUTCFullYear(), calendarStart.getUTCMonth(), 1);
+            targetDate = calendarStart;
         }
         
         appStateManager.currentDate = targetDate;

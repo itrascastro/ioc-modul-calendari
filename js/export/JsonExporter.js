@@ -33,7 +33,7 @@ class JsonExporter {
         
         const jsonContent = this.generateJsonContent(calendar);
         this.downloadJsonFile(jsonContent, calendar.name);
-        uiHelper.showMessage('Calendari guardat com a fitxer JSON', 'success');
+        uiHelper.showMessage('Calendari desat com a fitxer JSON', 'success');
     }
     
     // === GENERACIÓ DE CONTINGUT JSON ===

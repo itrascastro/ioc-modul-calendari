@@ -36,7 +36,7 @@ class StorageManager {
             const jsonData = JSON.stringify(stateToSave);
             localStorage.setItem(this.STORAGE_KEY, jsonData);
             
-            console.log('[Storage] Estat guardat correctament');
+            console.log('[Storage] Estat desat correctament');
             return true;
             
         } catch (error) {

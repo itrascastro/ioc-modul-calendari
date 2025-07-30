@@ -286,7 +286,7 @@ class EventManager {
         viewManager.renderCurrentView();
         panelsRenderer.renderCategories(); // Re-renderitzar per mostrar nova categoria si s'ha afegit
         modalRenderer.closeModal('eventModal');
-        uiHelper.showMessage('Esdeveniment guardat correctament', 'success');
+        uiHelper.showMessage('Esdeveniment desat correctament', 'success');
     }
 }
 

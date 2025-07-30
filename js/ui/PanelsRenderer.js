@@ -24,7 +24,7 @@ class PanelsRenderer {
         this.rendererType = 'panels';
     }
     
-    // === RENDERITZACIÓ DE CALENDARIS GUARDATS ===
+    // === RENDERITZACIÓ DE CALENDARIS DESATS ===
     renderSavedCalendars() {
         const container = document.getElementById('calendars-list-container');
         if (!container) return;
