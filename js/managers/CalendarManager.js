@@ -374,8 +374,8 @@ class CalendarManager {
                 // Ordenar esdeveniments: primer amb hora específica, després dia complet
                 calendar.events.sort((a, b) => {
                     // Detectar si tenen hora específica (format [HH:MM])
-                    const aHasTime = /^\[\d{2}:\d{2}\]/.test(a.title);
-                    const bHasTime = /^\[\d{2}:\d{2}\]/.test(b.title);
+                    const aHasTime = /^\\[\\d{2}:\\d{2}\\]/.test(a.title);
+                    const bHasTime = /^\\[\\d{2}:\\d{2}\\]/.test(b.title);
                     
                     // Si un té hora i l'altre no, el que té hora va primer
                     if (aHasTime && !bHasTime) return -1;
@@ -387,8 +387,8 @@ class CalendarManager {
                     
                     // Si la data és la mateixa i ambdós tenen hora, ordenar per hora
                     if (aHasTime && bHasTime) {
-                        const aTime = a.title.match(/^\[(\d{2}:\d{2})\]/)[1];
-                        const bTime = b.title.match(/^\[(\d{2}:\d{2})\]/)[1];
+                        const aTime = a.title.match(/^\\[(\\d{2}:\\d{2})\\]/)[1];
+                        const bTime = b.title.match(/^\\[(\\d{2}:\\d{2})\\]/)[1];
                         return aTime.localeCompare(bTime);
                     }
                     
@@ -425,9 +425,81 @@ class CalendarManager {
     }
     
     // === CÀRREGA DE CALENDARIS ===
+
+    // Funció interna per processar les dades del calendari
+    _processLoadedCalendar(calendarData) {
+        try {
+            if (!calendarData.name || !calendarData.startDate || !calendarData.endDate) {
+                throw new CalendariIOCException('411', 'CalendarManager._processLoadedCalendar', false);
+            }
+
+            const calendarId = calendarData.id || calendarData.name;
+            
+            if (appStateManager.calendars[calendarId]) {
+                throw new CalendariIOCException('412', 'CalendarManager._processLoadedCalendar', false);
+            }
+            
+            const calendarType = calendarData.type || 'FP';
+            
+            if ((calendarType === 'FP' || calendarType === 'BTX') && !calendarData.code) {
+                throw new CalendariIOCException('413', 'CalendarManager._processLoadedCalendar', false);
+            }
+            
+            const calendarToLoad = {
+                ...calendarData,
+                id: calendarId,
+                type: calendarType,
+                eventCounter: calendarData.eventCounter || 0,
+                categoryCounter: calendarData.categoryCounter || 0,
+                categories: calendarData.categories || [],
+                events: calendarData.events || []
+            };
+            
+            appStateManager.calendars[calendarId] = calendarToLoad;
+            
+            if (calendarData.categories) {
+                calendarData.categories
+                    .filter(cat => !cat.isSystem)
+                    .forEach(category => {
+                        const existsInCatalog = appStateManager.categoryTemplates.some(template => 
+                            template.id === category.id
+                        );
+                        
+                        if (!existsInCatalog) {
+                            appStateManager.categoryTemplates.push({
+                                id: category.id,
+                                name: category.name,
+                                color: category.color,
+                                isSystem: false
+                            });
+                            console.log(`[Carga] Añadida "${category.name}" al catálogo desde archivo`);
+                        }
+                    });
+            }
+            
+            appStateManager.currentCalendarId = calendarId;
+            appStateManager.currentDate = dateHelper.parseUTC(calendarData.startDate);
+            viewManager.changeView('month');
+            storageManager.saveToStorage();
+            this.updateUI();
+            uiHelper.showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
+            
+        } catch (error) {
+            if (error instanceof CalendariIOCException) {
+                errorManager.handleError(error);
+            } else {
+                errorManager.handleError(new CalendariIOCException('414', 'CalendarManager._processLoadedCalendar', false));
+            }
+        }
+    }
     
-    // Carregar fitxer de calendari
-    loadCalendarFile() {
+    // Carregar fitxer de calendari o processar dades directament
+    loadCalendarFile(jsonData = null) {
+        if (jsonData) {
+            this._processLoadedCalendar(jsonData);
+            return;
+        }
+
         const input = document.createElement('input');
         input.id = 'calendar-file-input';
         input.name = 'calendar-file-input';
@@ -440,83 +512,9 @@ class CalendarManager {
                 reader.onload = (e) => {
                     try {
                         const calendarData = JSON.parse(e.target.result);
-                        
-                        // Validar estructura bàsica
-                        if (!calendarData.name || !calendarData.startDate || !calendarData.endDate) {
-                            throw new CalendariIOCException('411', 'CalendarManager.loadCalendarFile', false);
-                        }
-
-                        // Usar ID correcte del fitxer JSON
-                        const calendarId = calendarData.id || calendarData.name;
-                        
-                        // Validar que no existeixi ja un calendari amb aquest ID
-                        if (appStateManager.calendars[calendarId]) {
-                            throw new CalendariIOCException('412', 'CalendarManager.loadCalendarFile', false);
-                        }
-                        
-                        // Validar tipus de calendari
-                        const calendarType = calendarData.type || 'FP'; // Per defecte FP per compatibilitat
-                        
-                        // Validar codi de semestre només per calendaris FP/BTX (no per "Altre")
-                        if ((calendarType === 'FP' || calendarType === 'BTX') && !calendarData.code) {
-                            throw new CalendariIOCException('413', 'CalendarManager.loadCalendarFile', false);
-                        }
-                        // Calendaris "Altre" poden tenir code: null, és correcte
-                        
-                        // Usar el JSON sencer amb les seves propietats
-                        const calendarToLoad = {
-                            ...calendarData,
-                            id: calendarId,
-                            type: calendarType,
-                            eventCounter: calendarData.eventCounter || 0,
-                            categoryCounter: calendarData.categoryCounter || 0,
-                            categories: calendarData.categories || [],
-                            events: calendarData.events || []
-                        };
-                        
-                        appStateManager.calendars[calendarId] = calendarToLoad;
-                        
-                        // Migrar categories del fitxer carregat al catàleg
-                        if (calendarData.categories) {
-                            calendarData.categories
-                                .filter(cat => !cat.isSystem)
-                                .forEach(category => {
-                                    const existsInCatalog = appStateManager.categoryTemplates.some(template => 
-                                        template.id === category.id
-                                    );
-                                    
-                                    if (!existsInCatalog) {
-                                        appStateManager.categoryTemplates.push({
-                                            id: category.id,
-                                            name: category.name,
-                                            color: category.color,
-                                            isSystem: false
-                                        });
-                                        console.log(`[Carga] Añadida "${category.name}" al catálogo desde archivo`);
-                                    }
-                                });
-                        }
-                        
-                        // Activar calendari carregat
-                        appStateManager.currentCalendarId = calendarId;
-                        
-                        // Establir currentDate a la data d'inici real del calendari carregat
-                        const calendarStart = dateHelper.parseUTC(calendarData.startDate);
-                        appStateManager.currentDate = calendarStart;
-                        
-                        // Sempre tornar a vista mensual quan es carrega un calendari
-                        viewManager.changeView('month');
-                        
-                        storageManager.saveToStorage();
-                        this.updateUI();
-                        uiHelper.showMessage(`Calendari "${calendarData.name}" carregat correctament`, 'success');
-                        
+                        this._processLoadedCalendar(calendarData);
                     } catch (error) {
-                        if (error instanceof CalendariIOCException) {
-                            errorManager.handleError(error);
-                        } else {
-                            errorManager.handleError(new CalendariIOCException('414', 'CalendarManager.loadCalendarFile', false));
-                        }
+                        errorManager.handleError(new CalendariIOCException('414', 'CalendarManager.loadCalendarFile', false));
                     }
                 };
                 reader.readAsText(file);

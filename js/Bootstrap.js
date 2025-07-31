@@ -105,4 +105,20 @@ class Bootstrap {
 // === INICIALITZACIÓ ===
 document.addEventListener('DOMContentLoaded', () => {
     new Bootstrap();
+
+    // Exposar managers per a testing amb Cypress
+    if (window.Cypress) {
+        window.app = {
+            calendarManager,
+            storageManager,
+            appStateManager,
+            viewManager,
+            eventManager,
+            categoryManager,
+            replicaManager,
+            errorManager,
+            uiHelper,
+            dateHelper
+        };
+    }
 });
