@@ -18,6 +18,27 @@
  * =================================================================
  */
 
+/* === GESTIÓ DELS LOGOS === */
+
+/* Per defecte (mode clar), mostrem el logo clar i amaguem el fosc */
+.light-mode .light-mode-logo {
+    display: inline-block;
+}
+
+.light-mode .dark-mode-logo {
+    display: none;
+}
+
+/* En mode fosc, invertim la visibilitat */
+.dark-mode .light-mode-logo {
+    display: none;
+}
+
+.dark-mode .dark-mode-logo {
+    display: inline-block;
+}
+
+
 /* === REGLES DEL MODE FOSC === */
 
 /* Botons de vista */
@@ -129,5 +150,3 @@ body.dark-mode .modal-body textarea {
     color: var(--main-text-color) !important;
     border-color: #4a5568;
 }
-
-
